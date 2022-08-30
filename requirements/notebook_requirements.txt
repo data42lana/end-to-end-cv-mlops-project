@@ -1,7 +1,12 @@
 # This file may be used to create an environment using:
+# $ conda config --add channels conda-forge
 # $ conda create --name <env> --file <this file>
 # platform: win-64
+dvc=2.20.1
+matplotlib=3.5.3
 notebook=6.4.12
 numpy=1.23.1
+opencv=4.6.0
 pandas=1.4.3
 python=3.9.12
+seaborn=0.11.2
