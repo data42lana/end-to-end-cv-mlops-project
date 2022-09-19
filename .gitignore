@@ -1,4 +1,5 @@
 .ipynb_checkpoints/
 .vscode/
 __pycache__/
-/info
+env/
+info/
