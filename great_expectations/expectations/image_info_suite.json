@@ -1,0 +1,265 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "image_info_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": [
+          "Author",
+          "Source",
+          "License",
+          "Number_HSparrows",
+          "Name"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "Name"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Name"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.unique.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "Name"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Name"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "Author"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Author"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "Number_HSparrows"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Number_HSparrows"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "Source"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Source"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "License"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "License"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "Number_HSparrows",
+        "max_value": 300,
+        "min_value": 1,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": false
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "Number_HSparrows"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "Number_HSparrows"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "Name",
+        "mostly": 1.0,
+        "regex": "(?:.*).jpg"
+      },
+      "meta": {
+        "profiler_details": {
+          "evaluated_regexes": {
+            "(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})(?:.(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})){3}": 1.0,
+            "(?:[A-Fa-f0-9]){0,4}(?: ?:? ?(?:[A-Fa-f0-9]){0,4}){0,7}": 1.0,
+            "-?\\d+": 1.0,
+            "-?\\d+(?:\\.\\d*)?": 1.0,
+            "<\\/?(?:p|a|b|img)(?: \\/)?>": 0.0,
+            "[A-Za-z0-9\\.,;:!?()\\\"'%\\-]+": 1.0,
+            "\\b[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}-[0-5][0-9a-fA-F]{3}-[089ab][0-9a-fA-F]{3}-\\b[0-9a-fA-F]{12}\\b ": 0.0,
+            "\\d+": 1.0,
+            "\\s+$": 0.0,
+            "^\\s+": 0.0,
+            "https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,255}\\.[a-z]{2,6}\\b(?:[-a-zA-Z0-9@:%_\\+.~#()?&//=]*)": 0.0
+          },
+          "success_ratio": 1.0
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "Source",
+        "mostly": 1.0,
+        "value_set": [
+          "Flickr"
+        ]
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Source"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column.distinct_values",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "License",
+        "mostly": 1.0,
+        "value_set": [
+          "Attribution-ShareAlike 2.0 Generic (CC BY-SA 2.0)",
+          "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+          "Attribution-NonCommercial 2.0 Generic (CC BY-NC 2.0)",
+          "Attribution 2.0 Generic (CC BY 2.0)"
+        ]
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "License"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column.distinct_values",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "citations": [
+      {
+        "citation_date": "2022-09-24T08:27:05.691271Z",
+        "comment": "Created by effective Rule-Based Profiler of OnboardingDataAssistant with the configuration included.\n"
+      },
+      {
+        "batch_request": {
+          "data_asset_name": "image_info.csv",
+          "data_connector_name": "default_configured_data_connector_name",
+          "datasource_name": "image_info_and_bbox_csv_datasource",
+          "limit": 1000
+        },
+        "citation_date": "2022-09-24T08:29:38.452712Z",
+        "comment": "Created suite added via CLI"
+      }
+    ],
+    "great_expectations_version": "0.15.23"
+  }
+}

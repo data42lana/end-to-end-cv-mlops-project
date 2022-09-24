@@ -28,7 +28,7 @@ datasources:
             class_name: Asset
             module_name: great_expectations.datasource.data_connector.asset
             base_directory: ./
-          image_bboxes.csv:
+          bounding_boxes.csv:
             class_name: Asset
             module_name: great_expectations.datasource.data_connector.asset
             base_directory: bboxes/

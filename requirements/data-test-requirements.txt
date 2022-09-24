@@ -1,4 +1,5 @@
 # Require for python 3.9.13
+black==22.8.0
 deepchecks==0.8.3
 dvc==2.20.1
 great_expectations==0.15.23
