@@ -1,6 +1,6 @@
 {
   "data_asset_type": null,
-  "expectation_suite_name": "image_bboxes_suite",
+  "expectation_suite_name": "image_bboxes_ge_suite",
   "expectations": [
     {
       "expectation_type": "expect_table_columns_to_match_set",
@@ -34,387 +34,6 @@
             "metric_value_kwargs": null
           },
           "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "bbox_x"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "bbox_x"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "bbox_y"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "bbox_y"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "bbox_width"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "bbox_width"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "bbox_height"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "bbox_height"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "image_name"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "image_name"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "image_width"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "image_width"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "image_height"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "image_height"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "bbox_x",
-        "max_value": 3000,
-        "min_value": 0,
-        "mostly": 1.0,
-        "strict_max": false,
-        "strict_min": false
-      },
-      "meta": {
-        "profiler_details": {
-          "column_max_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_x"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.max",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          },
-          "column_min_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_x"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.min",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          }
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "bbox_y",
-        "max_value": 3000,
-        "min_value": 0,
-        "mostly": 1.0,
-        "strict_max": false,
-        "strict_min": false
-      },
-      "meta": {
-        "profiler_details": {
-          "column_max_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_y"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.max",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          },
-          "column_min_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_y"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.min",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          }
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "bbox_width",
-        "max_value": 3000,
-        "min_value": 0,
-        "mostly": 1.0,
-        "strict_max": false,
-        "strict_min": true
-      },
-      "meta": {
-        "profiler_details": {
-          "column_max_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_width"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.max",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          },
-          "column_min_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_width"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.min",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          }
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "bbox_height",
-        "max_value": 3000,
-        "min_value": 0,
-        "mostly": 1.0,
-        "strict_max": false,
-        "strict_min": true
-      },
-      "meta": {
-        "profiler_details": {
-          "column_max_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_height"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.max",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          },
-          "column_min_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "bbox_height"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.min",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          }
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "image_width",
-        "max_value": 3000,
-        "min_value": 0,
-        "mostly": 1.0,
-        "strict_max": false,
-        "strict_min": true
-      },
-      "meta": {
-        "profiler_details": {
-          "column_max_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "image_width"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.max",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          },
-          "column_min_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "image_width"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.min",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          }
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "image_height",
-        "max_value": 3000,
-        "min_value": 0,
-        "mostly": 1.0,
-        "strict_max": false,
-        "strict_min": true
-      },
-      "meta": {
-        "profiler_details": {
-          "column_max_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "image_height"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.max",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          },
-          "column_min_values_range_estimator": {
-            "metric_configuration": {
-              "domain_kwargs": {
-                "column": "image_height"
-              },
-              "metric_dependencies": null,
-              "metric_name": "column.min",
-              "metric_value_kwargs": null
-            },
-            "num_batches": 1
-          }
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "image_name",
-        "mostly": 1.0,
-        "regex": "(?:.*).jpg"
-      },
-      "meta": {
-        "profiler_details": {
-          "evaluated_regexes": {
-            "(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})(?:.(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})){3}": 1.0,
-            "(?:[A-Fa-f0-9]){0,4}(?: ?:? ?(?:[A-Fa-f0-9]){0,4}){0,7}": 1.0,
-            "-?\\d+": 1.0,
-            "-?\\d+(?:\\.\\d*)?": 1.0,
-            "<\\/?(?:p|a|b|img)(?: \\/)?>": 0.0,
-            "[A-Za-z0-9\\.,;:!?()\\\"'%\\-]+": 1.0,
-            "\\b[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}-[0-5][0-9a-fA-F]{3}-[089ab][0-9a-fA-F]{3}-\\b[0-9a-fA-F]{12}\\b ": 0.0,
-            "\\d+": 1.0,
-            "\\s+$": 0.0,
-            "^\\s+": 0.0,
-            "https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,255}\\.[a-z]{2,6}\\b(?:[-a-zA-Z0-9@:%_\\+.~#()?&//=]*)": 0.0
-          },
-          "success_ratio": 1.0
         }
       }
     },
@@ -463,15 +82,392 @@
           "num_batches": 1
         }
       }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "bbox_x"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "bbox_x"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "bbox_x",
+        "max_value": 3000,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": false
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_x"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_x"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "bbox_y"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "bbox_y"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "bbox_y",
+        "max_value": 3000,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": false
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_y"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_y"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "bbox_width"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "bbox_width"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "bbox_width",
+        "max_value": 3000,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": true
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_width"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_width"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "bbox_height"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "bbox_height"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "bbox_height",
+        "max_value": 3000,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": true
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_height"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "bbox_height"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "image_name"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "image_name"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "image_name",
+        "mostly": 1.0,
+        "regex": "(?:.*).jpg"
+      },
+      "meta": {
+        "profiler_details": {
+          "evaluated_regexes": {
+            "(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})(?:.(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})){3}": 1.0,
+            "(?:[A-Fa-f0-9]){0,4}(?: ?:? ?(?:[A-Fa-f0-9]){0,4}){0,7}": 1.0,
+            "-?\\d+": 1.0,
+            "-?\\d+(?:\\.\\d*)?": 1.0,
+            "<\\/?(?:p|a|b|img)(?: \\/)?>": 0.0,
+            "[A-Za-z0-9\\.,;:!?()\\\"'%\\-]+": 1.0,
+            "\\b[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}-[0-5][0-9a-fA-F]{3}-[089ab][0-9a-fA-F]{3}-\\b[0-9a-fA-F]{12}\\b ": 0.0,
+            "\\d+": 1.0,
+            "\\s+$": 0.0,
+            "^\\s+": 0.0,
+            "https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,255}\\.[a-z]{2,6}\\b(?:[-a-zA-Z0-9@:%_\\+.~#()?&//=]*)": 0.0
+          },
+          "success_ratio": 1.0
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "image_width"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "image_width"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "image_width",
+        "max_value": 3000,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": true
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "image_width"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "image_width"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "image_height"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "image_height"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "image_height",
+        "max_value": 3000,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": true
+      },
+      "meta": {
+        "profiler_details": {
+          "column_max_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "image_height"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.max",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          },
+          "column_min_values_range_estimator": {
+            "metric_configuration": {
+              "domain_kwargs": {
+                "column": "image_height"
+              },
+              "metric_dependencies": null,
+              "metric_name": "column.min",
+              "metric_value_kwargs": null
+            },
+            "num_batches": 1
+          }
+        }
+      }
     }
   ],
   "ge_cloud_id": null,
   "meta": {
     "citations": [
-      {
-        "citation_date": "2022-09-24T21:23:09.276240Z",
-        "comment": "Created by effective Rule-Based Profiler of OnboardingDataAssistant with the configuration included.\n"
-      },
       {
         "batch_request": {
           "data_asset_name": "bounding_boxes.csv",
@@ -479,7 +475,7 @@
           "datasource_name": "image_info_and_bbox_csv_datasource",
           "limit": 1000
         },
-        "citation_date": "2022-09-24T22:02:10.315135Z",
+        "citation_date": "2022-09-26T16:31:44.194406Z",
         "comment": "Created suite added via CLI"
       }
     ],

@@ -1,6 +1,6 @@
 {
   "data_asset_type": null,
-  "expectation_suite_name": "image_info_suite",
+  "expectation_suite_name": "image_info_ge_suite",
   "expectations": [
     {
       "expectation_type": "expect_table_columns_to_match_set",
@@ -54,6 +54,32 @@
       }
     },
     {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "Name",
+        "mostly": 1.0,
+        "regex": "(?:.*).jpg"
+      },
+      "meta": {
+        "profiler_details": {
+          "evaluated_regexes": {
+            "(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})(?:.(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})){3}": 1.0,
+            "(?:[A-Fa-f0-9]){0,4}(?: ?:? ?(?:[A-Fa-f0-9]){0,4}){0,7}": 1.0,
+            "-?\\d+": 1.0,
+            "-?\\d+(?:\\.\\d*)?": 1.0,
+            "<\\/?(?:p|a|b|img)(?: \\/)?>": 0.0,
+            "[A-Za-z0-9\\.,;:!?()\\\"'%\\-]+": 1.0,
+            "\\b[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}-[0-5][0-9a-fA-F]{3}-[089ab][0-9a-fA-F]{3}-\\b[0-9a-fA-F]{12}\\b ": 0.0,
+            "\\d+": 1.0,
+            "\\s+$": 0.0,
+            "^\\s+": 0.0,
+            "https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,255}\\.[a-z]{2,6}\\b(?:[-a-zA-Z0-9@:%_\\+.~#()?&//=]*)": 0.0
+          },
+          "success_ratio": 1.0
+        }
+      }
+    },
+    {
       "expectation_type": "expect_column_values_to_not_be_null",
       "kwargs": {
         "column": "Author"
@@ -82,44 +108,6 @@
           "metric_configuration": {
             "domain_kwargs": {
               "column": "Number_HSparrows"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "Source"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "Source"
-            },
-            "metric_dependencies": null,
-            "metric_name": "column_values.nonnull.unexpected_count",
-            "metric_value_kwargs": null
-          },
-          "num_batches": 1
-        }
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "License"
-      },
-      "meta": {
-        "profiler_details": {
-          "metric_configuration": {
-            "domain_kwargs": {
-              "column": "License"
             },
             "metric_dependencies": null,
             "metric_name": "column_values.nonnull.unexpected_count",
@@ -167,28 +155,21 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "expectation_type": "expect_column_values_to_not_be_null",
       "kwargs": {
-        "column": "Name",
-        "mostly": 1.0,
-        "regex": "(?:.*).jpg"
+        "column": "Source"
       },
       "meta": {
         "profiler_details": {
-          "evaluated_regexes": {
-            "(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})(?:.(?:25[0-5]|2[0-4]\\d|[01]\\d{2}|\\d{1,2})){3}": 1.0,
-            "(?:[A-Fa-f0-9]){0,4}(?: ?:? ?(?:[A-Fa-f0-9]){0,4}){0,7}": 1.0,
-            "-?\\d+": 1.0,
-            "-?\\d+(?:\\.\\d*)?": 1.0,
-            "<\\/?(?:p|a|b|img)(?: \\/)?>": 0.0,
-            "[A-Za-z0-9\\.,;:!?()\\\"'%\\-]+": 1.0,
-            "\\b[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}-[0-5][0-9a-fA-F]{3}-[089ab][0-9a-fA-F]{3}-\\b[0-9a-fA-F]{12}\\b ": 0.0,
-            "\\d+": 1.0,
-            "\\s+$": 0.0,
-            "^\\s+": 0.0,
-            "https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,255}\\.[a-z]{2,6}\\b(?:[-a-zA-Z0-9@:%_\\+.~#()?&//=]*)": 0.0
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "Source"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
+            "metric_value_kwargs": null
           },
-          "success_ratio": 1.0
+          "num_batches": 1
         }
       }
     },
@@ -209,6 +190,25 @@
             },
             "metric_dependencies": null,
             "metric_name": "column.distinct_values",
+            "metric_value_kwargs": null
+          },
+          "num_batches": 1
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "License"
+      },
+      "meta": {
+        "profiler_details": {
+          "metric_configuration": {
+            "domain_kwargs": {
+              "column": "License"
+            },
+            "metric_dependencies": null,
+            "metric_name": "column_values.nonnull.unexpected_count",
             "metric_value_kwargs": null
           },
           "num_batches": 1
@@ -246,17 +246,13 @@
   "meta": {
     "citations": [
       {
-        "citation_date": "2022-09-24T08:27:05.691271Z",
-        "comment": "Created by effective Rule-Based Profiler of OnboardingDataAssistant with the configuration included.\n"
-      },
-      {
         "batch_request": {
           "data_asset_name": "image_info.csv",
           "data_connector_name": "default_configured_data_connector_name",
           "datasource_name": "image_info_and_bbox_csv_datasource",
           "limit": 1000
         },
-        "citation_date": "2022-09-24T08:29:38.452712Z",
+        "citation_date": "2022-09-26T16:28:48.706083Z",
         "comment": "Created suite added via CLI"
       }
     ],
