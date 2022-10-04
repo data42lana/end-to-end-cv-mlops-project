@@ -29,7 +29,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           df1_image_name_column,
                                                           df2_image_name_column,
                                                           df2_columns_to_rename_in_new_df):
-    """Expandes a DataFrame with selected images with columns from another DataFrame 
+    """Expands a DataFrame with selected images with columns from another DataFrame 
     with averages calculated for each group of these images.
 
     Parameters:
@@ -60,6 +60,11 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
     new_expanded_df = (df1.loc[df1[df1_image_name_column].isin(selected_images)]
                           .merge(avg_df, on=df1_image_name_column, how='left'))
     return new_expanded_df
+
+def save_data_to_scv(data, path_to_save, file_name):
+    """Saves a pd.DataFrame or a pd.Series to a csv file."""
+    file_to_save =  path_to_save / file_name
+    data.to_csv(file_to_save, index=False)
 
 def main(project_path):
     data_path = project_path / 'data'
