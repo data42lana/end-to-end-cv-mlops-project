@@ -5,12 +5,12 @@ import pandas as pd
 
 from sklearn.model_selection import StratifiedGroupKFold 
 
+DATA_DIR = 'data'
+RAW_DATA_DIR = 'raw'
+PREPARED_DATA_DIR = 'prepared'
+
 INFO_CSV_DATA_FILE = 'image_info.csv'
 BBOX_CSV_DATA_FILE = 'bboxes/bounding_boxes.csv'
-
-def load_data(csv_data_path):
-    """Loads a csv file and returns it to pd.DataFrame."""
-    return pd.read_csv(csv_data_path)
 
 def stratified_group_train_test_split(data, stratification_basis, groups):
     """Stratified splits data into training and test sets,
@@ -18,10 +18,6 @@ def stratified_group_train_test_split(data, stratification_basis, groups):
     split = StratifiedGroupKFold(n_splits=2, shuffle=True, random_state=0)
     train_ids, test_ids = next(split.split(X=data, y=stratification_basis, groups=groups))
     return train_ids, test_ids
-
-def select_images_by_given_indices(image_series, indices):
-    """Returns a pd.Series with selected images names by given indices."""
-    return image_series.iloc[indices]
 
 def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           selected_images, 
@@ -50,7 +46,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
         rename_columns.update({col: 'avg_' + col for col in df2_columns_to_rename_in_new_df})
 
     avg_df = (df2.loc[df2[df2_image_name_column].isin(selected_images), 
-                      df2_columns_to_calculate_averages]
+                      df2_columns_to_calculate_averages + [df2_image_name_column]]
                  .groupby(df2_image_name_column)
                  .agg('mean')
                  .round()
@@ -67,23 +63,31 @@ def save_data_to_scv(data, path_to_save, file_name):
     data.to_csv(file_to_save, index=False)
 
 def main(project_path):
-    data_path = project_path / 'data'
-    raw_data_path = data_path / 'raw'
-    img_info_df, img_bbox_df = [load_data(csv_data_file) for csv_data_file in [INFO_CSV_DATA_FILE, 
-                                                                               BBOX_CSV_DATA_FILE]]
+    """Prepares data for training and testing.
+    
+    Parameter:
+    project_path (pathlib.Path): a path to a directory with the project files. 
+    """
+    data_path = project_path / DATA_DIR
+    raw_data_path = data_path / RAW_DATA_DIR
+    file_save_path = data_path / PREPARED_DATA_DIR
+    file_save_path.mkdir(exist_ok=True)
+    
+    img_info_df, img_bbox_df = [pd.read_csv(raw_data_path / csv_data_file) for csv_data_file in [INFO_CSV_DATA_FILE, 
+                                                                                                 BBOX_CSV_DATA_FILE]]
     train_ids, test_ids = stratified_group_train_test_split(img_info_df['Name'], 
                                                             img_info_df['Number_HSparrows'], 
                                                             img_info_df['Author'])
 
-    for ids, fname in zip((train_ids, test_ids), ('train_555.csv', 'test_555.csv')): # !!!!!!!!
-        sel_imgs = select_images_by_given_indices(img_info_df.Name, ids)
+    for ids, fname in zip((train_ids, test_ids), ('train.csv', 'test.csv')):
+        sel_imgs = img_info_df.Name.iloc[ids]
         cols_to_calculate_avg = ['bbox_width', 'bbox_height', 'image_width', 'image_height']
         expanded_df = expand_img_df_with_average_values_from_another_img_df(img_info_df, img_bbox_df,
                                                                             sel_imgs, cols_to_calculate_avg,
                                                                             'Name', 'image_name',
                                                                             cols_to_calculate_avg[:2])
-        save_data_to_scv(expanded_df, data_path('prepared_222').mkdir(exist_ok=True), fname) # !!!!!!!
+        save_data_to_scv(expanded_df, file_save_path, fname)
 
 if __name__ == "__main__":
-    project_path = Path(__file__).parent
+    project_path = Path(__file__).parent.parent
     main(project_path)
