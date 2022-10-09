@@ -1,3 +1,5 @@
+"""This module creates training and test datasets from raw data."""
+
 from pathlib import Path
 
 import numpy as np
@@ -63,11 +65,8 @@ def save_data_to_scv(data, path_to_save, file_name):
     data.to_csv(file_to_save, index=False)
 
 def main(project_path):
-    """Prepares data for training and testing.
-    
-    Parameter:
-    project_path (pathlib.Path): a path to a directory with the project files. 
-    """
+    """Creates training and test csv data files."""
+    project_path = Path(project_path)
     data_path = project_path / DATA_DIR
     raw_data_path = data_path / RAW_DATA_DIR
     file_save_path = data_path / PREPARED_DATA_DIR
@@ -88,6 +87,6 @@ def main(project_path):
                                                                             cols_to_calculate_avg[:2])
         save_data_to_scv(expanded_df, file_save_path, fname)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     project_path = Path(__file__).parent.parent
     main(project_path)
