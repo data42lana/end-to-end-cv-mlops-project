@@ -8,7 +8,7 @@ import pandas as pd
 
 RAW_DATA_PATH = 'data/raw'
 IMG_DIR = 'images'
-SAVE_CHECK_RESULT_DIR = 'results/data_check_results'
+SAVE_CHECK_RESULT_DIR = 'data_checks/data_check_results'
 
 INFO_CSV_DATA_FILE = 'image_info.csv'
 BBOX_CSV_DATA_FILE = 'bboxes/bounding_boxes.csv'

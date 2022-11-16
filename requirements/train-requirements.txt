@@ -1,0 +1,13 @@
+# Require for python 3.9.13
+albumentations==1.2.1
+black==22.8.0
+dvc==2.20.1
+kaleido=0.2.1
+mlflow==1.30.0
+numpy==1.23.1
+opencv-python==4.6.0.66
+optuna==3.0.3
+pandas==1.4.3
+scikit-learn==1.1.2
+torch==1.13.0
+torchvision==0.14.0
