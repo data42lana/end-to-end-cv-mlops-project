@@ -59,7 +59,7 @@ def main(project_path):
     project_path = Path(project_path)
 
     # Get image data paths from a configuration file
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(empty_lines_in_values=False)
     config.read(project_path / CONFIG_PATH)
     img_data_paths = config['image_data_paths']
     
