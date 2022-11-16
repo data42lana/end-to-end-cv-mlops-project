@@ -1,18 +1,13 @@
 """This module creates training and test datasets from raw data."""
 
 from pathlib import Path
+import configparser
 
 import numpy as np
 import pandas as pd
-
 from sklearn.model_selection import StratifiedGroupKFold 
 
-DATA_DIR = 'data'
-RAW_DATA_DIR = 'raw'
-PREPARED_DATA_DIR = 'prepared'
-
-INFO_CSV_DATA_FILE = 'image_info.csv'
-BBOX_CSV_DATA_FILE = 'bboxes/bounding_boxes.csv'
+CONFIG_PATH = 'configs/config.ini'
 
 def stratified_group_train_test_split(data, stratification_basis, groups):
     """Stratified splits data into training and test sets,
@@ -59,33 +54,34 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                           .merge(avg_df, on=df1_image_name_column, how='left'))
     return new_expanded_df
 
-def save_data_to_scv(data, path_to_save, file_name):
-    """Saves a pd.DataFrame or a pd.Series to a csv file."""
-    file_to_save =  path_to_save / file_name
-    data.to_csv(file_to_save, index=False)
-
 def main(project_path):
     """Creates training and test csv data files."""
     project_path = Path(project_path)
-    data_path = project_path / DATA_DIR
-    raw_data_path = data_path / RAW_DATA_DIR
-    file_save_path = data_path / PREPARED_DATA_DIR
-    file_save_path.mkdir(exist_ok=True)
+
+    # Get image data paths from a configuration file
+    config = configparser.ConfigParser()
+    config.read(project_path / CONFIG_PATH)
+    img_data_paths = config['image_data_paths']
     
-    img_info_df, img_bbox_df = [pd.read_csv(raw_data_path / csv_data_file) for csv_data_file in [INFO_CSV_DATA_FILE, 
-                                                                                                 BBOX_CSV_DATA_FILE]]
+    # Split data into training and test sets
+    img_info_df, img_bbox_df = [
+        pd.read_csv(project_path / img_data_paths[csv_data_file]) for csv_data_file in ['info_csv_file', 
+                                                                                        'bboxes_csv_file']]
     train_ids, test_ids = stratified_group_train_test_split(img_info_df['Name'], 
                                                             img_info_df['Number_HSparrows'], 
                                                             img_info_df['Author'])
+    # Create training and test csv files
+    for ids, fpath in zip((train_ids, test_ids), ('train_csv_file', 'test_csv_file')):
+        fpath = project_path / img_data_paths[fpath]
+        fpath.parent.mkdir(exist_ok=True)
 
-    for ids, fname in zip((train_ids, test_ids), ('train.csv', 'test.csv')):
         sel_imgs = img_info_df.Name.iloc[ids]
         cols_to_calculate_avg = ['bbox_width', 'bbox_height', 'image_width', 'image_height']
         expanded_df = expand_img_df_with_average_values_from_another_img_df(img_info_df, img_bbox_df,
                                                                             sel_imgs, cols_to_calculate_avg,
                                                                             'Name', 'image_name',
                                                                             cols_to_calculate_avg[:2])
-        save_data_to_scv(expanded_df, file_save_path, fname)
+        expanded_df.to_csv(fpath, index=False)
 
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent
