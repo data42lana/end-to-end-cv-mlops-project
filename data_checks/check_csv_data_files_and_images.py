@@ -2,34 +2,20 @@
 
 import argparse
 from pathlib import Path
+import configparser
 
 import numpy as np
 import pandas as pd
 
-RAW_DATA_PATH = 'data/raw'
-IMG_DIR = 'images'
-SAVE_CHECK_RESULT_DIR = 'data_checks/data_check_results'
+CONFIG_PATH = 'configs/config.ini'
 
-INFO_CSV_DATA_FILE = 'image_info.csv'
-BBOX_CSV_DATA_FILE = 'bboxes/bounding_boxes.csv'
-
-def get_path_args_parser():
-    """Returns a argument parser object with relative data paths."""
+def get_data_type_arg_parser():
+    """Returns a argument parser object with a type of data."""
     parser = argparse.ArgumentParser(
-        description='Specify a relative path to files and a directory with corresponding images to check.',
+        description='Specify a type of data to check.',
         add_help=False)
-    parser.add_argument('--info_csv_file_path', type=str, 
-                        default='/'.join([RAW_DATA_PATH, INFO_CSV_DATA_FILE]),
-                        help='a relative path from a project directory to a info csv file')
-    parser.add_argument('--bbox_csv_file_path', type=str,
-                        default='/'.join([RAW_DATA_PATH, BBOX_CSV_DATA_FILE]),
-                        help='a relative path from a project directory to a bbox csv file')
-    parser.add_argument('--image_dir_path', type=str, 
-                        default='/'.join([RAW_DATA_PATH, IMG_DIR]),
-                        help='a relative path from a project directory to a directory with corresponding images')
-    parser.add_argument('--save_validation_result_path', type=str, 
-                        default='/'.join([SAVE_CHECK_RESULT_DIR, 'csv_file_check_results.txt']),
-                        help='a relative path from a project directory to a file to save check results')
+    parser.add_argument('--check_data_type', type=str, choices=['raw', 'new'],
+                        default='raw', help='check raw or new data')
     return parser
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
@@ -69,14 +55,22 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
     else:
         return {'FAILED': s1[~comp_series_result].index}
         
-def main(project_path, img_data_path_args):
+def main(project_path, check_data_type):
     """Checks csv data files and matches them with images."""
     project_path = Path(project_path)
-    # Get a list of image names
-    img_names = [img.parts[-1] for img in (project_path / img_data_path_args.image_dir_path).iterdir()]
 
-    img_info_df, img_bbox_df = [pd.read_csv(project_path / csv_file) for csv_file in [img_data_path_args.info_csv_file_path, 
-                                                                                      img_data_path_args.bbox_csv_file_path]]
+    # Get image data paths from a configuration file
+    config = configparser.ConfigParser(empty_lines_in_values=False)
+    config.read(project_path / CONFIG_PATH)
+    img_data_paths = config['image_data_paths'] if check_data_type == 'raw' else config['new_image_data_paths']
+    print(check_data_type == 'raw')
+
+    # Get a list of image names
+    img_names = [img.parts[-1] for img in (project_path / img_data_paths['images']).iterdir()]
+
+    img_info_df, img_bbox_df = [
+        pd.read_csv(project_path / img_data_paths[csv_file]) for csv_file in ['info_csv_file', 
+                                                                              'bboxes_csv_file']]
     # Create a dict of validation results for summary report
     validation_results = {}
 
@@ -127,13 +121,13 @@ def main(project_path, img_data_path_args):
         number_hsparrows, number_bboxes, '==', passed_message="The numbers match.")
     
     # Save validation results to a file
-    file_save_path = project_path / img_data_path_args.save_validation_result_path
-    file_save_path.touch(exist_ok=True)
+    fname = f'{check_data_type}_csv_file_check_results.txt'
+    file_save_path = project_path / f'data_checks/data_check_results/{fname}'
+    file_save_path.parent.mkdir(parents=True, exist_ok=True)
     file_save_path.write_text(str(validation_results))
-
     
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent
-    data_path_parser = argparse.ArgumentParser('Image data csv file check script.', parents=[get_path_args_parser()])
-    img_data_path_args = data_path_parser.parse_args()
-    main(project_path, img_data_path_args)
+    data_type_parser = argparse.ArgumentParser('Image data csv file check script.', parents=[get_data_type_arg_parser()])
+    img_data_type = data_type_parser.parse_args()
+    main(project_path, img_data_type.check_data_type)
