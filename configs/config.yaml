@@ -1,0 +1,72 @@
+# Configurations for *.py modules
+
+image_data_paths:
+    images: data/raw/images
+    info_csv_file: data/raw/image_info.csv
+    bboxes_csv_file: data/raw/bboxes/bounding_boxes.csv
+    train_csv_file: data/prepared/train222.csv
+    test_csv_file: data/prepared/test222.csv
+
+new_image_data_paths:
+    images: data/new/images
+    info_csv_file: data/new/new_image_info.csv
+    bboxes_csv_file: data/new/bboxes/new_bounding_boxes.csv
+
+image_dataset_conf:
+   box_format: coco
+   batch_size: 16
+
+object_detection_model:
+    name: faster_rcnn_mob
+    registered_name: best_faster_rcnn_mob
+    number_classes: 2
+    load_parameters:
+        trainable_backbone_layers: 1
+        rpn_score_thresh: 0.4
+        box_score_thresh: 0.5
+        box_nms_thresh: 0.4
+        box_detections_per_img: 120
+        box_positive_fraction: 0.4
+    save_dir: models
+
+model_training_inference_conf:
+    device_cuda: Off
+    metric_to_find_best: f_beta
+    evaluation_iou_threshold: 0.4
+    evaluation_beta: 2
+    epochs: 15    
+    checkpoint: best_faster_rcnn_mob_f_beta_2_weights_ckpt.pt
+
+mlops_tracking_conf:
+    tracking_dir: mlruns
+    run_train_name: fine-tuning_with_optimized_parameters
+
+hyperparameter_optimization:
+    study_name: faster_rcnn_mob_hyper_opt_study
+    metric: f_beta
+    sampler: 
+        name: TPESampler
+        parameters: null
+    pruner: 
+        name: MedianPruner
+        parameters: {n_warmup_steps: 3}
+    epochs: 10
+    n_trials: 100
+    timeout: 2400
+    hyperparameters:
+        optimizers: 
+            SGD: 
+                lr: [{low: 0.00001, high: 0.01, log: True}, float]
+                weight_decay: [{low: 0.0, high: 0.001, step: 0.0001}, float]
+                momentum: [{low: 0.0, high: 0.9, step: 0.3}, float]
+            Adam:
+                lr: [{low: 0.00001, high: 0.01, log: True}, float]
+                weight_decay: [{low: 0.0, high: 0.001, step: 0.0001}, float]
+        lr_schedulers: 
+            StepLR:
+                step_size: [{low: 1, high: 3}, int]
+                gamma: [{low: 0.1, high: 0.2, log: True}, float]
+            LinearLR: null
+            None: null
+    save_best_parameters_path: configs/best_train_params.yaml
+    save_study_dir: hyper_opt

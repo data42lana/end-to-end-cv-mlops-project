@@ -1,20 +1,14 @@
 """This module creates training and test datasets from raw data."""
 
 from pathlib import Path
-import configparser
 
+import yaml
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedGroupKFold 
 
-CONFIG_PATH = 'configs/config.ini'
+from utils import stratified_group_train_test_split
 
-def stratified_group_train_test_split(data, stratification_basis, groups):
-    """Stratified splits data into training and test sets,
-    taking into account groups, and returns the corresponding indices."""
-    split = StratifiedGroupKFold(n_splits=2, shuffle=True, random_state=0)
-    train_ids, test_ids = next(split.split(X=data, y=stratification_basis, groups=groups))
-    return train_ids, test_ids
+CONFIG_PATH = 'configs/config.yaml'
 
 def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           selected_images, 
@@ -59,8 +53,8 @@ def main(project_path):
     project_path = Path(project_path)
 
     # Get image data paths from a configuration file
-    config = configparser.ConfigParser(empty_lines_in_values=False)
-    config.read(project_path / CONFIG_PATH)
+    with open(project_path / CONFIG_PATH) as f:
+        config = yaml.safe_load(f)  
     img_data_paths = config['image_data_paths']
     
     # Split data into training and test sets
@@ -82,6 +76,7 @@ def main(project_path):
                                                                             'Name', 'image_name',
                                                                             cols_to_calculate_avg[:2])
         expanded_df.to_csv(fpath, index=False)
+        print("[INFO]: Train and test csv files are saved.")
 
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent

@@ -2,12 +2,12 @@
 
 import argparse
 from pathlib import Path
-import configparser
 
+import yaml
 import numpy as np
 import pandas as pd
 
-CONFIG_PATH = 'configs/config.ini'
+CONFIG_PATH = 'configs/config.yaml'
 
 def get_data_type_arg_parser():
     """Returns a argument parser object with a type of data."""
@@ -38,8 +38,8 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
     Parameters:
         s1 (pd.Series): a object to be compared
         other (pd.Series or scalar value): a object to compare
-        comparison_sign (str): must be one of '==', '<='. Otherwise raises ValueError.
-        passed_message (str): a message that describes a passage of the check
+        comparison_sign (str): must be one of '==', '<='. Otherwise raises ValueError
+        passed_message (str): a message that describes a passage of the check.
     """  
     comp_series_result = 0
 
@@ -60,11 +60,10 @@ def main(project_path, check_data_type):
     project_path = Path(project_path)
 
     # Get image data paths from a configuration file
-    config = configparser.ConfigParser(empty_lines_in_values=False)
-    config.read(project_path / CONFIG_PATH)
+    with open(project_path / CONFIG_PATH) as f:
+        config = yaml.safe_load(f)        
     img_data_paths = config['image_data_paths'] if check_data_type == 'raw' else config['new_image_data_paths']
-    print(check_data_type == 'raw')
-
+        
     # Get a list of image names
     img_names = [img.parts[-1] for img in (project_path / img_data_paths['images']).iterdir()]
 
@@ -125,9 +124,11 @@ def main(project_path, check_data_type):
     file_save_path = project_path / f'data_checks/data_check_results/{fname}'
     file_save_path.parent.mkdir(parents=True, exist_ok=True)
     file_save_path.write_text(str(validation_results))
+    print("[INFO]: Check results are saved.")
     
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent
-    data_type_parser = argparse.ArgumentParser('Image data csv file check script.', parents=[get_data_type_arg_parser()])
+    data_type_parser = argparse.ArgumentParser('Image data csv file check script.', 
+                                               parents=[get_data_type_arg_parser()])
     img_data_type = data_type_parser.parse_args()
     main(project_path, img_data_type.check_data_type)
