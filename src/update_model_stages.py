@@ -40,8 +40,10 @@ def update_registered_model_version_stages(registered_model_name):
 def main(project_path):
     """Updates version stages for a registered model specified in a configuration file."""
     project_path = Path(project_path)
+
     with open(project_path / CONFIG_PATH) as f:
         config = yaml.safe_load(f)  
+        
     update_registered_model_version_stages(config['object_detection_model']['registered_name'])
     print("[INFO]: Stages are updated.")
 
