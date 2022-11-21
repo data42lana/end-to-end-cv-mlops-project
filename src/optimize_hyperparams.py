@@ -13,6 +13,7 @@ import torch # PyTorch
 from image_dataloader import get_train_val_test_dataloaders
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train_inference_fns import train_one_epoch, eval_one_epoch
+from utils import get_device
 
 # Set partial reproducibility
 SEED = 0
@@ -27,7 +28,7 @@ CONFIG_PATH =  PROJECT_PATH / 'configs/config.yaml'
 with open(CONFIG_PATH) as f:
     config = yaml.safe_load(f)
 
-DEVICE = torch.device('cuda' if config['model_training_inference_conf']['device_cuda'] and torch.cuda.is_available() else 'cpu')
+DEVICE = get_device(config['model_training_inference_conf']['device_cuda'])
 BATCH_SIZE = config['image_dataset_conf']['batch_size']
 NUM_CLASSES = config['object_detection_model']['number_classes']
 EVAL_IOU_THRESH = config['model_training_inference_conf']['evaluation_iou_threshold']

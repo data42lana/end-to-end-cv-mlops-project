@@ -10,6 +10,10 @@ from torchvision.utils import draw_bounding_boxes
 # Set reproducibility
 SEED = 0
 
+def get_device(config_param):
+    """Returns torch.device('cpu' or 'cuda') depending on the corresponding configuration parameter."""
+    return torch.device('cuda' if config_param and torch.cuda.is_available() else 'cpu')
+
 def stratified_group_train_test_split(data, stratification_basis, groups):
     """Stratified splits data into training and test sets,
     taking into account groups, and returns the corresponding indices.

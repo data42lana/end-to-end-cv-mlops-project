@@ -13,7 +13,7 @@ import torchvision
 from train_inference_fns import train_one_epoch, eval_one_epoch
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from image_dataloader import get_train_val_test_dataloaders
-from utils import save_model_state, draw_bboxes_on_image
+from utils import save_model_state, draw_bboxes_on_image, get_device
 
 CONFIG_PATH = 'configs/config.yaml'
 
@@ -176,7 +176,7 @@ def main(project_path):
 
     # Set constants
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
-    DEVICE = torch.device('cuda' if TRAIN_EVAL_PARAMS['device_cuda'] and torch.cuda.is_available() else 'cpu')
+    DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
     BATCH_SIZE = config['image_dataset_conf']['batch_size']
     NUM_CLASSES = config['object_detection_model']['number_classes']
 
@@ -208,10 +208,11 @@ def main(project_path):
         checkpoint_path = project_path / config['object_detection_model']['save_dir'] / TRAIN_EVAL_PARAMS['checkpoint']
         checkpoint = torch.load(checkpoint_path)
 
-    # Train the model (fine-tuning) and log metrics and the parameters into MLflow
-    ftm_exp = mlflow.get_experiment_by_name('Fine-Tuning_Model')
+    # Train the model (fine-tuning) and log metrics and parameters into MLflow
     mlruns_path = project_path / config['mlops_tracking_conf']['tracking_dir']
+    mlflow.set_tracking_uri(mlruns_path.as_uri())
     mlflow.set_registry_uri('sqlite:///{}'.format(mlruns_path / 'model_registry.db'))
+    ftm_exp = mlflow.get_experiment_by_name('Fine-Tuning_Model')
 
     if ftm_exp is not None:
         ftm_exp_id = ftm_exp.experiment_id

@@ -12,6 +12,7 @@ import torch # PyTorch
 
 from train_inference_fns import eval_one_epoch, predict
 from image_dataloader import get_train_val_test_dataloaders
+from utils import get_device
 
 CONFIG_PATH = 'configs/config.yaml'
 
@@ -24,7 +25,8 @@ torch.cuda.manual_seed_all(SEED)
 
 def main(project_path, show_random_predict=False):
     """Evaluates an object detection model on test data 
-    and displays a random prediction if show_random_predict is True."""
+    and displays a random prediction if show_random_predict is True.
+    """
     project_path = Path(project_path)
 
     # Get configurations
@@ -32,8 +34,7 @@ def main(project_path, show_random_predict=False):
         config = yaml.safe_load(f)
 
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
-    DEVICE = torch.device('cuda' if TRAIN_EVAL_PARAMS['device_cuda'] and torch.cuda.is_available() else 'cpu')
-
+    DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
     # Load the best model from the MLflow registry
     client = mlflow.MlflowClient()
