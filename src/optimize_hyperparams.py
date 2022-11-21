@@ -91,7 +91,8 @@ def objective(trial):
         lr_scheduler = None
     
     # Log parameters into MLflow
-    mlflow.log_params({'device': DEVICE,
+    mlflow.log_params({'seed': SEED,
+                       'device': DEVICE,
                        'num_classes': NUM_CLASSES,
                        'batch_size': BATCH_SIZE})                     
     mlflow.log_params({'eval_iou_thresh': EVAL_IOU_THRESH,
