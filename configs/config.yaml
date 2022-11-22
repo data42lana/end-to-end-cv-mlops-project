@@ -4,8 +4,8 @@ image_data_paths:
     images: data/raw/images
     info_csv_file: data/raw/image_info.csv
     bboxes_csv_file: data/raw/bboxes/bounding_boxes.csv
-    train_csv_file: data/prepared/train222.csv
-    test_csv_file: data/prepared/test222.csv
+    train_csv_file: data/prepared/train.csv
+    test_csv_file: data/prepared/test.csv
 
 new_image_data_paths:
     images: data/new/images
