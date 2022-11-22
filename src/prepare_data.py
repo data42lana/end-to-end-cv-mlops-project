@@ -8,7 +8,11 @@ import pandas as pd
 
 from utils import stratified_group_train_test_split
 
+# Set reproducibility
+SEED = 0
+
 CONFIG_PATH = 'configs/config.yaml'
+
 
 def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           selected_images, 
@@ -63,7 +67,8 @@ def main(project_path):
                                                                                         'bboxes_csv_file']]
     train_ids, test_ids = stratified_group_train_test_split(img_info_df['Name'], 
                                                             img_info_df['Number_HSparrows'], 
-                                                            img_info_df['Author'])
+                                                            img_info_df['Author'], 
+                                                            SEED)
     # Create training and test csv files
     for ids, fpath in zip((train_ids, test_ids), ('train_csv_file', 'test_csv_file')):
         fpath = project_path / img_data_paths[fpath]

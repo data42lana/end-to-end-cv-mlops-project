@@ -89,8 +89,8 @@ def collate_batch(batch):
 
 def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco', 
                                    transform_train_imgs=False):
-    """Gets a data path from configuration file and returns training, validation, and test dataloaders 
-    with a box transformation to pascal_voc ('xyxy') format.
+    """Gets a data path from configuration file and returns training, validation, 
+    and test dataloaders with a box transformation to pascal_voc ('xyxy') format.
     """
     project_path = Path.cwd()
     
@@ -117,7 +117,8 @@ def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco
     # Split data into training and validation sets
     train_ids, val_ids = stratified_group_train_test_split(train_dataset.img_df['Name'], 
                                                            train_dataset.img_df['Number_HSparrows'], 
-                                                           train_dataset.img_df['Author'])    
+                                                           train_dataset.img_df['Author'],
+                                                           SEED)
     # Create dataloaders
     dl_params = {'batch_size': batch_size,
                  'collate_fn': collate_batch} 
