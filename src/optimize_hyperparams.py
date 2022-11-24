@@ -3,6 +3,7 @@
 import sys
 import random
 from pathlib import Path
+import logging
 
 import yaml
 import numpy as np
@@ -146,6 +147,7 @@ def main():
     """Runs an optimization study."""
     hyper_opt_path = PROJECT_PATH / HYPER_OPT_PARAMS['save_study_dir']
     hyper_opt_path.mkdir(exist_ok=True)
+    logging.basicConfig(level=logging.INFO)
 
     # Set study parameters
     study_callbacks=[mlc]
@@ -181,11 +183,11 @@ def main():
 
     with open(save_best_params_path, 'w') as f:
         yaml.safe_dump(best_params, f)
-    print("[INFO]: The best parameters are saved.")
+    logging.info("The best parameters are saved.")
     
     # Save study visualizations
     save_study_plots(study, HYPER_OPT_PARAMS['study_name'], hyper_opt_path)
-    print("[INFO]: Plots are saved.")
+    logging.info("Plots are saved.")
 
 if __name__ == '__main__':
     main()

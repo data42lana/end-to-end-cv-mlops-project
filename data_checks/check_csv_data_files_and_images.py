@@ -2,6 +2,7 @@
 
 import argparse
 from pathlib import Path
+import logging
 
 import yaml
 import numpy as np
@@ -48,7 +49,7 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
     elif comparison_sign == '<=':
         comp_series_result  = s1.le(other) 
     else:
-        raise ValueError()       
+        raise ValueError("comparison_sign must be '==' or '<='")       
 
     if comp_series_result.sum() == s1.shape[0]:
         return {'PASSED': passed_message}
@@ -58,6 +59,7 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
 def main(project_path, check_data_type):
     """Checks csv data files and matches them with images."""
     project_path = Path(project_path)
+    logging.basicConfig(level=logging.INFO)
 
     # Get image data paths from a configuration file
     with open(project_path / CONFIG_PATH) as f:
@@ -124,7 +126,7 @@ def main(project_path, check_data_type):
     file_save_path = project_path / f'data_checks/data_check_results/{fname}'
     file_save_path.parent.mkdir(parents=True, exist_ok=True)
     file_save_path.write_text(str(validation_results))
-    print("[INFO]: Check results are saved.")
+    logging.info("Check results are saved.")
     
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent

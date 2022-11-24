@@ -1,6 +1,7 @@
 """This module creates training and test datasets from raw data."""
 
 from pathlib import Path
+import logging
 
 import yaml
 import numpy as np
@@ -55,6 +56,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
 def main(project_path):
     """Creates training and test csv data files."""
     project_path = Path(project_path)
+    logging.basicConfig(level=logging.INFO)
 
     # Get image data paths from a configuration file
     with open(project_path / CONFIG_PATH) as f:
@@ -81,7 +83,7 @@ def main(project_path):
                                                                             'Name', 'image_name',
                                                                             cols_to_calculate_avg[:2])
         expanded_df.to_csv(fpath, index=False)
-        print("[INFO]: Train and test csv files are saved.")
+        logging.info("Train and test csv files are saved.")
 
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent

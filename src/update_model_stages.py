@@ -1,6 +1,7 @@
 """This module updates registered model version stages in MLflow."""
 
 from pathlib import Path
+import logging
 
 import yaml
 import mlflow # Model Registry
@@ -33,19 +34,21 @@ def update_registered_model_version_stages(registered_model_name):
                         version=m.version,
                         stage='Archived')
 
-    # View model version stages
+    # View updated model version stages
     for m in client.get_latest_versions(registered_model_name):
-        print(f'{m.name}: version: {m.version}, current stage: {m.current_stage}')
+        logging.info("Updated model version stages: ")
+        logging.info(f"{m.name}: version: {m.version}, current stage: {m.current_stage}")
 
 def main(project_path):
     """Updates version stages for a registered model specified in a configuration file."""
     project_path = Path(project_path)
+    logging.basicConfig(level=logging.INFO)
 
     with open(project_path / CONFIG_PATH) as f:
         config = yaml.safe_load(f)  
         
     update_registered_model_version_stages(config['object_detection_model']['registered_name'])
-    print("[INFO]: Stages are updated.")
+    logging.info("Stages are updated.")
 
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent

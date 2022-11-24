@@ -3,6 +3,7 @@
 import gc
 import random
 from pathlib import Path
+import logging
 
 import yaml
 import numpy as np
@@ -66,7 +67,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     Returns:
         a dictionary of training and evaluation results.
     """ 
-    print("Device: ", device)    
+    logging.info(f"Device: {device}") 
     start_epoch = 0
     best_epoch_score = init_metric_value
     lr_scheduler = None
@@ -93,21 +94,21 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
 
     for epoch in range(1, epochs+1):
         current_epoch = start_epoch + epoch
-        print(f"EPOCH [{current_epoch}/{start_epoch + epochs}]: ")
+        logging.info(f"EPOCH [{current_epoch}/{start_epoch + epochs}]: ")
 
         # Training step
-        print("TRAIN:")
+        logging.info("TRAIN:")
         train_res = train_one_epoch(train_dataloader, model, optimizer, device)
-        print("  epoch loss: {0}:\n    {1}".format(train_res['epoch_loss'], 
-                                                   train_res['epoch_dict_losses']))
+        logging.info("  epoch loss: {0}:\n    {1}".format(train_res['epoch_loss'], 
+                                                          train_res['epoch_dict_losses']))
 
         if lr_scheduler is not None:
             lr_scheduler.step()        
         
         # Evaluation step
-        print("EVAL:")
+        logging.info("EVAL:")
         eval_res = eval_one_epoch(val_dataloader, model, eval_iou_thresh, eval_beta, device)
-        print("\n  epoch scores: {}".format(eval_res['epoch_scores'])) 
+        logging.info("\n  epoch scores: {}".format(eval_res['epoch_scores'])) 
         
         if metric_to_find_best_model:
             # Save a model with the maximum epoch score
@@ -117,23 +118,19 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                 filename = model_name + f'_best_{metric_to_find_best_model}_{eval_beta}_weights'
                 
                 if register_best_log_model:
-                    try:
-                        # Log and register the best model into MLflow
-                        mlflow.pytorch.log_model(model, filename, registered_model_name=reg_model_name, 
-                                                await_registration_for=40, 
-                                                pip_requirements=[f'torch={torch.__version__}', 
-                                                                  f'torchvision={torchvision.__version__}'])
-                    except NameError: 
-                        print("[WARNING]: The Model cannot be registered! -- MLflow module is not imported.")
-
+                    # Log and register the best model into MLflow
+                    mlflow.pytorch.log_model(model, filename, registered_model_name=reg_model_name, 
+                                             await_registration_for=40, 
+                                             pip_requirements=[f'torch={torch.__version__}', 
+                                                               f'torchvision={torchvision.__version__}'])
                 if save_best_ckpt:
                     ckpt_dict = {'epoch': current_epoch,            
                                  'optimizer_state_dict': optimizer.state_dict(),
                                  metric_to_find_best_model + '_score': best_epoch_score}
                     filename += '_ckpt'
 
-                save_model_state(model, filename + '.pt', ckpt_dict)
-                print("[INFO]: Model is saved. --- The best {} score: {}".format(
+                save_model_state(model, save_best_model_path + filename + '.pt', ckpt_dict)
+                logging.info("Model is saved. --- The best {} score: {}".format(
                     metric_to_find_best_model, best_epoch_score))
 
                 with torch.no_grad():
@@ -146,29 +143,29 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                         del preds
                                     
             if log_metrics: 
-                try:   
-                    # Log losses and scores into MLflow       
-                    mlflow.log_metric('train_epoch_loss', train_res['epoch_loss'], step=current_epoch)
-                    mlflow.log_metrics(train_res['epoch_dict_losses'], step=current_epoch)
-                    mlflow.log_metrics(eval_res['epoch_scores'], step=current_epoch)
-                    print("[INFO]: Metrics are logged.")
-                except NameError: 
-                    print("[WARNING]: Metrics cannot be logged! -- MLflow module is not imported.")
+                # Log losses and scores into MLflow       
+                mlflow.log_metric('train_epoch_loss', train_res['epoch_loss'], step=current_epoch)
+                mlflow.log_metrics(train_res['epoch_dict_losses'], step=current_epoch)
+                mlflow.log_metrics(eval_res['epoch_scores'], step=current_epoch)
+                logging.info("Metrics are logged.")
 
         # Free up memory
         gc.collect()
         if str(device) == 'cuda':
             torch.cuda.empty_cache()
 
-        print("-" * 60)
+        logging.info("-" * 60)
 
-    print("DONE!")
+    logging.info("DONE!")
     return {'train_res': train_res,
             'eval_res': eval_res}
 
 def main(project_path):
     """Performs fine-tuning of object detection model."""
     project_path = Path(project_path)
+
+    logging.basicConfig(level=logging.INFO, filename='logs/app.log',
+                        format="[%(levelname)s]: %(message)s")
 
     # Get configurations for training and inference
     with open(project_path / CONFIG_PATH) as f:
@@ -190,7 +187,7 @@ def main(project_path):
     # Load the best parameters for training
     with open(project_path / config['hyperparameter_optimization']['save_best_parameters_path']) as f:
         best_params = yaml.safe_load(f)
-    print("[INFO]: The best training parameters are loaded: \n", best_params)
+    logging.info(f"The best training parameters are loaded: \n{best_params}")
 
     optimized_train_params = {
         'optimizer_name': best_params['optimizer'],
@@ -249,7 +246,7 @@ def main(project_path):
             else:
                 mlflow.log_param(params, optimized_train_params[params])
         
-    print("[INFO]: Parameters are logged.")
+        logging.info("Parameters are logged.")
 
 if __name__ == '__main__':
     project_path = Path(__file__).parent.parent

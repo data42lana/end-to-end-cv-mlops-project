@@ -22,14 +22,15 @@ def stratified_group_train_test_split(data, stratification_basis, groups, random
 def draw_bboxes_on_image(img, bboxes, scores=None):
     """Draws an image with bounding boxes from Tensors."""
     if (img.dtype != torch.uint8):
-        img = T.functional.convert_image_dtype(img, dtype=torch.uint8)
-         
+        img = T.functional.convert_image_dtype(img, dtype=torch.uint8) 
+
     img_box = draw_bounding_boxes(img.detach(), boxes=bboxes, colors='orange', width=2)
     img = to_pil_image(img_box.detach())
     plt.figure(figsize=(8, 10))
     plt.imshow(img)
     plt.axis('off')
-    ax = plt.gca()
+    ax = plt.gca()   
+     
     if scores is not None:
         for bb, sc in zip(bboxes, scores):
             x, y = bb.tolist()[:2]

@@ -2,6 +2,7 @@
     
 import random
 from pathlib import Path
+import logging
 
 import yaml
 import numpy as np
@@ -27,8 +28,9 @@ def main(project_path, show_random_predict=False):
     """Evaluates an object detection model on test data 
     and displays a random prediction if show_random_predict is True.
     """
-    project_path = Path(project_path)
-
+    project_path = Path(project_path)    
+    logging.basicConfig(level=logging.INFO)
+    
     # Get configurations
     with open(project_path / CONFIG_PATH) as f:
         config = yaml.safe_load(f)
@@ -49,7 +51,7 @@ def main(project_path, show_random_predict=False):
     test_res = eval_one_epoch(test_dl, best_faster_rcnn_mob_model, 
                               TRAIN_EVAL_PARAMS['evaluation_iou_threshold'], 
                               TRAIN_EVAL_PARAMS['evaluation_beta'], DEVICE)
-    print("[INFO]: ", test_res['epoch_scores'])
+    logging.info(test_res['epoch_scores'])
 
     if show_random_predict:
         # Display a random test image sample with predict boxes and scores

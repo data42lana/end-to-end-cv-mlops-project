@@ -12,7 +12,7 @@ from utils import draw_bboxes_on_image
 def precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):
     """Calculates the batch precision, recall, and f_beta scores based on IoU thresholds."""
     if (beta or iou_thresh) < 0:
-        raise ValueError("beta and iou_thresh should be >=0")
+        raise ValueError("beta and iou_thresh must be >=0")
 
     total_gt_labels = []
     total_correct_pred_labels = []
