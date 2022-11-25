@@ -174,7 +174,7 @@ def main():
     save_best_params_path = PROJECT_PATH / HYPER_OPT_PARAMS['save_best_parameters_path']
     save_best_params_path.mkdir(exist_ok=True)
     
-    best_params = {}
+    best_params = {METRIC: round(study.best_values, 2)}
     for hp in ['optimizer', 'lr_scheduler']:
         hps = {}
         for k in HYPERPARAMS[study.best_params[hp]].keys():

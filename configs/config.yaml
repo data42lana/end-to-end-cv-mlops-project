@@ -32,9 +32,20 @@ object_detection_model:
 model_training_inference_conf:
     device_cuda: Off
     metric_to_find_best: f_beta
+    initial_metric_value: 0.5
     evaluation_iou_threshold: 0.4
     evaluation_beta: 2
-    epochs: 15    
+    optimizer: 
+        name: SGD
+        parameters: {lr: 0.001}
+    lr_sheduler:
+        name: null
+        parameters: null
+    epochs: 15 
+    log_metrics: On
+    save_best_ckpt: On
+    register_best_log_model: On
+    show_random_best_model_prediction: On
     checkpoint: best_faster_rcnn_mob_f_beta_2_weights_ckpt.pt
 
 mlops_tracking_conf:

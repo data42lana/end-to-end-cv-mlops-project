@@ -25,8 +25,8 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
-def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, optim_params,
-              save_best_model_path, lr_scheduler_name=None, lr_scheduler_params=None, 
+def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, optimizer_parameters,
+              save_best_model_path, lr_scheduler_name=None, lr_scheduler_parameters=None, 
               device=torch.device('cpu'), metric_to_find_best_model=None, 
               init_metric_value=0.0, eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', 
               save_best_ckpt=False, checkpoint=None, log_metrics=False, register_best_log_model=False, 
@@ -40,11 +40,11 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         model (nn.Module): an object detection model
         epochs (int): number of training epochs
         optimizer_name (str): an optimizer name from torch.optim
-        optim_params (dict): relevant parameters for the optimizer
+        optimizer_parameters (dict): relevant parameters for the optimizer
         save_best_model_path (Path): a path to directory to save the best model or its checkpoint
         lr_scheduler_name (str) (optional): a learning rate scheduler name 
             from torch.optim.lr_scheduler (default None)
-        lr_scheduler_params (dict) (optional): relevant parameters for 
+        lr_scheduler_parameters (dict) (optional): relevant parameters for 
             the learning rate scheduler (default None)
         device (torch.device): a type of device used: torch.device('cpu' or 'cuda') 
             (default torch.device('cpu'))
@@ -74,14 +74,14 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
 
     model_params = [p for p in model.parameters() if p.requires_grad]
     # Construct an optimizer
-    optimizer = getattr(torch.optim, optimizer_name)(model_params, **optim_params)
+    optimizer = getattr(torch.optim, optimizer_name)(model_params, **optimizer_parameters)
 
     if lr_scheduler_name is not None:
         if lr_scheduler_params is None:
             lr_scheduler_params = {}
         # Construct a learning rate scheduler
         lr_scheduler = getattr(torch.optim.lr_scheduler, lr_scheduler_name)(optimizer, 
-                                                                            **lr_scheduler_params)
+                                                                            **lr_scheduler_parameters)
     
     if checkpoint is not None:
         # Get state parameters from the checkpoint
@@ -171,34 +171,43 @@ def main(project_path):
     with open(project_path / CONFIG_PATH) as f:
         config = yaml.safe_load(f)
 
-    # Set constants
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
-    DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
-    BATCH_SIZE = config['image_dataset_conf']['batch_size']
-    NUM_CLASSES = config['object_detection_model']['number_classes']
+    device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
     # Get dataloaders
-    train_dl, val_dl, _ = get_train_val_test_dataloaders(BATCH_SIZE, transform_train_img=True)
+    batch_size = config['image_dataset_conf']['batch_size']
+    train_dl, val_dl, _ = get_train_val_test_dataloaders(batch_size, transform_train_img=True)
 
     # Get a modified model
-    model_params = config['object_detection_model']['load_parameters']    
-    faster_rcnn_mob_model = faster_rcnn_mob_model_for_n_classes(NUM_CLASSES, **model_params)
+    model_params = config['object_detection_model']['load_parameters']
+    num_classes = config['object_detection_model']['number_classes'] 
+    faster_rcnn_mob_model = faster_rcnn_mob_model_for_n_classes(num_classes, **model_params)
+    
+    # Load the best parameters for training if a file with them exists
+    best_params_path = project_path / config['hyperparameter_optimization']['save_best_parameters_path']
+    
+    if best_params_path.exists():
+        with open(project_path / config['hyperparameter_optimization']['save_best_parameters_path']) as f:
+            best_params = yaml.safe_load(f)
+        logging.info(f"The best training parameters are loaded: \n{best_params}")
 
-    # Load the best parameters for training
-    with open(project_path / config['hyperparameter_optimization']['save_best_parameters_path']) as f:
-        best_params = yaml.safe_load(f)
-    logging.info(f"The best training parameters are loaded: \n{best_params}")
+    # Set training parameters
+    train_params = {}
+    for param in ['optimizer', 'lr_scheduler']:
+        for k in ['name', 'parameters']:
+            if best_params:
+                val = best_params[param] if k == 'name' else best_params[best_params[param]]
+            else:
+                val = TRAIN_EVAL_PARAMS[param][k]
+            train_params['_'.join([param, k])] = val
 
-    optimized_train_params = {
-        'optimizer_name': best_params['optimizer'],
-        'optim_params': best_params[best_params['optimizer']],
-        'lr_scheduler_name': best_params['lr_scheduler'],
-        'lr_scheduler_params': best_params[best_params['lr_scheduler']]}
+    tracking_metric = TRAIN_EVAL_PARAMS['metric_to_find_best']
+    init_metric_value = best_params[tracking_metric] if tracking_metric in best_params else TRAIN_EVAL_PARAMS['initial_metric_value']
 
     add_train_params = {'epochs': TRAIN_EVAL_PARAMS['epochs'], 
                         'eval_iou_thresh': TRAIN_EVAL_PARAMS['evaluation_iou_threshold'], 
                         'eval_beta': TRAIN_EVAL_PARAMS['evaluation_beta'],
-                        'device': DEVICE}
+                        'device': device}
     
     checkpoint = None
     if TRAIN_EVAL_PARAMS['checkpoint']:
@@ -226,25 +235,27 @@ def main(project_path):
         # Run model training cycles
         _ = run_train(train_dl, val_dl, faster_rcnn_mob_model, 
                       save_best_model_path=config['object_detection_model']['save_dir'],
-                      metric_to_find_best_model=TRAIN_EVAL_PARAMS['metric_to_find_best'],
-                      init_metric_value=0.5, log_metrics=True, save_best_ckpt=True, 
-                      model_name=TRAIN_EVAL_PARAMS['model_name'], register_best_log_model=True,
+                      metric_to_find_best_model=tracking_metric, init_metric_value=init_metric_value, 
+                      log_metrics=TRAIN_EVAL_PARAMS['log_metrics'], 
+                      save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'], 
+                      model_name=TRAIN_EVAL_PARAMS['model_name'], 
+                      register_best_log_model=TRAIN_EVAL_PARAMS['register_best_log_model'],
                       reg_model_name=config['object_detection_model']['best_faster_rcnn_mob'],
-                      show_random_best_model_prediction=True, checkpoint=checkpoint,
-                      **optimized_train_params, **add_train_params)
+                      show_random_best_model_prediction=TRAIN_EVAL_PARAMS['show_random_best_model_prediction'],
+                      checkpoint=checkpoint, **train_params, **add_train_params)
 
         # Log the parameters into MLflow
         mlflow.log_params(model_params)
         mlflow.log_params({'seed': SEED,
-                           'batch_size': BATCH_SIZE,
-                           'num_classes': NUM_CLASSES})
+                           'batch_size': batch_size,
+                           'num_classes': num_classes})
         mlflow.log_params(add_train_params)
 
-        for params in optimized_train_params: 
-            if params in ['optim_params', 'lr_scheduler_params']:
-                mlflow.log_params(optimized_train_params[params])
+        for params in train_params: 
+            if params in ['optimizer_parameters', 'lr_scheduler_parameters']:
+                mlflow.log_params(train_params[params])
             else:
-                mlflow.log_param(params, optimized_train_params[params])
+                mlflow.log_param(params, train_params[params])
         
         logging.info("Parameters are logged.")
 
