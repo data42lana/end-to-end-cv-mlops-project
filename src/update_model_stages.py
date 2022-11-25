@@ -12,7 +12,7 @@ def update_registered_model_version_stages(registered_model_name):
     """Sets a stage to 'Production' for the latest version of model, and 'Archived' 
     if the current stage is 'Production' but the version is not the latest.
     """
-    # Load a model from the MLflow registry
+    # Get information about a registered model
     client = mlflow.MlflowClient()
     model_registry_info = client.get_latest_versions(registered_model_name)
     model_latest_version = max([m.version for m in model_registry_info])

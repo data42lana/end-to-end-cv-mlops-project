@@ -28,7 +28,7 @@ def main(project_path, show_random_predict=False):
     """Evaluates an object detection model on test data 
     and displays a random prediction if show_random_predict is True.
     """
-    project_path = Path(project_path)    
+    project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)
     
     # Get configurations
