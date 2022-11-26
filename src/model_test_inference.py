@@ -25,8 +25,8 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 def main(project_path, show_random_predict=False):
-    """Evaluates an object detection model on test data 
-    and displays a random prediction if show_random_predict is True.
+    """Evaluate an object detection model on test data 
+    and display a random prediction if show_random_predict is True.
     """
     project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)

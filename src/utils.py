@@ -8,19 +8,19 @@ from torchvision.transforms.functional import to_pil_image
 from torchvision.utils import draw_bounding_boxes
 
 def get_device(config_param):
-    """Returns torch.device('cpu' or 'cuda') depending on the corresponding configuration parameter."""
+    """Return torch.device('cpu' or 'cuda') depending on the corresponding configuration parameter."""
     return torch.device('cuda' if config_param and torch.cuda.is_available() else 'cpu')
 
 def stratified_group_train_test_split(data, stratification_basis, groups, random_state=0):
-    """Stratified splits data into training and test sets,
-    taking into account groups, and returns the corresponding indices.
+    """Split data in a stratified way into training and test sets,
+    taking into account groups, and return the corresponding indices.
     """
     split = StratifiedGroupKFold(n_splits=2, shuffle=True, random_state=random_state)
     train_ids, test_ids = next(split.split(X=data, y=stratification_basis, groups=groups))
     return train_ids, test_ids
 
 def draw_bboxes_on_image(img, bboxes, scores=None):
-    """Draws an image with bounding boxes from Tensors."""
+    """Draw an image with bounding boxes from Tensors."""
     if (img.dtype != torch.uint8):
         img = T.functional.convert_image_dtype(img, dtype=torch.uint8) 
 
@@ -40,7 +40,7 @@ def draw_bboxes_on_image(img, bboxes, scores=None):
     plt.show()
 
 def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
-    """Saves a model state dictionary or a checkpoint."""
+    """Save a model state dictionary or a checkpoint."""
     if (ckpt_params_dict is not None) or isinstance(ckpt_params_dict, dict):
         torch.save({'model_state_dict': model_to_save.state_dict(),
                     **ckpt_params_dict}, filepath)

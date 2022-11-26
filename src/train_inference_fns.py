@@ -10,7 +10,7 @@ from utils import draw_bboxes_on_image
 
 @torch.inference_mode()
 def precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):
-    """Calculates the batch precision, recall, and f_beta scores based on IoU thresholds."""
+    """Calculate the batch precision, recall, and f_beta scores based on IoU thresholds."""
     if (beta or iou_thresh) < 0:
         raise ValueError("beta and iou_thresh must be >=0")
 
@@ -48,7 +48,7 @@ def precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):
             'f_beta': f_beta}
 
 def train_one_epoch(dataloader, model, optimizer, device=torch.device('cpu')):
-    """Passes a training step in one epoch."""
+    """Pass a training step in one epoch."""
     accum_dict_losses = {}
     accum_model_loss = 0
     num_batches = len(dataloader)
@@ -92,7 +92,7 @@ def train_one_epoch(dataloader, model, optimizer, device=torch.device('cpu')):
 
 @torch.inference_mode()
 def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1, device=torch.device('cpu')):
-    """Passes a inference evaluation step in one epoch."""
+    """Pass a inference evaluation step in one epoch."""
     accum_model_scores = {}
     results = []
     num_batches = len(dataloader)
@@ -133,7 +133,7 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1, device=torch.devic
 
 @torch.inference_mode()
 def predict(img, model, show_scores=False, device=torch.device('cpu')):
-    """Draws an image with bounding boxes (and scores) and returns 
+    """Draw an image with bounding boxes (and scores) and return
     a number of detection target objects on it.
     """
     img = T.ToTensor()(img).to(device)

@@ -11,7 +11,7 @@ import pandas as pd
 CONFIG_PATH = 'configs/config.yaml'
 
 def get_data_type_arg_parser():
-    """Returns a argument parser object with a type of data."""
+    """Return a argument parser object with a type of data."""
     parser = argparse.ArgumentParser(
         description='Specify a type of data to check.',
         add_help=False)
@@ -20,7 +20,7 @@ def get_data_type_arg_parser():
     return parser
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
-    """Returns a dictionary of the validation status with a list 
+    """Return a dictionary of the validation status with a list 
     of non-matching elements or the number of duplicates, if any."""
     l1 = sorted(l1)
     l2 = sorted(l2)
@@ -34,7 +34,7 @@ def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
         return {'FAILED': not_match}
 
 def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passed_message=''):
-    """Returns a dictionary of the validation status with indices with incorrect values, if any.
+    """Return a dictionary of the validation status with indices with incorrect values, if any.
     
     Parameters:
         s1 (pd.Series): a object to be compared
@@ -57,7 +57,7 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
         return {'FAILED': s1[~comp_series_result].index}
         
 def main(project_path, check_data_type):
-    """Checks csv data files and matches them with images."""
+    """Check csv data files and matches them with images."""
     project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)
 

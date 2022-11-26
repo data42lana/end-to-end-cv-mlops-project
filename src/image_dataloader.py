@@ -28,7 +28,7 @@ BBOX_FORMATS = {'coco': 'xywh',
                 'yolo': 'cxcywh'}
 
 def get_image_transforms(box_format):
-    """Returns a Albumentation object."""
+    """Return a Albumentation object."""
     aug = A.Compose([
                     A.LongestMaxSize(1333, always_apply=True),  
                     A.SmallestMaxSize(800, always_apply=True),
@@ -89,7 +89,7 @@ def collate_batch(batch):
 
 def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco', 
                                    transform_train_imgs=False):
-    """Gets a data path from configuration file and returns training, validation, 
+    """Get a data path from configuration file and returns training, validation, 
     and test dataloaders with a box transformation to pascal_voc ('xyxy') format.
     """
     project_path = Path.cwd()

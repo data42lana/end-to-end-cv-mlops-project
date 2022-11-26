@@ -31,7 +31,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
               init_metric_value=0.0, eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', 
               save_best_ckpt=False, checkpoint=None, log_metrics=False, register_best_log_model=False, 
               reg_model_name='best_model', show_random_best_model_prediction=False):
-    """Runs a new training and evaluation cycle of a model for a fixed number of epochs
+    """Run a new training and evaluation cycle of a model for a fixed number of epochs
     or continue if checkpoint is passed, while saving the best model (or checkpoint).
     
     Parameters:
@@ -64,7 +64,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         show_random_best_model_prediction (bool): whether to show a random prediction 
             of the best model (default False).
 
-    Returns:
+    Return:
         a dictionary of training and evaluation results.
     """ 
     logging.info(f"Device: {device}") 
@@ -161,7 +161,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
             'eval_res': eval_res}
 
 def main(project_path):
-    """Performs fine-tuning of object detection model."""
+    """Perform fine-tuning of object detection model."""
     project_path = Path(project_path)
 
     logging.basicConfig(level=logging.INFO, filename='logs/app.log',

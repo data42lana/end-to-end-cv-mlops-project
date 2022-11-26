@@ -127,7 +127,7 @@ def objective(trial):
     return opt_score
 
 def save_study_plots(study, study_name, save_path):
-    """Saves study result plots."""
+    """Save study result plots."""
     plots = [optuna.visualization.plot_optimization_history,
              optuna.visualization.plot_intermediate_values,
              optuna.visualization.plot_parallel_coordinate,
@@ -144,7 +144,7 @@ def save_study_plots(study, study_name, save_path):
         fig.write_image(save_path / f'{fname}.jpeg')
 
 def main():
-    """Runs an optimization study."""
+    """Run an optimization study."""
     hyper_opt_path = PROJECT_PATH / HYPER_OPT_PARAMS['save_study_dir']
     hyper_opt_path.mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO)

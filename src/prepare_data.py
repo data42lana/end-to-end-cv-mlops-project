@@ -21,7 +21,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           df1_image_name_column,
                                                           df2_image_name_column,
                                                           df2_columns_to_rename_in_new_df):
-    """Expands a DataFrame with selected images with columns from another DataFrame 
+    """Expand a DataFrame with selected images with columns from another DataFrame 
     with averages calculated for each group of these images.
 
     Parameters:
@@ -33,7 +33,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
         df2_image_name_column (str): a df2 column with image names to merge
         df2_columns_to_rename_in_new_df (list): df2 columns with averages to be renamed
     
-    Returns:
+    Return:
         a new expanded pd.DataFrame object.
     """
     rename_columns = {df2_image_name_column: df1_image_name_column}
@@ -54,7 +54,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
     return new_expanded_df
 
 def main(project_path):
-    """Creates training and test csv data files."""
+    """Create training and test csv data files."""
     project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)
 
