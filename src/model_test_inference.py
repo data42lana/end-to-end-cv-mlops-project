@@ -4,7 +4,6 @@ import random
 from pathlib import Path
 import logging
 
-import yaml
 import numpy as np
 import pandas as pd
 import cv2
@@ -13,9 +12,7 @@ import torch # PyTorch
 
 from train_inference_fns import eval_one_epoch, predict
 from image_dataloader import get_train_val_test_dataloaders
-from utils import get_device
-
-CONFIG_PATH = 'configs/config.yaml'
+from utils import get_device, get_config_yml
 
 # Set partial reproducibility
 SEED = 0
@@ -32,8 +29,7 @@ def main(project_path, show_random_predict=False):
     logging.basicConfig(level=logging.INFO)
     
     # Get configurations
-    with open(project_path / CONFIG_PATH) as f:
-        config = yaml.safe_load(f)
+    config = get_config_yml(project_path)
 
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])

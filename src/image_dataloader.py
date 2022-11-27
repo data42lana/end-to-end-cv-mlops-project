@@ -3,7 +3,6 @@
 import random
 from pathlib import Path
 
-import yaml
 import numpy as np
 import pandas as pd
 import cv2
@@ -13,7 +12,7 @@ from torch.utils.data import Dataset, Subset, DataLoader
 from torchvision.ops import box_convert
 import torchvision.transforms as T
 
-from utils import stratified_group_train_test_split
+from utils import stratified_group_train_test_split, get_config_yml
 
 # Set partial reproducibility
 SEED = 0
@@ -22,7 +21,6 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
-CONFIG_PATH = 'configs/config.yaml'
 BBOX_FORMATS = {'coco': 'xywh',
                 'pascal_voc': 'xyxy',
                 'yolo': 'cxcywh'}
@@ -95,8 +93,7 @@ def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco
     project_path = Path.cwd()
     
     # Get image data paths from a configuration file
-    with open(project_path / CONFIG_PATH) as f:
-        config = yaml.safe_load(f)
+    config = get_config_yml(project_path)    
     img_data_paths = config['image_data_paths']
     
     # Set dataset parameters

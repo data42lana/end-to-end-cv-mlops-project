@@ -3,10 +3,7 @@
 from pathlib import Path
 import logging
 
-import yaml
 import mlflow # Model Registry
-
-CONFIG_PATH = 'configs/config.yaml'
 
 def update_registered_model_version_stages(registered_model_name):
     """Set a stage to 'Production' for the latest version of model, and 'Archived' 
@@ -43,9 +40,7 @@ def main(project_path):
     """Update version stages for a registered model specified in a configuration file."""
     project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)
-
-    with open(project_path / CONFIG_PATH) as f:
-        config = yaml.safe_load(f)  
+    config = project_path(project_path)
         
     update_registered_model_version_stages(config['object_detection_model']['registered_name'])
     logging.info("Stages are updated.")

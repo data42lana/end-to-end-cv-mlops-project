@@ -14,7 +14,7 @@ import torch # PyTorch
 from image_dataloader import get_train_val_test_dataloaders
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train_inference_fns import train_one_epoch, eval_one_epoch
-from utils import get_device
+from utils import get_device, get_config_yml
 
 # Set partial reproducibility
 SEED = 0
@@ -24,10 +24,8 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 PROJECT_PATH = Path.cwd()
-CONFIG_PATH =  PROJECT_PATH / 'configs/config.yaml'
 # Get configurations
-with open(CONFIG_PATH) as f:
-    config = yaml.safe_load(f)
+config = get_config_yml(PROJECT_PATH)
 
 DEVICE = get_device(config['model_training_inference_conf']['device_cuda'])
 BATCH_SIZE = config['image_dataset_conf']['batch_size']

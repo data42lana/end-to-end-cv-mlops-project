@@ -1,11 +1,21 @@
 """This module contains helper functions."""
 
+from pathlib import Path
+
+import yaml
 from sklearn.model_selection import StratifiedGroupKFold
 import matplotlib.pyplot as plt
 import torch # PyTorch
 import torchvision.transforms as T
 from torchvision.transforms.functional import to_pil_image
 from torchvision.utils import draw_bounding_boxes
+
+def get_config_yml(project_path):
+    """Get configurations from a yaml file."""
+    config_path = Path(project_path) / 'configs/config.yaml'
+    with open(project_path / config_path) as conf:
+        config = yaml.safe_load(conf)
+    return config
 
 def get_device(config_param):
     """Return torch.device('cpu' or 'cuda') depending on the corresponding configuration parameter."""

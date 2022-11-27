@@ -21,7 +21,8 @@ def get_data_type_arg_parser():
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
     """Return a dictionary of the validation status with a list 
-    of non-matching elements or the number of duplicates, if any."""
+    of non-matching elements or the number of duplicates, if any.
+    """
     l1 = sorted(l1)
     l2 = sorted(l2)
     

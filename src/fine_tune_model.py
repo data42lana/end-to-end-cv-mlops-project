@@ -14,9 +14,7 @@ import torchvision
 from train_inference_fns import train_one_epoch, eval_one_epoch
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from image_dataloader import get_train_val_test_dataloaders
-from utils import save_model_state, draw_bboxes_on_image, get_device
-
-CONFIG_PATH = 'configs/config.yaml'
+from utils import save_model_state, draw_bboxes_on_image, get_device, get_config_yml
 
 # Set partial reproducibility
 SEED = 0
@@ -168,8 +166,7 @@ def main(project_path):
                         format="[%(levelname)s]: %(message)s")
 
     # Get configurations for training and inference
-    with open(project_path / CONFIG_PATH) as f:
-        config = yaml.safe_load(f)
+    config = get_config_yml(project_path)
 
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])

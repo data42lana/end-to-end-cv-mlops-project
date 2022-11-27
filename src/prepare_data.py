@@ -3,17 +3,13 @@
 from pathlib import Path
 import logging
 
-import yaml
 import numpy as np
 import pandas as pd
 
-from utils import stratified_group_train_test_split
+from utils import stratified_group_train_test_split, get_config_yml
 
 # Set reproducibility
 SEED = 0
-
-CONFIG_PATH = 'configs/config.yaml'
-
 
 def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           selected_images, 
@@ -59,8 +55,7 @@ def main(project_path):
     logging.basicConfig(level=logging.INFO)
 
     # Get image data paths from a configuration file
-    with open(project_path / CONFIG_PATH) as f:
-        config = yaml.safe_load(f)  
+    config = get_config_yml(project_path)
     img_data_paths = config['image_data_paths']
     
     # Split data into training and test sets
