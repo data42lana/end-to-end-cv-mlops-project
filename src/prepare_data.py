@@ -21,13 +21,13 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
     with averages calculated for each group of these images.
 
     Parameters:
-        df1 (pd.DataFrame): a pd.DataFrame object to expand
-        df2 (pd.DataFrame): a pd.DataFrame object to calculate averages. 
-        selected_images (list): images for which average values from df2 will be calculated
-        df2_columns_to_calculate_averages (list): df2 columns to calculate average values
-        df1_image_name_column (str): a df1 column with image names to merge
-        df2_image_name_column (str): a df2 column with image names to merge
-        df2_columns_to_rename_in_new_df (list): df2 columns with averages to be renamed
+        df1 (pd.DataFrame) -- a pd.DataFrame object to expand
+        df2 (pd.DataFrame) -- a pd.DataFrame object to calculate averages. 
+        selected_images (list) -- images for which average values from df2 will be calculated
+        df2_columns_to_calculate_averages (list) -- df2 columns to calculate average values
+        df1_image_name_column (str) -- a df1 column with image names to merge
+        df2_image_name_column (str) -- a df2 column with image names to merge
+        df2_columns_to_rename_in_new_df (list) -- df2 columns with averages to be renamed
     
     Return:
         a new expanded pd.DataFrame object.

@@ -33,33 +33,33 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     or continue if checkpoint is passed, while saving the best model (or checkpoint).
     
     Parameters:
-        train_dataloader (Dataloader): images, labels and boxes for a training step
-        val_dataloader (Dataloader): images, labels and boxes for an evaluation step
-        model (nn.Module): an object detection model
-        epochs (int): number of training epochs
-        optimizer_name (str): an optimizer name from torch.optim
-        optimizer_parameters (dict): relevant parameters for the optimizer
-        save_best_model_path (Path): a path to directory to save the best model or its checkpoint
-        lr_scheduler_name (str) (optional): a learning rate scheduler name 
+        train_dataloader (Dataloader) -- images, labels and boxes for a training step
+        val_dataloader (Dataloader) -- images, labels and boxes for an evaluation step
+        model (nn.Module) -- an object detection model
+        epochs (int) -- number of training epochs
+        optimizer_name (str) -- an optimizer name from torch.optim
+        optimizer_parameters (dict) -- relevant parameters for the optimizer
+        save_best_model_path (Path) -- a path to directory to save the best model or its checkpoint
+        lr_scheduler_name (str) (optional) -- a learning rate scheduler name 
             from torch.optim.lr_scheduler (default None)
-        lr_scheduler_parameters (dict) (optional): relevant parameters for 
+        lr_scheduler_parameters (dict) (optional) -- relevant parameters for 
             the learning rate scheduler (default None)
-        device (torch.device): a type of device used: torch.device('cpu' or 'cuda') 
+        device (torch.device) -- a type of device used: torch.device('cpu' or 'cuda') 
             (default torch.device('cpu'))
-        metric_to_find_best_model (str) (optional): a corresponding model score is tracked 
+        metric_to_find_best_model (str) (optional) -- a corresponding model score is tracked 
             to find the best model (default None) 
-        init_metric_value (float): an initial metric value to find the best model (default 0.0)
-        eval_iou_thresh (float): an iou threshold to determine correct predict boxes (default 0.5)
-        eval_beta (int): a beta value for f_beta score (default 1)
-        model_name (str): a part of filename to save (default 'best_model')
-        save_best_ckpt (bool): whether to save the best model (default) 
+        init_metric_value (float) -- an initial metric value to find the best model (default 0.0)
+        eval_iou_thresh (float) -- an iou threshold to determine correct predict boxes (default 0.5)
+        eval_beta (int) -- a beta value for f_beta score (default 1)
+        model_name (str) -- a part of filename to save (default 'best_model')
+        save_best_ckpt (bool) -- whether to save the best model (default) 
             or its checkpoint (default False)
-        checkpoint (dict) (optional): a checkpoint to continue training (default None)
-        log_metrics (bool): whether to log metrics into MLflow (default False)
-        register_best_log_model (bool): whether to log and register the best model 
+        checkpoint (dict) (optional) -- a checkpoint to continue training (default None)
+        log_metrics (bool) -- whether to log metrics into MLflow (default False)
+        register_best_log_model (bool) -- whether to log and register the best model 
             into MLflow (default False)
-        reg_model_name: a model registration name (default 'best_model')
-        show_random_best_model_prediction (bool): whether to show a random prediction 
+        reg_model_name -- a model registration name (default 'best_model')
+        show_random_best_model_prediction (bool) -- whether to show a random prediction 
             of the best model (default False).
 
     Return:
