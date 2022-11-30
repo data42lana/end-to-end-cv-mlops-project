@@ -1,23 +1,13 @@
-"""This module checks csv data files and matches them with images."""
+"""This module checks integrity of image and bounding boxes information in csv files."""
 
 import argparse
 from pathlib import Path
+import json
 import logging
 
-import yaml
-import numpy as np
 import pandas as pd
 
-CONFIG_PATH = 'configs/config.yaml'
-
-def get_data_type_arg_parser():
-    """Return a argument parser object with a type of data."""
-    parser = argparse.ArgumentParser(
-        description='Specify a type of data to check.',
-        add_help=False)
-    parser.add_argument('--check_data_type', type=str, choices=['raw', 'new'],
-                        default='raw', help='check raw or new data')
-    return parser
+from utils import get_data_type_arg_parser, get_config_yml
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
     """Return a dictionary of the validation status with a list 
@@ -38,10 +28,10 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
     """Return a dictionary of the validation status with indices with incorrect values, if any.
     
     Parameters:
-        s1 (pd.Series): a object to be compared
-        other (pd.Series or scalar value): a object to compare
-        comparison_sign (str): must be one of '==', '<='. Otherwise raises ValueError
-        passed_message (str): a message that describes a passage of the check.
+        s1 (pd.Series) -- a object to be compared
+        other (pd.Series or scalar value) -- a object to compare
+        comparison_sign (str) -- must be one of '==', '<='. Otherwise raises ValueError
+        passed_message (str) -- a message that describes a passage of the check.
     """  
     comp_series_result = 0
 
@@ -57,14 +47,13 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
     else:
         return {'FAILED': s1[~comp_series_result].index}
         
-def main(project_path, check_data_type):
-    """Check csv data files and matches them with images."""
+def main(project_path, check_data_type, data_check_dir):
+    """Check csv files and matches them with images."""
     project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)
 
     # Get image data paths from a configuration file
-    with open(project_path / CONFIG_PATH) as f:
-        config = yaml.safe_load(f)        
+    config = get_config_yml(project_path)       
     img_data_paths = config['image_data_paths'] if check_data_type == 'raw' else config['new_image_data_paths']
         
     # Get a list of image names
@@ -73,6 +62,7 @@ def main(project_path, check_data_type):
     img_info_df, img_bbox_df = [
         pd.read_csv(project_path / img_data_paths[csv_file]) for csv_file in ['info_csv_file', 
                                                                               'bboxes_csv_file']]
+    
     # Create a dict of validation results for summary report
     validation_results = {}
 
@@ -123,15 +113,32 @@ def main(project_path, check_data_type):
         number_hsparrows, number_bboxes, '==', passed_message="The numbers match.")
     
     # Save validation results to a file
-    fname = f'{check_data_type}_csv_file_check_results.txt'
-    file_save_path = project_path / f'data_checks/data_check_results/{fname}'
+    fname = f'{check_data_type}_csv_file_check_results.json'
+    file_save_path = project_path / data_check_dir / f'data_check_results/{fname}'
     file_save_path.parent.mkdir(parents=True, exist_ok=True)
-    file_save_path.write_text(str(validation_results))
-    logging.info("Check results are saved.")
+    json.dump(validation_results, file_save_path)
+    logging.info("Data integrity check results are saved.")
+
+    # Find total check status
+    total_check_passed_condition = True 
+    for val_res in validation_results.values():
+        if list(val_res)[0] != 'PASSED':
+            total_check_passed_condition = False
+            break
+
+    return total_check_passed_condition
     
 if __name__ == '__main__':
-    project_path = Path(__file__).parent.parent
+    data_check_dir = Path(__file__).parent
+    project_path = data_check_dir.parent
     data_type_parser = argparse.ArgumentParser('Image data csv file check script.', 
                                                parents=[get_data_type_arg_parser()])
     img_data_type = data_type_parser.parse_args()
-    main(project_path, img_data_type.check_data_type)
+
+    if img_data_type in ['raw', 'new']:
+        check_passed = main(project_path, img_data_type.check_data_type, data_check_dir)
+
+        if not check_passed:
+            logging.warning(f"Checking for the integrity of the {img_data_type} csv files failed.")
+    else:
+        logging.warning(f"{img_data_type} data cannot be checked. Choose 'raw' or 'new'.")
