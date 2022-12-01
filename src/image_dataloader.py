@@ -1,4 +1,4 @@
-"""This module contains a class and functions to create a image dataloader with(out) transformations."""
+"""This module contains a class and functions to create an image dataloader with(out) transformations."""
 
 import random
 from pathlib import Path
@@ -26,7 +26,7 @@ BBOX_FORMATS = {'coco': 'xywh',
                 'yolo': 'cxcywh'}
 
 def get_image_transforms(box_format):
-    """Return a Albumentation object."""
+    """Return an Albumentation object."""
     aug = A.Compose([
                     A.LongestMaxSize(1333, always_apply=True),  
                     A.SmallestMaxSize(800, always_apply=True),
@@ -45,7 +45,7 @@ def get_image_transforms(box_format):
     return aug
 
 class ImageBBoxDataset(Dataset):
-    """A Dataset from csv to detect objects in images."""
+    """A Dataset from CSV to detect objects in images."""
     def __init__(self, csv_file_path, img_dir_path, bbox_path, 
                  img_transforms=None, bbox_transform=None):
         self.img_dir_path = img_dir_path

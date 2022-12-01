@@ -26,7 +26,8 @@ def main(project_path, show_random_predict=False):
     and display a random prediction if show_random_predict is True.
     """
     project_path = Path(project_path)
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, filename='logs/model_test_inf_log.txt',
+                        format="[%(levelname)s]: %(message)s")
     
     # Get configurations
     config = get_config_yml(project_path)

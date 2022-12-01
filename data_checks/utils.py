@@ -13,7 +13,7 @@ def get_config_yml(project_path):
     return config
 
 def get_data_type_arg_parser():
-    """Return a argument parser object with a type of data."""
+    """Return an argument parser object with a type of data."""
     parser = argparse.ArgumentParser(
         description='Specify a type of data to check.',
         add_help=False)

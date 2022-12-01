@@ -1,4 +1,4 @@
-"""This module contains helper functions."""
+"""This module contains helper functions for model training."""
 
 from pathlib import Path
 

@@ -85,7 +85,8 @@ def check_train_test_author_group_leakage(train_file_path, test_file_path):
 def main(project_path, check_data_type, data_check_dir):
     """Check data for duplicates and similarity between two datasets."""
     project_path = Path(project_path)
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, filename='logs/similarity_checks_log.txt',
+                        format="[%(levelname)s]: %(message)s")
 
     # Get image data paths from a configuration file
     config = get_config_yml(project_path)

@@ -1,4 +1,4 @@
-"""This module implements fine-tuning of object detection model."""
+"""This module implements fine-tuning of an object detection model."""
 
 import gc
 import random
@@ -44,14 +44,14 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
             from torch.optim.lr_scheduler (default None)
         lr_scheduler_parameters (dict) (optional) -- relevant parameters for 
             the learning rate scheduler (default None)
-        device (torch.device) -- a type of device used: torch.device('cpu' or 'cuda') 
+        device (torch.device) -- a type of a device used: torch.device('cpu' or 'cuda') 
             (default torch.device('cpu'))
         metric_to_find_best_model (str) (optional) -- a corresponding model score is tracked 
             to find the best model (default None) 
         init_metric_value (float) -- an initial metric value to find the best model (default 0.0)
         eval_iou_thresh (float) -- an iou threshold to determine correct predict boxes (default 0.5)
         eval_beta (int) -- a beta value for f_beta score (default 1)
-        model_name (str) -- a part of filename to save (default 'best_model')
+        model_name (str) -- a part of a filename to save (default 'best_model')
         save_best_ckpt (bool) -- whether to save the best model (default) 
             or its checkpoint (default False)
         checkpoint (dict) (optional) -- a checkpoint to continue training (default None)
@@ -159,10 +159,9 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
             'eval_res': eval_res}
 
 def main(project_path):
-    """Perform fine-tuning of object detection model."""
+    """Perform fine-tuning of an object detection model."""
     project_path = Path(project_path)
-
-    logging.basicConfig(level=logging.INFO, filename='logs/app.log',
+    logging.basicConfig(level=logging.INFO, filename='logs/fine_tune_log.txt',
                         format="[%(levelname)s]: %(message)s")
 
     # Get configurations for training and inference

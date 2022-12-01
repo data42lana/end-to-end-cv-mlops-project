@@ -92,7 +92,7 @@ def train_one_epoch(dataloader, model, optimizer, device=torch.device('cpu')):
 
 @torch.inference_mode()
 def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1, device=torch.device('cpu')):
-    """Pass a inference evaluation step in one epoch."""
+    """Pass an inference evaluation step in one epoch."""
     accum_model_scores = {}
     results = []
     num_batches = len(dataloader)

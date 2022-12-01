@@ -50,9 +50,10 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
     return new_expanded_df
 
 def main(project_path):
-    """Create training and test csv data files."""
+    """Create training and test CSV data files."""
     project_path = Path(project_path)
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, filename='logs/prep_data_log.txt',
+                        format="[%(levelname)s]: %(message)s")
 
     # Get image data paths from a configuration file
     config = get_config_yml(project_path)
@@ -66,7 +67,7 @@ def main(project_path):
                                                             img_info_df['Number_HSparrows'], 
                                                             img_info_df['Author'], 
                                                             SEED)
-    # Create training and test csv files
+    # Create training and test CSV files
     for ids, fpath in zip((train_ids, test_ids), ('train_csv_file', 'test_csv_file')):
         fpath = project_path / img_data_paths[fpath]
         fpath.parent.mkdir(exist_ok=True)
