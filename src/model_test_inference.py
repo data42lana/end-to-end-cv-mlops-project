@@ -21,16 +21,16 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
-def main(project_path, show_random_predict=False):
+def main(show_random_predict=False):
     """Evaluate an object detection model on test data 
     and display a random prediction if show_random_predict is True.
     """
-    project_path = Path(project_path)
+    project_path = Path.cwd()
     logging.basicConfig(level=logging.INFO, filename='logs/model_test_inf_log.txt',
                         format="[%(levelname)s]: %(message)s")
     
     # Get configurations
-    config = get_config_yml(project_path)
+    config = get_config_yml()
 
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
@@ -61,5 +61,4 @@ def main(project_path, show_random_predict=False):
         _ = predict(test_sample_img, best_faster_rcnn_mob_model, show_scores=True)
 
 if __name__ == '__main__':
-    project_path = Path(__file__).parent.parent
-    main(project_path, show_random_predict=True)
+    main(show_random_predict=True)

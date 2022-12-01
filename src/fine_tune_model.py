@@ -158,14 +158,14 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     return {'train_res': train_res,
             'eval_res': eval_res}
 
-def main(project_path):
+def main():
     """Perform fine-tuning of an object detection model."""
-    project_path = Path(project_path)
+    project_path = Path.cwd()
     logging.basicConfig(level=logging.INFO, filename='logs/fine_tune_log.txt',
                         format="[%(levelname)s]: %(message)s")
 
     # Get configurations for training and inference
-    config = get_config_yml(project_path)
+    config = get_config_yml()
 
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
@@ -256,5 +256,4 @@ def main(project_path):
         logging.info("Parameters are logged.")
 
 if __name__ == '__main__':
-    project_path = Path(__file__).parent.parent
-    main(project_path)
+    main()

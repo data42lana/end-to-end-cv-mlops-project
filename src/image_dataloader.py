@@ -93,7 +93,7 @@ def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco
     project_path = Path.cwd()
     
     # Get image data paths from a configuration file
-    config = get_config_yml(project_path)    
+    config = get_config_yml()    
     img_data_paths = config['image_data_paths']
     
     # Set dataset parameters

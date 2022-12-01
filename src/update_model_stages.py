@@ -5,6 +5,8 @@ import logging
 
 import mlflow # Model Registry
 
+from utils import get_config_yml
+
 def update_registered_model_version_stages(registered_model_name):
     """Set a stage to 'Production' for the latest version of a model, and 'Archived' 
     if the current stage is 'Production' but the version is not the latest.
@@ -36,16 +38,14 @@ def update_registered_model_version_stages(registered_model_name):
         logging.info("Updated model version stages: ")
         logging.info(f"{m.name}: version: {m.version}, current stage: {m.current_stage}")
 
-def main(project_path):
+def main():
     """Update version stages for a registered model specified in a configuration file."""
-    project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO, filename='logs/update_stages_log.txt',
                         format="[%(levelname)s]: %(message)s")
-    config = project_path(project_path)
+    config = get_config_yml()
         
     update_registered_model_version_stages(config['object_detection_model']['registered_name'])
     logging.info("Stages are updated.")
 
 if __name__ == '__main__':
-    project_path = Path(__file__).parent.parent
-    main(project_path)
+    main()

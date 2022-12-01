@@ -25,7 +25,7 @@ torch.cuda.manual_seed_all(SEED)
 
 PROJECT_PATH = Path.cwd()
 # Get configurations
-config = get_config_yml(PROJECT_PATH)
+config = get_config_yml()
 
 DEVICE = get_device(config['model_training_inference_conf']['device_cuda'])
 BATCH_SIZE = config['image_dataset_conf']['batch_size']

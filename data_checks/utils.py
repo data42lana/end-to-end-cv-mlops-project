@@ -5,10 +5,10 @@ from pathlib import Path
 
 import yaml
 
-def get_config_yml(project_path):
+def get_config_yml():
     """Get configurations from a yaml file."""
-    config_path = Path(project_path) / 'configs/config.yaml'
-    with open(project_path / config_path) as conf:
+    config_path = Path.cwd() / 'configs/config.yaml'
+    with open(config_path) as conf:
         config = yaml.safe_load(conf)
     return config
 
