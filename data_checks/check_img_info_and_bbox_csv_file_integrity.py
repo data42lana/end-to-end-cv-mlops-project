@@ -1,4 +1,4 @@
-"""This module checks integrity of image and bounding boxes information in csv files."""
+"""This module checks integrity of image and bounding boxes information in CSV files."""
 
 import argparse
 from pathlib import Path
@@ -48,7 +48,7 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
         return {'FAILED': s1[~comp_series_result].index}
         
 def main(project_path, check_data_type, data_check_dir):
-    """Check csv files and matches them with images."""
+    """Check CSV files and match them with images."""
     project_path = Path(project_path)
     logging.basicConfig(level=logging.INFO)
 
@@ -131,7 +131,7 @@ def main(project_path, check_data_type, data_check_dir):
 if __name__ == '__main__':
     data_check_dir = Path(__file__).parent
     project_path = data_check_dir.parent
-    data_type_parser = argparse.ArgumentParser('Image data csv file check script.', 
+    data_type_parser = argparse.ArgumentParser('Image data CSV file check script.', 
                                                parents=[get_data_type_arg_parser()])
     img_data_type = data_type_parser.parse_args()
 
@@ -139,6 +139,7 @@ if __name__ == '__main__':
         check_passed = main(project_path, img_data_type.check_data_type, data_check_dir)
 
         if not check_passed:
-            logging.warning(f"Checking for the integrity of the {img_data_type} csv files failed.")
+            logging.warning(f"Checking for the integrity of the {img_data_type} CSV files failed.")
+            
     else:
         logging.warning(f"{img_data_type} data cannot be checked. Choose 'raw' or 'new'.")
