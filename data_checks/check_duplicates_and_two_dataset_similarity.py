@@ -1,6 +1,5 @@
 """"This module checks data for duplicates and similarity between two datasets."""
 
-import argparse
 from pathlib import Path
 import logging
 
@@ -10,7 +9,7 @@ from deepchecks.tabular import Suite
 from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison, TrainTestSamplesMix, 
                                        IndexTrainTestLeakage, TrainTestFeatureDrift)
 
-from utils import get_data_type_arg_parser, get_config_yml
+from dch_utils import get_data_type_arg_parser, get_config_yml
 
 def check_two_datasets(ds1, ds2, suite_name, checks):
     """Create a custom validation suite and return its check result.
@@ -93,7 +92,7 @@ def main(check_data_type, data_check_dir):
     img_data_paths = config['image_data_paths']
     
     # Track total check status
-    check_passed_conditions = []
+    checks_passed = []
     check_results = []
 
     fnames = []
@@ -104,7 +103,7 @@ def main(check_data_type, data_check_dir):
         data_duplicates_check_result = check_bbox_csv_file_for_duplicates(
             project_path / img_data_paths['bboxes_csv_file'])            
         check_results.append(data_duplicates_check_result)
-        check_passed_conditions.append(data_duplicates_check_result.passed_conditions())
+        checks_passed.append(data_duplicates_check_result.passed_conditions())
         fnames.append(f'{check_data_type}_duplicates')
         log_msgs.append("Results of checking for duplicates are saved.")
 
@@ -115,14 +114,14 @@ def main(check_data_type, data_check_dir):
         # Train Test Validation
         train_test_check_result = check_two_datasets_similarity(train_path, test_path)
         check_results.append(train_test_check_result)
-        check_passed_conditions.append(train_test_check_result.passed_conditions())
+        checks_passed.append(train_test_check_result.passed())
         fnames.append(f'{check_data_type}_train_test_similarity')
         log_msgs.append("Train Test validation results are saved.")
 
         # Train Test Author Group Leakage
         author_group_leakage_check_result = check_train_test_author_group_leakage(train_path, test_path)
         check_results.append(author_group_leakage_check_result)
-        check_passed_conditions.append(author_group_leakage_check_result.passed_conditions())
+        checks_passed.append(author_group_leakage_check_result.passed())
         fnames.append(f'{check_data_type}_train_test_author_leakage')
         log_msgs.append("Author Group Leakage check results are saved.")
 
@@ -136,7 +135,7 @@ def main(check_data_type, data_check_dir):
         new_info_ds_check_result = check_two_datasets_similarity(info_path, new_info_path, 
                                                                  check_type='new-old')
         check_results.append(new_info_ds_check_result)
-        check_passed_conditions.append(new_info_ds_check_result.passed_conditions())
+        checks_passed.append(new_info_ds_check_result.passed())
         fnames.append(f'{check_data_type}_old_info')
         log_msgs.append("New info dataset check results are saved.")
 
@@ -148,7 +147,7 @@ def main(check_data_type, data_check_dir):
                                                                  check_type='new-old', 
                                                                  check_new_old_bbox_files=True)
         check_results.append(new_bbox_ds_check_result)
-        check_passed_conditions.append(new_bbox_ds_check_result.passed_conditions())
+        checks_passed.append(new_bbox_ds_check_result.passed())
         fnames.append(f'{check_data_type}_old_bbox')
         log_msgs.append("New bbox dataset check results are saved.")
     else:
@@ -160,15 +159,13 @@ def main(check_data_type, data_check_dir):
         check_result.save_as_html(data_check_dir / fname)
         logging.info(log_msg)
 
-    return bool(sum(check_passed_conditions))
+    return bool(sum(checks_passed))
 
 if __name__ == '__main__':
     data_check_dir = Path(__file__).parent
-    data_type_parser = argparse.ArgumentParser('Image data CSV file check script.', 
-                                               parents=[get_data_type_arg_parser()])
-    img_data_type = data_type_parser.parse_args()
+    img_data_type = get_data_type_arg_parser().parse_args()
 
-    if img_data_type in ['raw', 'prepared', 'new']:
+    if img_data_type.check_data_type in ['raw', 'prepared', 'new']:
         check_passed = main(img_data_type.check_data_type, data_check_dir)
 
         if not check_passed:

@@ -5,3 +5,4 @@ env/
 info/
 logs/
 tmp/
+data_check_results/

@@ -1,13 +1,12 @@
 """This module checks integrity of image and bounding boxes information in CSV files."""
 
-import argparse
 from pathlib import Path
 import json
 import logging
 
 import pandas as pd
 
-from utils import get_data_type_arg_parser, get_config_yml
+from dch_utils import get_data_type_arg_parser, get_config_yml
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
     """Return a dictionary of the validation status with a list 
@@ -131,11 +130,9 @@ def main(check_data_type, data_check_dir):
     
 if __name__ == '__main__':
     data_check_dir = Path(__file__).parent
-    data_type_parser = argparse.ArgumentParser('Image data CSV file check script.', 
-                                               parents=[get_data_type_arg_parser()])
-    img_data_type = data_type_parser.parse_args()
+    img_data_type = get_data_type_arg_parser().parse_args()
 
-    if img_data_type in ['raw', 'new']:
+    if img_data_type.check_data_type in ['raw', 'new']:
         check_passed = main(img_data_type.check_data_type, data_check_dir)
 
         if not check_passed:
