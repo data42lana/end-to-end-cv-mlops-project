@@ -145,6 +145,7 @@ def main():
     """Run an optimization study."""
     hyper_opt_path = PROJECT_PATH / HYPER_OPT_PARAMS['save_study_dir']
     hyper_opt_path.mkdir(exist_ok=True)
+    (PROJECT_PATH / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/hparam_opt_log.txt',
                         format="[%(levelname)s]: %(message)s")
 

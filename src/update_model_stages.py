@@ -40,6 +40,8 @@ def update_registered_model_version_stages(registered_model_name):
 
 def main():
     """Update version stages for a registered model specified in a configuration file."""
+    project_path = Path.cwd()
+    (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/update_stages_log.txt',
                         format="[%(levelname)s]: %(message)s")
     config = get_config_yml()

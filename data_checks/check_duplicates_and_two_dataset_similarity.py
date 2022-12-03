@@ -6,8 +6,8 @@ import logging
 import pandas as pd
 from deepchecks.tabular import Dataset
 from deepchecks.tabular import Suite
-from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison, TrainTestSamplesMix, 
-                                       IndexTrainTestLeakage, TrainTestFeatureDrift)
+from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison, 
+                                       TrainTestSamplesMix, TrainTestFeatureDrift)
 
 from dch_utils import get_data_type_arg_parser, get_config_yml
 
@@ -81,6 +81,7 @@ def check_train_test_author_group_leakage(train_df, test_df):
 def main(check_data_type, data_check_dir):
     """Check data for duplicates and similarity between two datasets."""
     project_path = Path.cwd()
+    (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/similarity_checks_log.txt',
                         format="[%(levelname)s]: %(message)s")
 

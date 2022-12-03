@@ -26,6 +26,7 @@ def main(show_random_predict=False):
     and display a random prediction if show_random_predict is True.
     """
     project_path = Path.cwd()
+    (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/model_test_inf_log.txt',
                         format="[%(levelname)s]: %(message)s")
     

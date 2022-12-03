@@ -161,6 +161,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
 def main():
     """Perform fine-tuning of an object detection model."""
     project_path = Path.cwd()
+    (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/fine_tune_log.txt',
                         format="[%(levelname)s]: %(message)s")
 
