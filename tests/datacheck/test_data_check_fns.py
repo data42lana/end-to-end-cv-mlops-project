@@ -5,7 +5,7 @@ from deepchecks.tabular.checks import TrainTestSamplesMix
 
 from data_checks.check_img_info_and_bbox_csv_file_integrity import (check_that_two_sorted_lists_are_equal,
                                                                     check_that_series_is_less_than_or_equal_to)
-from data_checks.check_duplicates_and_two_dataset_similarity import (check_two_datasets, check_bbox_csv_file_for_duplicates,
+from data_checks.check_duplicates_and_two_dataset_similarity import (check_two_datasets, check_bbox_data_for_duplicates,
                                                                      check_two_datasets_similarity, 
                                                                      check_train_test_author_group_leakage) 
 
@@ -29,15 +29,14 @@ class TestIdentityCheckFns:
     def test_check_that_series_is_less_than_or_equal_to_passed(self):
         s = pd.Series([23, 44, 61])
         check_res = check_that_series_is_less_than_or_equal_to(s, s + 2, '<=', 'Good')
-        assert check_res.get('PASSED')
+        assert 'PASSED' in check_res
         assert check_res['PASSED'] == 'Good'
 
     def test_check_that_series_is_less_than_or_equal_to_failed(self):
         s = pd.Series([23, 44, 61])
         check_res = check_that_series_is_less_than_or_equal_to(s, s - 2, '<=')
-        assert check_res.get('FAILED')
-        assert check_res['FAILED'] == s.iloc[[0, 1, 2]].index
-        # pd.testing.assert_frame_equal(check_res['FAILED'], s.iloc[[0, 1, 2]].index)
+        assert 'FAILED' in check_res
+        assert list(check_res['FAILED']) == list(s.iloc[[0, 1, 2]].index)
 
 class TestSimilarityCheckFns:
 
@@ -45,36 +44,39 @@ class TestSimilarityCheckFns:
         cat_features=['Source', 'License']
         ds1, ds2 = [Dataset(df, cat_features=cat_features, index_name='Name') for df in [train_df, test_df]]
         check = TrainTestSamplesMix().add_condition_duplicates_ratio_less_or_equal(0)
-        check_res = check_two_datasets(ds1, ds2, 'Test Suite', [check])
-        assert check_res.passed_conditions()
+        check_suite_res = check_two_datasets(ds1, ds2, 'Test Suite', [check])
+        assert check_suite_res.passed(fail_if_check_not_run=True)
     
     def test_check_two_datasets_failed(self, train_df):
         cat_features=['Source', 'License']
         ds = Dataset(train_df, cat_features=cat_features, index_name='Name')
         check = TrainTestSamplesMix().add_condition_duplicates_ratio_less_or_equal(0)
         check_suite_res = check_two_datasets(ds, ds, 'Test Suite', [check])
-        assert not check_suite_res.passed()
+        assert not check_suite_res.passed(fail_if_check_not_run=True)
 
-    def test_check_bbox_csv_file_for_duplicates_passed(self, bbox_path):
-        check_res = check_bbox_csv_file_for_duplicates(bbox_path)
+    def test_check_bbox_data_for_duplicates_passed(self, bbox_df):
+        check_res = check_bbox_data_for_duplicates(bbox_df)
         assert check_res.passed_conditions()
 
-    def test_check_bbox_csv_file_for_duplicates_failed(self, bbox_bbox_path):
-        check_res = check_bbox_csv_file_for_duplicates(bbox_bbox_path)
+    def test_check_bbox_data_for_duplicates_failed(self, bbox_df):
+        bbox_bbox_df = pd.concat([bbox_df, bbox_df], ignore_index=True)
+        check_res = check_bbox_data_for_duplicates(bbox_bbox_df)
         assert not check_res.passed_conditions()
 
-    def test_check_two_datasets_similarity_passed(self, train_csv_path, test_csv_path):
-        check_suite_res = check_two_datasets_similarity(train_csv_path, test_csv_path)
-        assert check_suite_res.passed()
+    def test_check_two_datasets_similarity_passed(self, train_df, test_df):
+        check_suite_res = check_two_datasets_similarity(train_df, test_df)
+        assert 'Datasets Size Comparison' == check_suite_res.get_passed_checks()[0].get_header()
+        assert 'Train Test Samples Mix' == check_suite_res.get_passed_checks()[1].get_header()
 
-    def test_check_two_datasets_similarity_failed(self, train_csv_path):
-        check_suite_res = check_two_datasets_similarity(train_csv_path, train_csv_path)
-        assert not check_suite_res.passed()
+    def test_check_two_datasets_similarity_failed(self, train_df):
+        check_suite_res = check_two_datasets_similarity(train_df, train_df)
+        assert not check_suite_res.passed(fail_if_check_not_run=True)
 
-    def test_check_train_test_author_group_leakage_passed(self, train_csv_path, test_csv_path):
-        check_suite_res = check_train_test_author_group_leakage(train_csv_path, test_csv_path)
-        assert check_suite_res.passed()
+    def test_check_train_test_author_group_leakage_passed(self, train_df, test_df):
+        check_suite_res = check_train_test_author_group_leakage(train_df, test_df)
+        assert check_suite_res.passed(fail_if_check_not_run=True)
 
-    def test_check_train_test_author_group_leakage_failed(self, train_csv_path):
-        check_suite_res = check_train_test_author_group_leakage(train_csv_path, train_csv_path)
-        assert not check_suite_res.passed()
+    def test_check_train_test_author_group_leakage_failed(self, train_df):
+        train_train_df = pd.concat([train_df, train_df], ignore_index=True)
+        check_suite_res = check_train_test_author_group_leakage(train_train_df, train_df)
+        assert not check_suite_res.passed(fail_if_check_not_run=True)
