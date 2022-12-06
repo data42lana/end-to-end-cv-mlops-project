@@ -11,7 +11,7 @@ import mlflow # Model Registry
 import torch # PyTorch
 
 from train_inference_fns import eval_one_epoch, predict
-from image_dataloader import get_train_val_test_dataloaders
+from image_dataloader import create_dataloaders
 from utils import get_device, get_config_yml
 
 # Set partial reproducibility
@@ -33,6 +33,7 @@ def main(show_random_predict=False):
     # Get configurations
     config = get_config_yml()
 
+    img_data_paths = config['image_data_paths']
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
@@ -45,7 +46,12 @@ def main(show_random_predict=False):
     best_faster_rcnn_mob_model = mlflow.pytorch.load_model(model_uri)
 
     # Evaluate the best model on test data
-    test_dl = get_train_val_test_dataloaders(config['image_dataset_conf']['batch_size'])[2]
+    imgs_path, test_csv_path, bbox_csv_path = [
+        project_path / fpath for fpath in [img_data_paths['images'], 
+                                           img_data_paths['test_csv_file'], 
+                                           img_data_paths['bboxes_csv_file']]]
+    batch_size = config['image_dataset_conf']['batch_size']
+    test_dl = create_dataloaders(imgs_path, test_csv_path, bbox_csv_path, batch_size)
     test_res = eval_one_epoch(test_dl, best_faster_rcnn_mob_model, 
                               TRAIN_EVAL_PARAMS['evaluation_iou_threshold'], 
                               TRAIN_EVAL_PARAMS['evaluation_beta'], DEVICE)

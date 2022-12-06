@@ -45,7 +45,7 @@ model_training_inference_conf:
     log_metrics: On
     save_best_ckpt: On
     register_best_log_model: On
-    show_random_best_model_prediction: On
+    save_random_best_model_output_dir: 'outputs'
     checkpoint: best_faster_rcnn_mob_f_beta_2_weights_ckpt.pt
 
 mlops_tracking_conf:

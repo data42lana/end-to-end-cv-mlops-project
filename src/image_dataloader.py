@@ -85,17 +85,12 @@ def collate_batch(batch):
     """Collate batches in a Dataloader."""
     return tuple(zip(*batch))
 
-def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco', 
-                                   transform_train_imgs=False):
-    """Get a data path from configuration file and returns training, validation, 
-    and test dataloaders with a box transformation to pascal_voc ('xyxy') format.
+def create_dataloaders(img_dir_path, csv_file_path, bboxes_path, batch_size, 
+                       box_format_before_transform='coco', train_test_split_data=False, 
+                       transform_train_imgs=False):
+    """Return a dataloader or two if train_test_split_data=True with applying a box transformation 
+    to pascal_voc ('xyxy') format and training image transformation if necessary.
     """
-    project_path = Path.cwd()
-    
-    # Get image data paths from a configuration file
-    config = get_config_yml()    
-    img_data_paths = config['image_data_paths']
-    
     # Set dataset parameters
     img_transforms = get_image_transforms(box_format_before_transform) if transform_train_imgs else None
     bbox_transform = None
@@ -103,24 +98,30 @@ def get_train_val_test_dataloaders(batch_size, box_format_before_transform='coco
     if box_format_before_transform != 'pascal_voc':
         bbox_transform = (box_convert, BBOX_FORMATS[box_format_before_transform], BBOX_FORMATS['pascal_voc'])
 
-    dataset_params = {'img_dir_path': project_path / img_data_paths['images'],
-                      'bbox_path': project_path / img_data_paths['bboxes_csv_file'], 
-                      'bbox_transform': bbox_transform}  
-    # Create datasets
-    train_dataset = ImageBBoxDataset(project_path / img_data_paths['train_csv_file'], img_transforms=img_transforms, **dataset_params)
-    val_dataset = ImageBBoxDataset(project_path / img_data_paths['train_csv_file'], **dataset_params) 
-    test_dataset = ImageBBoxDataset(project_path / img_data_paths['test_csv_file'], **dataset_params)
-
-    # Split data into training and validation sets
-    train_ids, val_ids = stratified_group_train_test_split(train_dataset.img_df['Name'], 
-                                                           train_dataset.img_df['Number_HSparrows'], 
-                                                           train_dataset.img_df['Author'],
-                                                           SEED)
-    # Create dataloaders
+    dataset_params = {'img_dir_path': img_dir_path,
+                      'bbox_path': bboxes_path, 
+                      'bbox_transform': bbox_transform} 
+    
     dl_params = {'batch_size': batch_size,
                  'collate_fn': collate_batch} 
-    train_dataloader = DataLoader(Subset(train_dataset, train_ids), shuffle=True, **dl_params)
-    val_dataloader = DataLoader(Subset(val_dataset, val_ids), **dl_params)
-    test_dataloader = DataLoader(test_dataset, **dl_params)
 
-    return train_dataloader, val_dataloader, test_dataloader
+    if train_test_split_data:
+        # Create datasets
+        train_dataset, val_dataset = [
+            ImageBBoxDataset(csv_file_path, 
+                             img_transforms=img_tr, 
+                             **dataset_params) for img_tr in [img_transforms, None]]
+        
+        # Split data into training and validation sets
+        train_ids, val_ids = stratified_group_train_test_split(train_dataset.img_df['Name'], 
+                                                               train_dataset.img_df['Number_HSparrows'], 
+                                                               train_dataset.img_df['Author'],
+                                                               SEED)
+        # Create dataloaders
+        train_dataloader = DataLoader(Subset(train_dataset, train_ids), shuffle=True, **dl_params)
+        val_dataloader = DataLoader(Subset(val_dataset, val_ids), **dl_params)
+        return train_dataloader, val_dataloader
+    else:
+        test_dataset = ImageBBoxDataset(csv_file_path, **dataset_params)
+        test_dataloader = DataLoader(test_dataset, **dl_params)
+        return test_dataloader

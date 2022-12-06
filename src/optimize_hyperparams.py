@@ -11,7 +11,7 @@ import optuna # Hyperparameter Optimization
 import mlflow # Experiment Tracking
 import torch # PyTorch
 
-from image_dataloader import get_train_val_test_dataloaders
+from image_dataloader import create_dataloaders
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train_inference_fns import train_one_epoch, eval_one_epoch
 from utils import get_device, get_config_yml
@@ -26,6 +26,8 @@ torch.cuda.manual_seed_all(SEED)
 PROJECT_PATH = Path.cwd()
 # Get configurations
 config = get_config_yml()
+
+IMG_DATA_PATHS = config['image_data_paths']    
 
 DEVICE = get_device(config['model_training_inference_conf']['device_cuda'])
 BATCH_SIZE = config['image_dataset_conf']['batch_size']
@@ -63,8 +65,13 @@ mlc = optuna.integration.mlflow.MLflowCallback(
 @mlc.track_in_mlflow()
 def objective(trial):
     """The function to be optimized."""
-    # Get dataloaders
-    train_dl, val_dl, _ = get_train_val_test_dataloaders(BATCH_SIZE)
+    # Get dataloaders    
+    imgs_path, train_csv_path, bbox_csv_path = [
+        PROJECT_PATH / fpath for fpath in [IMG_DATA_PATHS['images'], 
+                                           IMG_DATA_PATHS['train_csv_file'], 
+                                           IMG_DATA_PATHS['bboxes_csv_file']]]
+    train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, 
+                                          BATCH_SIZE, train_test_split_data=True)
 
     model_params = config['object_detection_model']['load_parameters'] 
     frcnn_mob_model = faster_rcnn_mob_model_for_n_classes(NUM_CLASSES, **model_params)

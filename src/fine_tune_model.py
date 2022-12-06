@@ -13,7 +13,7 @@ import torchvision
 
 from train_inference_fns import train_one_epoch, eval_one_epoch
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
-from image_dataloader import get_train_val_test_dataloaders
+from image_dataloader import create_dataloaders
 from utils import save_model_state, draw_bboxes_on_image, get_device, get_config_yml
 
 # Set partial reproducibility
@@ -28,7 +28,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
               device=torch.device('cpu'), metric_to_find_best_model=None, 
               init_metric_value=0.0, eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', 
               save_best_ckpt=False, checkpoint=None, log_metrics=False, register_best_log_model=False, 
-              reg_model_name='best_model', show_random_best_model_prediction=False):
+              reg_model_name='best_model', save_random_best_model_output_path=None):
     """Run a new training and evaluation cycle of a model for a fixed number of epochs
     or continue if checkpoint is passed, while saving the best model (or checkpoint).
     
@@ -39,7 +39,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         epochs (int) -- number of training epochs
         optimizer_name (str) -- an optimizer name from torch.optim
         optimizer_parameters (dict) -- relevant parameters for the optimizer
-        save_best_model_path (Path) -- a path to directory to save the best model or its checkpoint
+        save_best_model_path (Path) -- a path to a directory to save the best model or its checkpoint
         lr_scheduler_name (str) (optional) -- a learning rate scheduler name 
             from torch.optim.lr_scheduler (default None)
         lr_scheduler_parameters (dict) (optional) -- relevant parameters for 
@@ -59,8 +59,8 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         register_best_log_model (bool) -- whether to log and register the best model 
             into MLflow (default False)
         reg_model_name -- a model registration name (default 'best_model')
-        show_random_best_model_prediction (bool) -- whether to show a random prediction 
-            of the best model (default False).
+        save_random_best_model_output_path (optional) (Path) -- a path to a directory to save 
+            a random image with drawn the best model prediction boxes and scores on it (default None).
 
     Return:
         a dictionary of training and evaluation results.
@@ -127,16 +127,18 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                                  metric_to_find_best_model + '_score': best_epoch_score}
                     filename += '_ckpt'
 
-                save_model_state(model, save_best_model_path + filename + '.pt', ckpt_dict)
+                save_model_state(model, save_best_model_path / f'{filename}.pt', ckpt_dict)
                 logging.info("Model is saved. --- The best {} score: {}".format(
                     metric_to_find_best_model, best_epoch_score))
 
                 with torch.no_grad():
-                    if show_random_best_model_prediction:
+                    if save_random_best_model_output_path:
                         sample_imgs, _ = next(iter(val_dataloader))
                         sample_idx = random.randint(0, len(sample_imgs)-1)
                         preds = eval_res['results'][sample_idx]
-                        draw_bboxes_on_image(sample_imgs[sample_idx], preds['boxes'], preds['scores'])
+                        save_img_out_path = save_random_best_model_output_path / model_name / f'epoch_{current_epoch}.jpg'
+                        draw_bboxes_on_image(sample_imgs[sample_idx], preds['boxes'], preds['scores'], 
+                                             save_img_out_path=save_img_out_path)
                         del sample_imgs
                         del preds
                                     
@@ -168,12 +170,18 @@ def main():
     # Get configurations for training and inference
     config = get_config_yml()
 
+    img_data_paths = config['image_data_paths']
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
     # Get dataloaders
+    imgs_path, train_csv_path, bbox_csv_path = [
+        project_path / fpath for fpath in [img_data_paths['images'], 
+                                           img_data_paths['train_csv_file'], 
+                                           img_data_paths['bboxes_csv_file']]]
     batch_size = config['image_dataset_conf']['batch_size']
-    train_dl, val_dl, _ = get_train_val_test_dataloaders(batch_size, transform_train_img=True)
+    train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, batch_size, 
+                                          train_test_split_data=True, transform_train_img=True)   
 
     # Get a modified model
     model_params = config['object_detection_model']['load_parameters']
@@ -211,6 +219,10 @@ def main():
         checkpoint_path = project_path / config['object_detection_model']['save_dir'] / TRAIN_EVAL_PARAMS['checkpoint']
         checkpoint = torch.load(checkpoint_path)
 
+    # Set paths to save the best model and its outputs
+    save_best_model_path = project_path / config['object_detection_model']['save_dir']
+    save_output_path = project_path / TRAIN_EVAL_PARAMS['save_random_best_model_output_dir']
+
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
     mlruns_path = project_path / config['mlops_tracking_conf']['tracking_dir']
     mlflow.set_tracking_uri(mlruns_path.as_uri())
@@ -231,14 +243,14 @@ def main():
 
         # Run model training cycles
         _ = run_train(train_dl, val_dl, faster_rcnn_mob_model, 
-                      save_best_model_path=config['object_detection_model']['save_dir'],
+                      save_best_model_path=save_best_model_path,
                       metric_to_find_best_model=tracking_metric, init_metric_value=init_metric_value, 
                       log_metrics=TRAIN_EVAL_PARAMS['log_metrics'], 
                       save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'], 
                       model_name=TRAIN_EVAL_PARAMS['model_name'], 
                       register_best_log_model=TRAIN_EVAL_PARAMS['register_best_log_model'],
                       reg_model_name=config['object_detection_model']['best_faster_rcnn_mob'],
-                      show_random_best_model_prediction=TRAIN_EVAL_PARAMS['show_random_best_model_prediction'],
+                      save_random_best_model_output_path=save_output_path,
                       checkpoint=checkpoint, **train_params, **add_train_params)
 
         # Log the parameters into MLflow

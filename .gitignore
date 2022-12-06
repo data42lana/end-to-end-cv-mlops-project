@@ -2,7 +2,8 @@
 .vscode/
 __pycache__/
 env/
+data_check_results/
 info/
 logs/
 tmp/
-data_check_results/
+pyttmp/

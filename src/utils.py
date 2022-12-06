@@ -29,8 +29,8 @@ def stratified_group_train_test_split(data, stratification_basis, groups, random
     train_ids, test_ids = next(split.split(X=data, y=stratification_basis, groups=groups))
     return train_ids, test_ids
 
-def draw_bboxes_on_image(img, bboxes, scores=None):
-    """Draw an image with bounding boxes from Tensors."""
+def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
+    """Draw or save an image with bounding boxes from Tensors."""
     if (img.dtype != torch.uint8):
         img = T.functional.convert_image_dtype(img, dtype=torch.uint8) 
 
@@ -47,7 +47,12 @@ def draw_bboxes_on_image(img, bboxes, scores=None):
             text_sc = f"{sc:0.2f}"
             ax.text(x, y, text_sc , fontsize=12, 
                     bbox=dict(facecolor='orange', alpha=0.5))            
-    plt.show()
+    
+    if save_img_out_path:
+        plt.savefig(save_img_out_path)
+        plt.close()
+    else:
+        plt.show()
 
 def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
     """Save a model state dictionary or a checkpoint."""
