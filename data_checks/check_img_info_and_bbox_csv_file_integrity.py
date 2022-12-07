@@ -46,15 +46,13 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
     else:
         return {'FAILED': s1[~comp_series_result].index}
         
-def main(check_data_type, data_check_dir):
+def main(project_path, config, check_data_type, data_check_dir):
     """Check CSV files and match them with images."""
-    project_path = Path.cwd()
     (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/integrity_checks_log.txt',
                         format="[%(levelname)s]: %(message)s")
 
-    # Get image data paths from a configuration file
-    config = get_config_yml()       
+    # Get image data paths from configurations     
     img_data_paths = config['image_data_paths'] if check_data_type == 'raw' else config['new_image_data_paths']
         
     # Get a list of image names
@@ -130,11 +128,13 @@ def main(check_data_type, data_check_dir):
     return total_check_passed_condition
     
 if __name__ == '__main__':
+    project_path = Path.cwd()
+    config = get_config_yml()  
     data_check_dir = Path(__file__).parent
     img_data_type = get_data_type_arg_parser().parse_args()
 
     if img_data_type.check_data_type in ['raw', 'new']:
-        check_passed = main(img_data_type.check_data_type, data_check_dir)
+        check_passed = main(project_path, config, img_data_type.check_data_type, data_check_dir)
 
         if not check_passed:
             logging.warning(f"Checking for the integrity of the {img_data_type} CSV files failed.")

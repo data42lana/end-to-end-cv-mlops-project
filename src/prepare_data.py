@@ -49,15 +49,13 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                           .merge(avg_df, on=df1_image_name_column, how='left'))
     return new_expanded_df
 
-def main():
+def main(project_path, config):
     """Create training and test CSV data files."""
-    project_path = Path.cwd()
     (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/prep_data_log.txt',
                         format="[%(levelname)s]: %(message)s")
 
-    # Get image data paths from a configuration file
-    config = get_config_yml()
+    # Get image data paths from configurations
     img_data_paths = config['image_data_paths']
     
     # Split data into training and test sets
@@ -83,4 +81,6 @@ def main():
         logging.info("Train and test csv files are saved.")
 
 if __name__ == '__main__':
-    main()
+    project_path = Path.cwd()
+    config = get_config_yml()
+    main(project_path, config)

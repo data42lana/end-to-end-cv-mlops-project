@@ -38,16 +38,16 @@ def update_registered_model_version_stages(registered_model_name):
         logging.info("Updated model version stages: ")
         logging.info(f"{m.name}: version: {m.version}, current stage: {m.current_stage}")
 
-def main():
+def main(project_path, config):
     """Update version stages for a registered model specified in a configuration file."""
-    project_path = Path.cwd()
     (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/update_stages_log.txt',
                         format="[%(levelname)s]: %(message)s")
-    config = get_config_yml()
         
     update_registered_model_version_stages(config['object_detection_model']['registered_name'])
     logging.info("Stages are updated.")
 
 if __name__ == '__main__':
-    main()
+    project_path = Path.cwd()
+    config = get_config_yml()
+    main(project_path, config)

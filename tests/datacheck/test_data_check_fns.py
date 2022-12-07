@@ -40,9 +40,9 @@ class TestIdentityCheckFns:
 
 class TestSimilarityCheckFns:
 
-    def test_check_two_datasets_passed(self, train_df, test_df):
+    def test_check_two_datasets_passed(self, train_df, val_df):
         cat_features=['Source', 'License']
-        ds1, ds2 = [Dataset(df, cat_features=cat_features, index_name='Name') for df in [train_df, test_df]]
+        ds1, ds2 = [Dataset(df, cat_features=cat_features, index_name='Name') for df in [train_df, val_df]]
         check = TrainTestSamplesMix().add_condition_duplicates_ratio_less_or_equal(0)
         check_suite_res = check_two_datasets(ds1, ds2, 'Test Suite', [check])
         assert check_suite_res.passed(fail_if_check_not_run=True)
@@ -63,8 +63,8 @@ class TestSimilarityCheckFns:
         check_res = check_bbox_data_for_duplicates(bbox_bbox_df)
         assert not check_res.passed_conditions()
 
-    def test_check_two_datasets_similarity_passed(self, train_df, test_df):
-        check_suite_res = check_two_datasets_similarity(train_df, test_df)
+    def test_check_two_datasets_similarity_passed(self, train_df, val_df):
+        check_suite_res = check_two_datasets_similarity(train_df, val_df)
         assert 'Datasets Size Comparison' == check_suite_res.get_passed_checks()[0].get_header()
         assert 'Train Test Samples Mix' == check_suite_res.get_passed_checks()[1].get_header()
 
@@ -72,8 +72,8 @@ class TestSimilarityCheckFns:
         check_suite_res = check_two_datasets_similarity(train_df, train_df)
         assert not check_suite_res.passed(fail_if_check_not_run=True)
 
-    def test_check_train_test_author_group_leakage_passed(self, train_df, test_df):
-        check_suite_res = check_train_test_author_group_leakage(train_df, test_df)
+    def test_check_train_test_author_group_leakage_passed(self, train_df, val_df):
+        check_suite_res = check_train_test_author_group_leakage(train_df, val_df)
         assert check_suite_res.passed(fail_if_check_not_run=True)
 
     def test_check_train_test_author_group_leakage_failed(self, train_df):

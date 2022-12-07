@@ -3,7 +3,7 @@ import torch
 import torchvision.transforms as T
 
 from src.utils import (get_config_yml, get_device, stratified_group_train_test_split, 
-                       draw_bboxes_on_image, save_model_state)
+                       collate_batch, draw_bboxes_on_image, save_model_state)
 
 def test_get_config_yml():
     yaml_config = get_config_yml()
@@ -28,7 +28,12 @@ def test_stratified_group_train_test_split_contains_different_groups(img_info_df
     assert sum([auth in test_auths for auth in train_auths]) == 0
     assert sum([auth in train_auths for auth in test_auths]) == 0
 
-@pytest.mark.parametrize('imgidx', [0, 1, 2])
+def test_collate_batch():
+    batch = [[11, 22, 33], [44, 55, 66]]
+    res_batch = collate_batch(batch)
+    assert res_batch == ([11, 44], [22, 55], [33, 66])
+
+@pytest.mark.parametrize('imgidx', [0, 1, 5])
 def test_draw_bboxes_on_image_01_tensor(imgbboxdataset, imgidx, tmp_path):
     img =imgbboxdataset[imgidx][0]
     bboxes = imgbboxdataset[imgidx][1]['boxes']
@@ -37,7 +42,7 @@ def test_draw_bboxes_on_image_01_tensor(imgbboxdataset, imgidx, tmp_path):
     draw_bboxes_on_image(img, bboxes, scores, fpath)
     assert fpath.exists()
 
-@pytest.mark.parametrize('imgidx', [0, 1, 2])
+@pytest.mark.parametrize('imgidx', [0, 1, 5])
 def test_draw_bboxes_on_image_uint8_tensor(imgbboxdataset, imgidx, tmp_path):
     img = T.functional.convert_image_dtype(imgbboxdataset[imgidx][0], dtype=torch.uint8)
     bboxes = imgbboxdataset[imgidx][1]['boxes']
@@ -46,6 +51,6 @@ def test_draw_bboxes_on_image_uint8_tensor(imgbboxdataset, imgidx, tmp_path):
     draw_bboxes_on_image(img, bboxes, scores, fpath)
     assert fpath.exists()
 
-# def test_save_model_state(nn_model, tmp_path):
-#     save_model_state(nn_model, tmp_path / 'model.pt')
-#     assert torch.load(tmp_path / 'model.pt') == nn_model.state_dict()
+def test_save_model_state(frcnn_model, tmp_path):
+    save_model_state(frcnn_model, tmp_path / 'model.pt')
+    assert torch.load(tmp_path / 'model.pt') == frcnn_model.state_dict()

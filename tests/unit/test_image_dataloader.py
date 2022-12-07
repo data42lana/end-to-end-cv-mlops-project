@@ -1,10 +1,8 @@
-import pytest
 import albumentations as A
 import torch
 from torchvision.ops import box_convert
 
-from src.image_dataloader import (get_image_transforms, ImageBBoxDataset, 
-                                  collate_batch, create_dataloaders)
+from src.image_dataloader import get_image_transforms, ImageBBoxDataset, create_dataloaders
 
 def test_get_image_transforms():
     img_transform = get_image_transforms('coco')
@@ -36,14 +34,13 @@ class TestImageBBoxDataset:
                                 bbox_transform=(box_convert, 'xywh', 'xyxy'))
         assert torch.equal(ds[0][1]['bboxes'], dstr[0][1]['bboxes'])
 
-def test_collate_batch():
-    batch = [[11, 22, 33], [44, 55, 66]]
-    res_batch = collate_batch([])
-    assert res_batch == ([11, 44], [22, 55], [33, 66])
+def test_create_dataloader(imgs_path, train_val_path, bbox_path):
+    dl = create_dataloaders(imgs_path, train_val_path, bbox_path, 2)
+    assert len(dl) == 3
+    assert len(dl.dataset) == 6
 
-# def test_create_dataloaders():
-#     train_dl, val_dl, test_dl = create_dataloaders(2, transform_train_imgs=True)
-
-#     img_dir_path, csv_file_path, bboxes_path, batch_size, 
-#                        box_format_before_transform='coco', train_test_split_data=False, 
-#                        transform_train_imgs=False
+def test_create_two_dataloaders(imgs_path, train_val_path, bbox_path):
+    dl1, dl2 = create_dataloaders(imgs_path, train_val_path, bbox_path, 2,
+                                  train_test_split_data=True)
+    assert len(dl1) == 2 and len(dl2) == 2
+    assert len(dl1.dataset) == 3 and len(dl2.dataset) == 3

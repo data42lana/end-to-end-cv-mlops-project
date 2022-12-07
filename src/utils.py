@@ -29,6 +29,10 @@ def stratified_group_train_test_split(data, stratification_basis, groups, random
     train_ids, test_ids = next(split.split(X=data, y=stratification_basis, groups=groups))
     return train_ids, test_ids
 
+def collate_batch(batch):
+    """Collate batches in a Dataloader."""
+    return tuple(zip(*batch))
+
 def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
     """Draw or save an image with bounding boxes from Tensors."""
     if (img.dtype != torch.uint8):

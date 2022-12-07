@@ -136,7 +136,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                         sample_imgs, _ = next(iter(val_dataloader))
                         sample_idx = random.randint(0, len(sample_imgs)-1)
                         preds = eval_res['results'][sample_idx]
-                        save_img_out_path = save_random_best_model_output_path / model_name / f'epoch_{current_epoch}.jpg'
+                        save_img_out_path = save_random_best_model_output_path / f'val_outs/epoch_{current_epoch}.jpg'
                         draw_bboxes_on_image(sample_imgs[sample_idx], preds['boxes'], preds['scores'], 
                                              save_img_out_path=save_img_out_path)
                         del sample_imgs
@@ -160,15 +160,11 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     return {'train_res': train_res,
             'eval_res': eval_res}
 
-def main():
+def main(project_path, config):
     """Perform fine-tuning of an object detection model."""
-    project_path = Path.cwd()
     (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/fine_tune_log.txt',
                         format="[%(levelname)s]: %(message)s")
-
-    # Get configurations for training and inference
-    config = get_config_yml()
 
     img_data_paths = config['image_data_paths']
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
@@ -269,4 +265,6 @@ def main():
         logging.info("Parameters are logged.")
 
 if __name__ == '__main__':
-    main()
+    project_path = Path.cwd()
+    config = get_config_yml()
+    main(project_path, config)

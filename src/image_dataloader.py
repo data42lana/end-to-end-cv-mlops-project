@@ -12,7 +12,7 @@ from torch.utils.data import Dataset, Subset, DataLoader
 from torchvision.ops import box_convert
 import torchvision.transforms as T
 
-from utils import stratified_group_train_test_split, get_config_yml
+from utils import stratified_group_train_test_split, collate_batch
 
 # Set partial reproducibility
 SEED = 0
@@ -80,10 +80,6 @@ class ImageBBoxDataset(Dataset):
                   'labels': labels}
 
         return image, target
-
-def collate_batch(batch):
-    """Collate batches in a Dataloader."""
-    return tuple(zip(*batch))
 
 def create_dataloaders(img_dir_path, csv_file_path, bboxes_path, batch_size, 
                        box_format_before_transform='coco', train_test_split_data=False, 

@@ -78,15 +78,13 @@ def check_train_test_author_group_leakage(train_df, test_df):
                                             checks=[ttsm_check])
     return check_suite_result
 
-def main(check_data_type, data_check_dir):
+def main(project_path, config, check_data_type, data_check_dir):
     """Check data for duplicates and similarity between two datasets."""
-    project_path = Path.cwd()
     (project_path / 'logs').mkdir(exist_ok=True)
     logging.basicConfig(level=logging.INFO, filename='logs/similarity_checks_log.txt',
                         format="[%(levelname)s]: %(message)s")
 
-    # Get image data paths from a configuration file
-    config = get_config_yml()
+    # Get image data paths from configurations
     img_data_paths = config['image_data_paths']
     
     # Track total check status
@@ -163,11 +161,13 @@ def main(check_data_type, data_check_dir):
     return bool(sum(checks_passed))
 
 if __name__ == '__main__':
+    project_path = Path.cwd()
+    config = get_config_yml()
     data_check_dir = Path(__file__).parent
     img_data_type = get_data_type_arg_parser().parse_args()
 
     if img_data_type.check_data_type in ['raw', 'prepared', 'new']:
-        check_passed = main(img_data_type.check_data_type, data_check_dir)
+        check_passed = main(project_path, config, img_data_type.check_data_type, data_check_dir)
 
         if not check_passed:
             logging.warning(f"Checking for duplicates or similarity of \
