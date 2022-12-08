@@ -37,23 +37,23 @@ class Objective:
     def __call__(self, trial):
             
         trials_suggest = {'cat': trial.suggest_categorical,
-                        'int': trial.suggest_int,
-                        'float': trial.suggest_float}
+                          'int': trial.suggest_int,
+                          'float': trial.suggest_float}
 
         # Get hyperparameters from configurations
         hyperparams= self.hyper_opt_params_conf['hyperparameters']
 
         # Construct a training optimizer and a lr_scheduler
-        optimizer_name = trial.suggest_categorical('optimizer', hyperparams['optimizers'].keys())
+        optimizer_name = trial.suggest_categorical('optimizer', list(hyperparams['optimizers']))
         optim_params = {k: trials_suggest[p[1]](k, **p[0]) for k, p in hyperparams['optimizers'][optimizer_name]}    
 
-        lr_scheduler_name = trial.suggest_categorical('lr_scheduler', hyperparams['lr_schedulers'].keys())
+        lr_scheduler_name = trial.suggest_categorical('lr_scheduler', list(hyperparams['lr_schedulers']))
         lr_scheduler_params = {k: trials_suggest[p[1]](k, **p[0]) for k, p in hyperparams['lr_scheduler'][lr_scheduler_name]}
 
         train_model_params = [p for p in self.model.parameters() if p.requires_grad]
         optimizer = getattr(torch.optim, optimizer_name)(train_model_params, **optim_params)
 
-        if lr_scheduler_name is not None:
+        if lr_scheduler_name != 'None':
             lr_scheduler = getattr(torch.optim.lr_scheduler, lr_scheduler_name)(optimizer, **lr_scheduler_params)
         else:
             lr_scheduler = None
@@ -77,13 +77,16 @@ class Objective:
 
 def save_best_hyper_params(study, hyper_opt_params_conf, save_path):
     """Save the best parameters found during a hyperparameter optimization."""
-    save_path.mkdir(exist_ok=True)    
+    save_path.mkdir(exist_ok=True)  
+    hp_conf = hyper_opt_params_conf['hyperparameters']  
     best_params = {hyper_opt_params_conf['metric']: round(study.best_values, 2)}
+    
     for hp in ['optimizer', 'lr_scheduler']:
         hps = {}
-        for k in hyper_opt_params_conf['hyperparameters'][study.best_params[hp]].keys():
+        for k in hp_conf[study.best_params[hp]]:
             hps[k]: study.best_params[k]            
-        best_params[hp] = {study.best_params[hp]: hps}
+        best_params[hp] = {'name': study.best_params[hp],
+                           'parameters': hps}
 
     with open(save_path, 'w') as f:
         yaml.safe_dump(best_params, f)

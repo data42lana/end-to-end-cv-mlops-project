@@ -187,19 +187,17 @@ def main(project_path, config):
     # Load the best parameters for training if a file with them exists
     best_params_path = project_path / config['hyperparameter_optimization']['save_best_parameters_path']
     
+    best_params = None
     if best_params_path.exists():
         with open(project_path / config['hyperparameter_optimization']['save_best_parameters_path']) as f:
             best_params = yaml.safe_load(f)
         logging.info(f"The best training parameters are loaded: \n{best_params}")
-
+   
     # Set training parameters
     train_params = {}
     for param in ['optimizer', 'lr_scheduler']:
         for k in ['name', 'parameters']:
-            if best_params:
-                val = best_params[param] if k == 'name' else best_params[best_params[param]]
-            else:
-                val = TRAIN_EVAL_PARAMS[param][k]
+            val = best_params[param][k] if best_params else TRAIN_EVAL_PARAMS[param][k]
             train_params['_'.join([param, k])] = val
 
     tracking_metric = TRAIN_EVAL_PARAMS['metric_to_find_best']

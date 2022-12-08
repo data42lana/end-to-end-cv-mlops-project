@@ -4,145 +4,140 @@ import pytest
 import pandas as pd
 import cv2
 import yaml
+import optuna
 import torch
 import torchvision.transforms as T
 from torchvision.ops import box_convert
 
-from src.image_dataloader import ImageBBoxDataset
+from src.image_dataloader import ImageBBoxDataset, create_dataloaders
+from src.object_detection_model import faster_rcnn_mob_model_for_n_classes
+from src.optimize_hyperparams import Objective
 
 @pytest.fixture(scope='session')
+def example_config():
+    config_path = Path('tests/data_samples/example_config.yaml').absolute()
+    with open(config_path) as conf:
+        config = yaml.safe_load(conf)
+    return config
+
+@pytest.fixture(scope='package')
 def imgs_path():
     imgs_path = Path('tests/data_samples/sample_imgs').absolute()
     return imgs_path
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='package')
 def img_info_path():
     fpath = Path('tests/data_samples/sample_img_info.csv').absolute()
     return fpath
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='package')
 def bbox_path():
     fpath = Path('tests/data_samples/sample_bboxes.csv').absolute()
     return fpath
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='package')
 def train_csv_path():
     fpath = Path('tests/data_samples/sample_train.csv').absolute()
     return fpath
 
-@pytest.fixture(scope='session')
-def test_csv_path():
-    fpath = Path('tests/data_samples/sample_test.csv').absolute()
+@pytest.fixture(scope='package')
+def val_csv_path():
+    fpath = Path('tests/data_samples/sample_val.csv').absolute()
     return fpath
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='package')
+def train_val_csv_path():
+    fpath = Path('tests/data_samples/sample_train_val.csv').absolute()
+    return fpath
+
+@pytest.fixture(scope='package')
 def img_info_df(img_info_path):
     df = pd.read_csv(img_info_path)
     return df
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='package')
 def bbox_df(bbox_path):
     df = pd.read_csv(bbox_path)
     return df
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='package')
 def train_df(train_csv_path):
     df = pd.read_csv(train_csv_path)
     return df
 
-@pytest.fixture(scope='session')
-def test_df(test_csv_path):
-    df = pd.read_csv(test_csv_path)
+@pytest.fixture(scope='package')
+def val_df(val_csv_path):
+    df = pd.read_csv(val_csv_path)
     return df
 
-@pytest.fixture(scope='session')
-def imgbboxdataset(train_csv_path, imgs_path, bbox_path, request):
-    ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path, 
+@pytest.fixture(scope='package')
+def train_val_df(train_val_csv_path):
+    df = pd.read_csv(train_val_csv_path)
+    return df
+
+@pytest.fixture(scope='package')
+def imgbboxdataset(train_val_csv_path, imgs_path, bbox_path):
+    ds = ImageBBoxDataset(train_val_csv_path, imgs_path, bbox_path, 
                           bbox_transform=(box_convert, 'xywh', 'xyxy'))    
     return ds
 
-# @pytest.fixture(scope='session')
-# def config_yml():
-#     config = get_config_yml()
-#     return config
+@pytest.fixture(scope='package')
+def dataloader(imgs_path, train_val_csv_path, bbox_path):
+    dl = create_dataloaders(imgs_path, train_val_csv_path, bbox_path, 2)
+    return dl
 
-# @pytest.fixture(scope='class')
-# def img(imgs_path, request):
-#     img_name = request.node.get_closest_marker('image_name')
-#     img = cv2.cvtColor(cv2.imread(str(imgs_path / img_name)), cv2.COLOR_BGR2RGB)
-#     return img
+@pytest.fixture(scope='package')
+def frcnn_model():
+    model = faster_rcnn_mob_model_for_n_classes(2)
+    return model
 
-# @pytest.fixture(scope='session', params=[1, 2, 7])
-# def train_img(train_df, imgs_path, request):
-#     df = train_df[train_df['Number_HSparrows'] == request.param]
-#     img_name = df['Name'].item()
-#     img = cv2.cvtColor(cv2.imread(str(imgs_path / img_name)), cv2.COLOR_BGR2RGB)
-#     return {'img_name': img_name, 'img': img}
+@pytest.fixture(scope='module')
+def hp_conf():
+    hp_conf = yaml.safe_load("""
+    hyperparameter_optimization:
+        metric: f_beta
+        epochs: 3
+        hyperparameters:
+            optimizers: 
+                SGD: 
+                    lr: 
+                    - low: 0.0001
+                      high: 0.01
+                    - float
+                Adam: 
+                    lr: 
+                    - low: 0.0001
+                      high: 0.01
+                    - float
+            lr_schedulers: 
+                StepLR:
+                    step_size: 
+                        - low: 1
+                          high: 3
+                        - int
+                None: null
+    """)
+    return hp_conf
 
-# @pytest.fixture
-# def train_img_tensor(train_img, request):
-#     img_tensor_type = request.node.get_closest_marker('img_tensor_type')
-#     img_tensor = T.ToTensor()(train_img['img'])
-
-#     if img_tensor_type != 'range_01':
-#         img_tensor = T.functional.convert_image_dtype(img_tensor, dtype=torch.uint8)
-
-#     return {'img_name': train_img['img_name'], 'img_tensor': img_tensor}
-
-# @pytest.fixture
-# def bbox_tensor(bbox_df):
-
-#     def _bbox_tensor(img_name):
-#         bboxes = bbox_df.loc[(bbox_df.image_name == img_name), 
-#                             ['bbox_x', 'bbox_y', 'bbox_width', 'bbox_height']].values
-#         bbox_t = torch.as_tensor(bboxes, dtype=torch.float)
-#         bbox_t = box_convert(bbox_t, 'xywh', 'xyxy')
-#         return bbox_t
-
-#     return _bbox_tensor
-
-# @pytest.fixture
-# def nn_model():
-#     class NN(torch.nn.Module):
-#         def __init__(self):
-#             super(NN, self).__init__()
-#             self.flatten = torch.nn.Flatten()
-#             self.linear_relu_stack = torch.nn.Sequential(
-#                 torch.nn.Linear(512, 256),
-#                 torch.nn.ReLU(),
-#                 torch.nn.Linear(256, 5),
-#             )
-
-#         def forward(self, x):
-#             x = self.flatten(x)
-#             out = self.linear_relu_stack(x)
-#             return out
-    
-#     return NN()
-    
-
-
-
-    
-
-# @pytest.fixture()
-# def bbox_bbox_path(bbox_df):
-#     bbox_bbox_df = pd.concat([bbox_df, bbox_df], ignore_index=True)
-#     fpath = Path('bbox_bbox.csv')
-#     bbox_bbox_df.to_csv(fpath, index=False)
-#     yield fpath
-#     fpath.unlink()
-
-# @pytest.fixture
-# def bbox_bbox_path(tmp_path, bbox_df):
-#     bbox_bbox_df = pd.concat([bbox_df, bbox_df], ignore_index=True)
-#     fpath = tmp_path / 'bbox_bbox.csv'
-#     bbox_bbox_df.to_csv(fpath, index=False)
-#     return fpath
-
-
-
-
-
-
-
+@pytest.fixture(scope='module')
+def simple_study():    
+    study = optuna.create_study(direction='maximize', sampler=optuna.samplers.RandomSampler(0))
+    study.add_trial(optuna.trial.create_trial(
+        params={'optimizer': 'SGD',
+                'lr': 0.002,
+                'lr_scheduler': 'StepLR',
+                'step_size': 2},
+        distributions={'optimizer': optuna.distributions.CategoricalDistribution(['SGD', 'Adam']),
+                       'lr': optuna.distributions.FloatDistribution(0.0001, 0.01),
+                       'lr_scheduler': optuna.distributions.CategoricalDistribution(['StepLR', 'None']),
+                       'step_size': optuna.distributions.IntDistribution(1, 3)},
+        value=0.52))
+    study.add_trial(optuna.trial.create_trial(
+        params={'optimizer': 'Adam',
+                'lr': 0.001,
+                'lr_scheduler': 'None'},
+        distributions={'optimizer': optuna.distributions.CategoricalDistribution(['SGD', 'Adam']),
+                       'lr': optuna.distributions.FloatDistribution(0.0001, 0.01),
+                       'lr_scheduler': optuna.distributions.CategoricalDistribution(['StepLR', 'None'])},
+        value=0.79))
+    return study

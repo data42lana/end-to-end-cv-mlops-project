@@ -35,6 +35,8 @@ model_training_inference_conf:
     initial_metric_value: 0.5
     evaluation_iou_threshold: 0.4
     evaluation_beta: 2
+    # These optimizer and lr_sheduler will be selected for training the model 
+    # if there are no saved best parameters found during optimization
     optimizer: 
         name: SGD
         parameters: {lr: 0.001}
@@ -55,6 +57,7 @@ mlops_tracking_conf:
 hyperparameter_optimization:
     study_name: faster_rcnn_mob_hyper_opt_study
     metric: f_beta
+    # sampler and pruner and their parameters can contain null values
     sampler: 
         name: TPESampler
         parameters: null
@@ -65,6 +68,8 @@ hyperparameter_optimization:
     n_trials: 100
     timeout: 2400
     hyperparameters:
+    # At least one optimizer must be defined with at least one optimization parameter 
+    # and at least one scheduler (for example None)
         optimizers: 
             SGD: 
                 lr: [{low: 0.00001, high: 0.01, log: True}, float]
