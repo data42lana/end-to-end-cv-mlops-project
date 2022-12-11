@@ -50,9 +50,9 @@ model_training_inference_conf:
     save_random_best_model_output_dir: 'outputs'
     checkpoint: best_faster_rcnn_mob_f_beta_2_weights_ckpt.pt
 
-mlops_tracking_conf:
-    tracking_dir: mlruns
-    run_train_name: fine-tuning_with_optimized_parameters
+mlflow_tracking_conf:
+    run_name: fine-tuning_with_optimized_parameters
+    experiment_name: Fine-Tuning_Model
 
 hyperparameter_optimization:
     study_name: faster_rcnn_mob_hyper_opt_study

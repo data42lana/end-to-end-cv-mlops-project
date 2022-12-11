@@ -218,17 +218,18 @@ def main(project_path, config):
     save_output_path = project_path / TRAIN_EVAL_PARAMS['save_random_best_model_output_dir']
 
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
-    mlruns_path = project_path / config['mlops_tracking_conf']['tracking_dir']
-    mlflow.set_tracking_uri(mlruns_path.as_uri())
-    mlflow.set_registry_uri('sqlite:///{}'.format(mlruns_path / 'model_registry.db'))
-    ftm_exp = mlflow.get_experiment_by_name('Fine-Tuning_Model')
+    mlflow_conf = config['mlflow_tracking_conf']
+    # mlruns_path = project_path / 'mlruns'
+    mlflow.set_tracking_uri('sqlite:////mlruns.db') # mlruns_path.as_uri()
+    # mlflow.set_registry_uri('sqlite:////mlruns/model_registry.db')
+    ftm_exp = mlflow.get_experiment_by_name(mlflow_conf['experiment_name'])
 
     if ftm_exp is not None:
         ftm_exp_id = ftm_exp.experiment_id
     else:  
-        ftm_exp_id = mlflow.create_experiment('Fine-Tuning_Model')
+        ftm_exp_id = mlflow.create_experiment(mlflow_conf['experiment_name'])
 
-    with mlflow.start_run(run_name=config['mlops_tracking_conf']['run_train_name'], 
+    with mlflow.start_run(run_name=mlflow_conf['run_name'], 
         experiment_id=ftm_exp_id) as mlft_run:
 
         mlflow.set_tags({'training_process': 'fine_tuning',
