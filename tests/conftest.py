@@ -5,6 +5,7 @@ import pandas as pd
 import cv2
 import yaml
 import optuna
+import mlflow
 import torch
 import torchvision.transforms as T
 from torchvision.ops import box_convert
@@ -76,14 +77,14 @@ def train_val_df(train_val_csv_path):
     return df
 
 @pytest.fixture(scope='package')
-def imgbboxdataset(train_val_csv_path, imgs_path, bbox_path):
-    ds = ImageBBoxDataset(train_val_csv_path, imgs_path, bbox_path, 
+def imgbboxdataset(train_csv_path, imgs_path, bbox_path):
+    ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path, 
                           bbox_transform=(box_convert, 'xywh', 'xyxy'))    
     return ds
 
 @pytest.fixture(scope='package')
-def dataloader(imgs_path, train_val_csv_path, bbox_path):
-    dl = create_dataloaders(imgs_path, train_val_csv_path, bbox_path, 2)
+def dataloader(imgs_path, train_csv_path, bbox_path):
+    dl = create_dataloaders(imgs_path, train_csv_path, bbox_path, 2)
     return dl
 
 @pytest.fixture(scope='package')
@@ -141,3 +142,8 @@ def simple_study():
                        'lr_scheduler': optuna.distributions.CategoricalDistribution(['StepLR', 'None'])},
         value=0.79))
     return study
+
+@pytest.fixture
+def mltracking(tmp_path):
+    mlflow.set_tracking_uri(f'sqlite:////{tmp_path}/mlruns.db')
+

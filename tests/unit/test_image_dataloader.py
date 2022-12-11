@@ -34,10 +34,10 @@ class TestImageBBoxDataset:
                                 bbox_transform=(box_convert, 'xywh', 'xyxy'))
         assert torch.equal(ds[0][1]['bboxes'], dstr[0][1]['bboxes'])
 
-def test_create_dataloader(imgs_path, train_val_path, bbox_path):
-    dl = create_dataloaders(imgs_path, train_val_path, bbox_path, 2)
-    assert len(dl) == 3
-    assert len(dl.dataset) == 6
+def test_create_dataloader(imgs_path, train_path, bbox_path):
+    dl = create_dataloaders(imgs_path, train_path, bbox_path, 2)
+    assert len(dl) == 2
+    assert len(dl.dataset) == 3
 
 def test_create_two_dataloaders(imgs_path, train_val_path, bbox_path):
     dl1, dl2 = create_dataloaders(imgs_path, train_val_path, bbox_path, 2,
