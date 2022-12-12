@@ -37,7 +37,7 @@ def test_predict(imgbboxdataset, frcnn_model, show_scores=False, device=torch.de
 
 class TestRunTrain:
 
-    def test_run_train_results(dataloader, frcnn_model, tmp_path): 
+    def test_run_train_results(self, dataloader, frcnn_model, tmp_path): 
         res = run_train(dataloader, dataloader, frcnn_model, 2, 'SGD', {'lr': 0.001},
                         save_best_model_path=tmp_path / 'best_model', 
                         metric_to_find_best_model='f_beta')
@@ -46,18 +46,19 @@ class TestRunTrain:
         assert 'epoch_scores' in res['eval_res']
         assert 'results' in res['eval_res']
 
-    def test_run_train_save_ckpt_and_random_output(dataloader, frcnn_model, tmp_path):
+    def test_run_train_save_ckpt_and_random_output(self, dataloader, frcnn_model, tmp_path):
         save_path = tmp_path / 'best_model'
         _ = run_train(dataloader, dataloader, frcnn_model, 2, 'SGD', {'lr': 0.001},
                         save_best_model_path=save_path, metric_to_find_best_model='f_beta', 
                         model_name='frcnn', save_best_ckpt=True, 
                         save_random_best_model_output_path=save_path)
         assert (save_path / 'best_frcnn_f_beta_1_weights_ckpt.pt').exists()
-        assert (save_path / 'val_outs/epoch_2.jpg')
+        assert (save_path / 'val_outs').exists()
+        assert [p for p in (save_path / 'val_outs').iterdir()]
 
-    def test_run_train_mlflow_tracking(dataloader, frcnn_model, tmp_path, mltracking): 
+    def test_run_train_mlflow_tracking(self, dataloader, frcnn_model, tmp_path): 
         reg_model_name = 'best_reg_model'
-        # mlflow.set_tracking_uri(f'sqlite:////{tmp_path}/mlruns.db')
+        mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/mlruns.db')
         with mlflow.start_run() as run:
             _ = run_train(dataloader, dataloader, frcnn_model, 2, 'SGD', {'lr': 0.001},
                         save_best_model_path=tmp_path / 'best_model', metric_to_find_best_model='f_beta',

@@ -24,7 +24,7 @@ class TestIdentityCheckFns:
     def test_check_that_two_sorted_lists_are_equal_failed(self):
         check_res = check_that_two_sorted_lists_are_equal(['b', 'c', 'a'], ['m', 'c', 'a'])
         assert check_res.get('FAILED')
-        assert check_res['FAILED'] == ['b', 'm']
+        assert sorted(check_res['FAILED']) == sorted(['b', 'm'])
 
     def test_check_that_series_is_less_than_or_equal_to_passed(self):
         s = pd.Series([23, 44, 61])

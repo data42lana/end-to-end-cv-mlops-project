@@ -118,7 +118,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                 if register_best_log_model:
                     # Log and register the best model into MLflow
                     mlflow.pytorch.log_model(model, filename, registered_model_name=reg_model_name, 
-                                             await_registration_for=40, 
+                                             await_registration_for=10, 
                                              pip_requirements=[f'torch={torch.__version__}', 
                                                                f'torchvision={torchvision.__version__}'])
                 if save_best_ckpt:
@@ -220,7 +220,7 @@ def main(project_path, config):
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
     mlflow_conf = config['mlflow_tracking_conf']
     # mlruns_path = project_path / 'mlruns'
-    mlflow.set_tracking_uri('sqlite:////mlruns.db') # mlruns_path.as_uri()
+    mlflow.set_tracking_uri(f'sqlite:///mlruns/mlruns.db') # mlruns_path.as_uri()
     # mlflow.set_registry_uri('sqlite:////mlruns/model_registry.db')
     ftm_exp = mlflow.get_experiment_by_name(mlflow_conf['experiment_name'])
 

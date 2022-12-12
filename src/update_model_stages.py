@@ -43,7 +43,7 @@ def main(project_path, config):
     logging.basicConfig(level=logging.INFO, filename='logs/update_stages_log.txt',
                         format="[%(levelname)s]: %(message)s")
     
-    mlflow.set_tracking_uri('sqlite:////mlruns.db')
+    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
     # mlflow.set_registry_uri('sqlite:////mlruns/model_registry.db')
     client = mlflow.MlflowClient()
     # mlruns_path = project_path / 'mlruns'

@@ -44,16 +44,15 @@ class Objective:
         hyperparams= self.hyper_opt_params_conf['hyperparameters']
 
         # Construct a training optimizer and a lr_scheduler
+        train_model_params = [p for p in self.model.parameters() if p.requires_grad]
         optimizer_name = trial.suggest_categorical('optimizer', list(hyperparams['optimizers']))
-        optim_params = {k: trials_suggest[p[1]](k, **p[0]) for k, p in hyperparams['optimizers'][optimizer_name]}    
-
-        lr_scheduler_name = trial.suggest_categorical('lr_scheduler', list(hyperparams['lr_schedulers']))
-        lr_scheduler_params = {k: trials_suggest[p[1]](k, **p[0]) for k, p in hyperparams['lr_scheduler'][lr_scheduler_name]}
-
+        optim_params = {k: trials_suggest[v[1]](k, **v[0]) for k, v in hyperparams['optimizers'][optimizer_name].items()}    
         train_model_params = [p for p in self.model.parameters() if p.requires_grad]
         optimizer = getattr(torch.optim, optimizer_name)(train_model_params, **optim_params)
-
-        if lr_scheduler_name != 'None':
+        
+        lr_scheduler_name = trial.suggest_categorical('lr_scheduler', list(hyperparams['lr_schedulers']))
+        if lr_scheduler_name != 'None':            
+            lr_scheduler_params = {k: trials_suggest[v[1]](k, **v[0]) for k, v in hyperparams['lr_schedulers'][lr_scheduler_name].items()}
             lr_scheduler = getattr(torch.optim.lr_scheduler, lr_scheduler_name)(optimizer, **lr_scheduler_params)
         else:
             lr_scheduler = None
@@ -77,14 +76,17 @@ class Objective:
 
 def save_best_hyper_params(study, hyper_opt_params_conf, save_path):
     """Save the best parameters found during a hyperparameter optimization."""
-    save_path.mkdir(exist_ok=True)  
+    save_path.parent.mkdir(exist_ok=True)  
     hp_conf = hyper_opt_params_conf['hyperparameters']  
-    best_params = {hyper_opt_params_conf['metric']: round(study.best_values, 2)}
+    best_params = {hyper_opt_params_conf['metric']: round(study.best_value, 2)}
     
     for hp in ['optimizer', 'lr_scheduler']:
-        hps = {}
-        for k in hp_conf[study.best_params[hp]]:
-            hps[k]: study.best_params[k]            
+        if study.best_params[hp] != 'None':
+            hps = {}
+            for k in hp_conf[hp+'s'][study.best_params[hp]]:
+                hps[k] = study.best_params[k]
+        else:
+            hps = None            
         best_params[hp] = {'name': study.best_params[hp],
                            'parameters': hps}
 
@@ -93,6 +95,9 @@ def save_best_hyper_params(study, hyper_opt_params_conf, save_path):
 
 def save_study_plots(study, study_name, save_path):
     """Save study result plots."""
+    save_path = Path(save_path) / study_name / 'plots'
+    save_path.mkdir(parents=True, exist_ok=True)
+
     plots = [optuna.visualization.plot_optimization_history,
              optuna.visualization.plot_intermediate_values,
              optuna.visualization.plot_parallel_coordinate,
@@ -100,13 +105,11 @@ def save_study_plots(study, study_name, save_path):
              optuna.visualization.plot_slice,
              optuna.visualization.plot_param_importances,
              optuna.visualization.plot_edf]
-
+    
     for plot in plots:
         fig = plot(study)
-        fname = plot.__name__[5:]
-        save_path = Path(save_path) / 'plots' / study_name
-        save_path.mkdir(parents=True, exist_ok=True)
-        fig.write_image(save_path / f'{fname}.jpeg')
+        fname = plot.__name__[5:]     
+        fig.write_image(save_path / f'{fname}.jpg')
 
 def main(project_path, config):
     """Run an optimization study.""" 
