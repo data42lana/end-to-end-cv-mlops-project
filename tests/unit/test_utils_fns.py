@@ -35,7 +35,7 @@ def test_collate_batch():
     res_batch = collate_batch(batch)
     assert res_batch == ((11, 44), (22, 55), (33, 66))
 
-@pytest.mark.parametrize('imgidx', [0, 1, 2])
+@pytest.mark.parametrize('imgidx', [0, 2])
 class TestDrawBBoxesOnImage:
 
     def test_draw_bboxes_on_image_01_tensor(self, imgbboxdataset, imgidx, tmp_path):

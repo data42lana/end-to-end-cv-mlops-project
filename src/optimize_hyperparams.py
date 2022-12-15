@@ -124,7 +124,7 @@ def main(project_path, config):
     num_classes = config['object_detection_model']['number_classes']     
     eval_iou_thresh = config['model_training_inference_conf']['evaluation_iou_threshold']
     eval_beta = config['model_training_inference_conf']['evaluation_beta']
-    device = get_device(['model_training_inference_conf']['device_cuda'])
+    device = get_device(config['model_training_inference_conf']['device_cuda'])
     HYPER_OPT_PARAMS = config['hyperparameter_optimization']
     sampler = HYPER_OPT_PARAMS['sampler']
     pruner = HYPER_OPT_PARAMS['pruner']
@@ -153,7 +153,7 @@ def main(project_path, config):
     sampler_pruner = []
     for osp, sp in zip((optuna.samplers, optuna.pruners), (sampler, pruner)):
         sp_params = sp['parameters'] if sp['parameters'] else {}
-        sampler_pruner.append(getattr(osp, sp['name'])(**sp_params))
+        sampler_pruner.append(getattr(osp, sp['name'])(**sp_params) if sp['name'] is not None else None)
 
     # Run a optimization session
     study = optuna.create_study(direction='maximize', sampler=sampler_pruner[0],

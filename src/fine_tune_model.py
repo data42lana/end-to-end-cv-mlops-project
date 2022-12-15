@@ -24,7 +24,7 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, optimizer_parameters,
-              save_best_model_path, lr_scheduler_name=None, lr_scheduler_parameters=None, 
+              save_best_model_path=None, lr_scheduler_name=None, lr_scheduler_parameters=None, 
               device=torch.device('cpu'), metric_to_find_best_model=None, 
               init_metric_value=0.0, eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', 
               save_best_ckpt=False, checkpoint=None, log_metrics=False, register_best_log_model=False, 
@@ -39,7 +39,8 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         epochs (int) -- number of training epochs
         optimizer_name (str) -- an optimizer name from torch.optim
         optimizer_parameters (dict) -- relevant parameters for the optimizer
-        save_best_model_path (Path) -- a path to a directory to save the best model or its checkpoint
+        save_best_model_path (Path) (optional) -- a path to a directory to save the best model 
+            or its checkpoint (default None)
         lr_scheduler_name (str) (optional) -- a learning rate scheduler name 
             from torch.optim.lr_scheduler (default None)
         lr_scheduler_parameters (dict) (optional) -- relevant parameters for 
@@ -126,10 +127,11 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                                  'optimizer_state_dict': optimizer.state_dict(),
                                  metric_to_find_best_model + '_score': best_epoch_score}
                     filename += '_ckpt'
-
-                save_model_state(model, save_best_model_path / f'{filename}.pt', ckpt_dict)
-                logging.info("Model is saved. --- The best {} score: {}".format(
-                    metric_to_find_best_model, best_epoch_score))
+                    
+                if save_best_model_path is not None:
+                    save_model_state(model, save_best_model_path / f'{filename}.pt', ckpt_dict)
+                    logging.info("Model is saved. --- The best {} score: {}".format(
+                        metric_to_find_best_model, best_epoch_score))
 
                 with torch.no_grad():
                     if save_random_best_model_output_path:
@@ -177,7 +179,7 @@ def main(project_path, config):
                                            img_data_paths['bboxes_csv_file']]]
     batch_size = config['image_dataset_conf']['batch_size']
     train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, batch_size, 
-                                          train_test_split_data=True, transform_train_img=True)   
+                                          train_test_split_data=True, transform_train_imgs=True)   
 
     # Get a modified model
     model_params = config['object_detection_model']['load_parameters']
@@ -211,7 +213,7 @@ def main(project_path, config):
     checkpoint = None
     if TRAIN_EVAL_PARAMS['checkpoint']:
         checkpoint_path = project_path / config['object_detection_model']['save_dir'] / TRAIN_EVAL_PARAMS['checkpoint']
-        checkpoint = torch.load(checkpoint_path)
+        checkpoint = torch.load(checkpoint_path) if checkpoint_path.exists() else None
 
     # Set paths to save the best model and its outputs
     save_best_model_path = project_path / config['object_detection_model']['save_dir']
@@ -219,9 +221,6 @@ def main(project_path, config):
 
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
     mlflow_conf = config['mlflow_tracking_conf']
-    # mlruns_path = project_path / 'mlruns'
-    mlflow.set_tracking_uri(f'sqlite:///mlruns/mlruns.db') # mlruns_path.as_uri()
-    # mlflow.set_registry_uri('sqlite:////mlruns/model_registry.db')
     ftm_exp = mlflow.get_experiment_by_name(mlflow_conf['experiment_name'])
 
     if ftm_exp is not None:
@@ -242,7 +241,7 @@ def main(project_path, config):
                       metric_to_find_best_model=tracking_metric, init_metric_value=init_metric_value, 
                       log_metrics=TRAIN_EVAL_PARAMS['log_metrics'], 
                       save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'], 
-                      model_name=TRAIN_EVAL_PARAMS['model_name'], 
+                      model_name=config['object_detection_model']['name'], 
                       register_best_log_model=TRAIN_EVAL_PARAMS['register_best_log_model'],
                       reg_model_name=config['object_detection_model']['best_faster_rcnn_mob'],
                       save_random_best_model_output_path=save_output_path,
@@ -266,4 +265,5 @@ def main(project_path, config):
 if __name__ == '__main__':
     project_path = Path.cwd()
     config = get_config_yml()
+    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
     main(project_path, config)

@@ -17,9 +17,9 @@ def get_config_yml():
         config = yaml.safe_load(conf)
     return config
 
-def get_device(config_param):
+def get_device(use_cuda_config_param):
     """Return torch.device('cpu' or 'cuda') depending on the corresponding configuration parameter."""
-    return torch.device('cuda' if config_param and torch.cuda.is_available() else 'cpu')
+    return torch.device('cuda' if use_cuda_config_param and torch.cuda.is_available() else 'cpu')
 
 def stratified_group_train_test_split(data, stratification_basis, groups, random_state=0):
     """Split data in a stratified way into training and test sets,
@@ -53,6 +53,7 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
                     bbox=dict(facecolor='orange', alpha=0.5))            
     
     if save_img_out_path:
+        Path(save_img_out_path).parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(save_img_out_path)
         plt.close()
     else:
@@ -60,6 +61,8 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
 
 def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
     """Save a model state dictionary or a checkpoint."""
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    
     if (ckpt_params_dict is not None) or isinstance(ckpt_params_dict, dict):
         torch.save({'model_state_dict': model_to_save.state_dict(),
                     **ckpt_params_dict}, filepath)

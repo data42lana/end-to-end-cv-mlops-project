@@ -19,8 +19,8 @@ def test_faster_rcnn_mob_model_for_n_classes():
     assert model.roi_heads.box_predictor.bbox_pred.out_features == 8
 
 def test_update_registered_model_version_stages(tmp_path):
-    reg_model_name = 'test_frcnn_reg'
-    mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/mlruns.db')
+    reg_model_name = 'test_update_reg_model_version_stages'
+    mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/tmlruns.db')
     client = mlflow.MlflowClient()
     client.create_registered_model(reg_model_name)
     for i in range(3):

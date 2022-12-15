@@ -43,14 +43,12 @@ def main(project_path, config):
     logging.basicConfig(level=logging.INFO, filename='logs/update_stages_log.txt',
                         format="[%(levelname)s]: %(message)s")
     
-    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    # mlflow.set_registry_uri('sqlite:////mlruns/model_registry.db')
     client = mlflow.MlflowClient()
-    # mlruns_path = project_path / 'mlruns'
     update_registered_model_version_stages(client, config['object_detection_model']['registered_name'])
     logging.info("Stages are updated.")
 
 if __name__ == '__main__':
     project_path = Path.cwd()
     config = get_config_yml()
+    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
     main(project_path, config)

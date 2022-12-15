@@ -1,9 +1,9 @@
 image_data_paths:
-    images: tests/data_samples/sample_imgs
-    info_csv_file: tests/data_samples/sample_img_info.csv
-    bboxes_csv_file: tests/data_samples/sample_bboxes.csv
-    train_csv_file: tests/data_samples/sample_train_val.csv
-    test_csv_file: tests/data_samples/sample_val.csv
+    images: data_samples/sample_imgs
+    info_csv_file: data_samples/sample_img_info.csv
+    bboxes_csv_file: data_samples/sample_bboxes.csv
+    train_csv_file: data_samples/sample_train_val.csv
+    test_csv_file: data_samples/sample_val.csv
 
 image_dataset_conf:
    box_format: coco
@@ -20,14 +20,14 @@ object_detection_model:
         box_nms_thresh: 0.4
         box_detections_per_img: 120
         box_positive_fraction: 0.4
-    save_dir: pyttmp/models
+    save_dir: tmp
 
 model_training_inference_conf:
     device_cuda: Off
     metric_to_find_best: f_beta
     initial_metric_value: 0.5
-    evaluation_iou_threshold: 0.4
-    evaluation_beta: 2
+    evaluation_iou_threshold: 0.5
+    evaluation_beta: 1
     optimizer: 
         name: SGD
         parameters: {lr: 0.001}
@@ -36,17 +36,17 @@ model_training_inference_conf:
         parameters: null
     epochs: 3 
     log_metrics: On
-    save_best_ckpt: On
+    save_best_ckpt: Off
     register_best_log_model: On
-    save_random_best_model_output_dir: 'pyttmp/outs'
-    checkpoint: best_tfrcnn_f_beta_2_weights_ckpt.pt
+    save_random_best_model_output_dir: 'tmp'
+    checkpoint: null
 
 mlflow_tracking_conf:
     run_name: test-fine-tuning
     experiment_name: TestFTModel
 
 hyperparameter_optimization:
-    study_name: test_frcnn_study
+    study_name: tfrcnn_study
     metric: f_beta
     sampler:
         name: RandomSampler
@@ -65,5 +65,5 @@ hyperparameter_optimization:
             StepLR:
                 step_size: [{low: 1, high: 3}, int]
             None: null
-    save_best_parameters_path: pyttmp/best_params.yaml
-    save_study_dir: pyttmp/hyper_opt
+    save_best_parameters_path: tmp/best_params.yaml
+    save_study_dir: tmp
