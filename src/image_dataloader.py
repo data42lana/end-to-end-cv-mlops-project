@@ -27,9 +27,9 @@ BBOX_FORMATS = {'coco': 'xywh',
 
 def get_image_transforms(box_format):
     """Return an Albumentation object."""
-    aug = A.Compose([
-                    A.LongestMaxSize(1333, always_apply=True),  
+    aug = A.Compose([                     
                     A.SmallestMaxSize(800, always_apply=True),
+                    A.LongestMaxSize(1333, always_apply=True), 
                     A.HorizontalFlip(p=0.6),
                     A.VerticalFlip(p=0.4),
                     A.ColorJitter(0.5, 0.5, 0.5, 0, p=0.7),

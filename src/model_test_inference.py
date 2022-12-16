@@ -25,8 +25,7 @@ def main(project_path, config, show_random_predict=False):
     """Evaluate an object detection model on test data 
     and display a random prediction if show_random_predict is True.
     """
-    (project_path / 'logs').mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, filename='logs/model_test_inf_log.txt',
+    logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
     
     img_data_paths = config['image_data_paths']

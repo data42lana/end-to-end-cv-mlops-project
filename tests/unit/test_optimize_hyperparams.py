@@ -1,8 +1,10 @@
+import pytest
 import optuna
 import yaml
 
 from src.optimize_hyperparams import Objective, save_best_hyper_params, save_study_plots
 
+@pytest.mark.slow
 def test_objective(dataloader, frcnn_model, hp_conf):
     objective = Objective(dataloader, dataloader, frcnn_model, hp_conf)
     fixed_trial = optuna.trial.FixedTrial({'optimizer': 'SGD', 'lr': 0.005, 'lr_scheduler': 'None'})
@@ -24,7 +26,7 @@ class TestSaveBestHyperParams:
                 parameters:
                     lr: 0.001
             lr_scheduler: 
-                name: 'None'
+                name: null
                 parameters: null   
         """)    
         fpath = tmp_path / 'best_hp.yaml'

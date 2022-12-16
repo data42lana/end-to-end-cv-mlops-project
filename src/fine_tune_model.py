@@ -76,8 +76,8 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     optimizer = getattr(torch.optim, optimizer_name)(model_params, **optimizer_parameters)
 
     if lr_scheduler_name is not None:
-        if lr_scheduler_params is None:
-            lr_scheduler_params = {}
+        if lr_scheduler_parameters is None:
+            lr_scheduler_parameters = {}
         # Construct a learning rate scheduler
         lr_scheduler = getattr(torch.optim.lr_scheduler, lr_scheduler_name)(optimizer, 
                                                                             **lr_scheduler_parameters)
@@ -164,8 +164,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
 
 def main(project_path, config):
     """Perform fine-tuning of an object detection model."""
-    (project_path / 'logs').mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, filename='logs/fine_tune_log.txt',
+    logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 
     img_data_paths = config['image_data_paths']
@@ -187,11 +186,10 @@ def main(project_path, config):
     faster_rcnn_mob_model = faster_rcnn_mob_model_for_n_classes(num_classes, **model_params)
     
     # Load the best parameters for training if a file with them exists
-    best_params_path = project_path / config['hyperparameter_optimization']['save_best_parameters_path']
-    
+    best_params_dir = config['hyperparameter_optimization']['save_best_parameters_path']
     best_params = None
-    if best_params_path.exists():
-        with open(project_path / config['hyperparameter_optimization']['save_best_parameters_path']) as f:
+    if best_params_dir and (project_path / best_params_dir).exists():
+        with open(project_path / best_params_dir) as f:
             best_params = yaml.safe_load(f)
         logging.info(f"The best training parameters are loaded: \n{best_params}")
    
@@ -211,13 +209,15 @@ def main(project_path, config):
                         'device': device}
     
     checkpoint = None
+    save_dir = config['object_detection_model']['save_dir']
     if TRAIN_EVAL_PARAMS['checkpoint']:
-        checkpoint_path = project_path / config['object_detection_model']['save_dir'] / TRAIN_EVAL_PARAMS['checkpoint']
+        checkpoint_path = project_path / save_dir / TRAIN_EVAL_PARAMS['checkpoint']
         checkpoint = torch.load(checkpoint_path) if checkpoint_path.exists() else None
 
     # Set paths to save the best model and its outputs
-    save_best_model_path = project_path / config['object_detection_model']['save_dir']
-    save_output_path = project_path / TRAIN_EVAL_PARAMS['save_random_best_model_output_dir']
+    save_best_model_path = project_path / save_dir if save_dir else save_dir
+    save_output_path = (project_path / TRAIN_EVAL_PARAMS['save_random_best_model_output_dir']
+                        if TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'] else None)
 
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
     mlflow_conf = config['mlflow_tracking_conf']
@@ -243,7 +243,7 @@ def main(project_path, config):
                       save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'], 
                       model_name=config['object_detection_model']['name'], 
                       register_best_log_model=TRAIN_EVAL_PARAMS['register_best_log_model'],
-                      reg_model_name=config['object_detection_model']['best_faster_rcnn_mob'],
+                      reg_model_name=config['object_detection_model']['registered_name'],
                       save_random_best_model_output_path=save_output_path,
                       checkpoint=checkpoint, **train_params, **add_train_params)
 
@@ -256,7 +256,8 @@ def main(project_path, config):
 
         for params in train_params: 
             if params in ['optimizer_parameters', 'lr_scheduler_parameters']:
-                mlflow.log_params(train_params[params])
+                if train_params[params] is not None:
+                    mlflow.log_params(train_params[params]) 
             else:
                 mlflow.log_param(params, train_params[params])
         

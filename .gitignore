@@ -1,9 +1,11 @@
 .ipynb_checkpoints/
 .vscode/
 __pycache__/
+.pytest_cache/
 env/
 data_check_results/
 info/
-logs/
 tmp/
 pyttmp/
+app.log
+*.db

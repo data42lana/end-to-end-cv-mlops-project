@@ -51,8 +51,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
 
 def main(project_path, config):
     """Create training and test CSV data files."""
-    (project_path / 'logs').mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, filename='logs/prep_data_log.txt',
+    logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 
     # Get image data paths from configurations

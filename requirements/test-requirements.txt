@@ -11,6 +11,8 @@ opencv-python==4.6.0.66
 optuna==3.0.3
 pandas==1.4.3
 pytest==7.2.0
+pytest-cov==4.0.0
+pytest-randomly==3.12.0
 pyyaml==6.0
 scikit-learn==1.1.2
 torch==1.13.0

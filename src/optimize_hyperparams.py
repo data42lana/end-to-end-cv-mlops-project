@@ -81,13 +81,15 @@ def save_best_hyper_params(study, hyper_opt_params_conf, save_path):
     best_params = {hyper_opt_params_conf['metric']: round(study.best_value, 2)}
     
     for hp in ['optimizer', 'lr_scheduler']:
-        if study.best_params[hp] != 'None':
+        hp_name = study.best_params[hp]
+        if hp_name != 'None':
             hps = {}
             for k in hp_conf[hp+'s'][study.best_params[hp]]:
                 hps[k] = study.best_params[k]
         else:
+            hp_name = None
             hps = None            
-        best_params[hp] = {'name': study.best_params[hp],
+        best_params[hp] = {'name': hp_name,
                            'parameters': hps}
 
     with open(save_path, 'w') as f:
@@ -113,8 +115,7 @@ def save_study_plots(study, study_name, save_path):
 
 def main(project_path, config):
     """Run an optimization study.""" 
-    (project_path / 'logs').mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, filename='logs/hparam_opt_log.txt',
+    logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 
     # Get configurations for a hyperparameter optimization

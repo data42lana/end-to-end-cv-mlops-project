@@ -1,3 +1,4 @@
+import pytest
 import mlflow
 import torch
 
@@ -15,6 +16,7 @@ def test_precision_recall_fbeta_scores():
     assert res['recall'] == 0.5
     assert round(res['f_beta'], 2) == 0.67
 
+@pytest.mark.slow
 def test_train_one_epoch(dataloader, frcnn_model):
     frcnn_model.train()
     model_params = [p for p in frcnn_model.parameters() if p.requires_grad]
@@ -35,9 +37,10 @@ def test_predict(img, frcnn_model, tmp_path):
     assert isinstance(res, int)
     assert res >= 0
 
+@pytest.mark.slow
 class TestRunTrain:
 
-    def test_run_train_results(self, dataloader, frcnn_model, tmp_path): 
+    def test_run_train_results(self, dataloader, frcnn_model): 
         res = run_train(dataloader, dataloader, frcnn_model, 2, 'SGD', {'lr': 0.001})
         assert 'epoch_dict_losses' in res['train_res']
         assert 'epoch_loss' in res['train_res']

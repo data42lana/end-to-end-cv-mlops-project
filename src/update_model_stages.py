@@ -39,8 +39,7 @@ def update_registered_model_version_stages(mlclient, registered_model_name):
 
 def main(project_path, config):
     """Update version stages for a registered model specified in a configuration file."""
-    (project_path / 'logs').mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, filename='logs/update_stages_log.txt',
+    logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
     
     client = mlflow.MlflowClient()
