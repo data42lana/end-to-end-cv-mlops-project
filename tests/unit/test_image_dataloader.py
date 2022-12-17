@@ -21,10 +21,10 @@ class TestImageBBoxDataset:
 
     def test_imagebboxdataset_with_img_transform(self, train_csv_path, imgs_path, bbox_path):
         idx = random.randint(0, 2)
+        ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path)
         dstr = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path, 
                                 img_transforms=get_image_transforms('coco'))
-        assert dstr[idx][0].size(1) >= 800 and dstr[idx][0].size(1) <= 1333
-        assert dstr[idx][0].size(2) >= 800 and dstr[idx][0].size(2) <= 1333
+        assert not torch.equal(ds[idx][0], dstr[idx][0])
 
     def test_imagebboxdataset_with_bbox_transform(self, train_csv_path, imgs_path, bbox_path):
         idx = random.randint(0, 2)

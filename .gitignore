@@ -9,3 +9,4 @@ tmp/
 pyttmp/
 app.log
 *.db
+.coverage
