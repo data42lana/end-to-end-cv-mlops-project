@@ -13,7 +13,6 @@ from torchvision.ops import box_convert
 
 from utils import collate_batch, stratified_group_train_test_split
 
-
 # Set partial reproducibility
 SEED = 0
 random.seed(SEED)

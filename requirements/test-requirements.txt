@@ -3,6 +3,7 @@ albumentations==1.2.1
 black==22.8.0
 deepchecks==0.9.0
 dvc==2.20.1
+isort==5.11.3
 kaleido==0.2.1
 matplotlib==3.5.3
 mlflow==1.30.0

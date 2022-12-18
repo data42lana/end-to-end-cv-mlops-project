@@ -7,7 +7,6 @@ import pandas as pd
 
 from utils import get_config_yml, stratified_group_train_test_split
 
-
 # Set reproducibility
 SEED = 0
 

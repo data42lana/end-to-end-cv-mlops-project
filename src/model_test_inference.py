@@ -14,7 +14,6 @@ from image_dataloader import create_dataloaders
 from train_inference_fns import eval_one_epoch, predict
 from utils import get_config_yml, get_device
 
-
 # Set partial reproducibility
 SEED = 0
 random.seed(SEED)

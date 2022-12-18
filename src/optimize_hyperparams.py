@@ -14,7 +14,6 @@ from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train_inference_fns import eval_one_epoch, train_one_epoch
 from utils import get_config_yml, get_device
 
-
 # Set partial reproducibility
 SEED = 0
 random.seed(SEED)
