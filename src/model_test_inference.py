@@ -1,18 +1,19 @@
 """This module evaluates an object detection model on test data."""
     
+import logging
 import random
 from pathlib import Path
-import logging
 
+import cv2
+import mlflow
 import numpy as np
 import pandas as pd
-import cv2
-import mlflow # Model Registry
-import torch # PyTorch
+import torch
 
-from train_inference_fns import eval_one_epoch, predict
 from image_dataloader import create_dataloaders
-from utils import get_device, get_config_yml
+from train_inference_fns import eval_one_epoch, predict
+from utils import get_config_yml, get_device
+
 
 # Set partial reproducibility
 SEED = 0

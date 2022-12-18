@@ -1,7 +1,8 @@
 from pathlib import Path
 
-import pytest
 import pandas as pd
+import pytest
+
 
 @pytest.fixture(scope='session')
 def bbox_path():

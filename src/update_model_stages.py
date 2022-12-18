@@ -1,11 +1,12 @@
 """This module updates registered model version stages in MLflow."""
 
-from pathlib import Path
 import logging
+from pathlib import Path
 
-import mlflow # Model Registry
+import mlflow
 
 from utils import get_config_yml
+
 
 def update_registered_model_version_stages(mlclient, registered_model_name):
     """Set a stage to 'Production' for the latest version of a model, and 'Archived' 

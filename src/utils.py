@@ -2,13 +2,14 @@
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import torch
+import torchvision.transforms as T
 import yaml
 from sklearn.model_selection import StratifiedGroupKFold
-import matplotlib.pyplot as plt
-import torch # PyTorch
-import torchvision.transforms as T
 from torchvision.transforms.functional import to_pil_image
 from torchvision.utils import draw_bounding_boxes
+
 
 def get_config_yml():
     """Get configurations from a yaml file."""

@@ -1,10 +1,12 @@
-import pytest
 import mlflow
+import pytest
 import torch
 
+# isort: off
 from src.train_inference_fns import (precision_recall_fbeta_scores, train_one_epoch, 
                                      eval_one_epoch, predict)
 from src.fine_tune_model import run_train
+
 
 def test_precision_recall_fbeta_scores():
     x1, y1, x2, y2 = 1.0, 1.0, 4.0, 4.0

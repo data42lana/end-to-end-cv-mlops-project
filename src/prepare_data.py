@@ -1,12 +1,12 @@
 """This module creates training and test datasets from raw data."""
 
-from pathlib import Path
 import logging
+from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
-from utils import stratified_group_train_test_split, get_config_yml
+from utils import get_config_yml, stratified_group_train_test_split
+
 
 # Set reproducibility
 SEED = 0

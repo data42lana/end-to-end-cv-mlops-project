@@ -2,8 +2,10 @@ import pytest
 import torch
 import torchvision.transforms as T
 
+# isort: off
 from src.utils import (get_config_yml, get_device, stratified_group_train_test_split, 
                        collate_batch, draw_bboxes_on_image, save_model_state)
+                       
 
 def test_get_config_yml():
     yaml_config = get_config_yml()

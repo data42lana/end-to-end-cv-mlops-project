@@ -1,10 +1,11 @@
-import pytest
 import mlflow
 import torch
 
+# isort: off
 from src.prepare_data import expand_img_df_with_average_values_from_another_img_df
 from src.object_detection_model import faster_rcnn_mob_model_for_n_classes
 from src.update_model_stages import update_registered_model_version_stages
+
 
 def test_expand_img_df_with_average_values_from_another_img_df(img_info_df, bbox_df, train_df):
     avg_cols = ['bbox_width', 'bbox_height', 'image_width', 'image_height']

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import yaml
 
+
 def get_config_yml():
     """Get configurations from a yaml file."""
     config_path = Path.cwd() / 'configs/config.yaml'

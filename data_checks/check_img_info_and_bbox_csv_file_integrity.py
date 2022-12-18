@@ -1,12 +1,13 @@
 """This module checks integrity of image and bounding boxes information in CSV files."""
 
-from pathlib import Path
 import json
 import logging
+from pathlib import Path
 
 import pandas as pd
 
-from dch_utils import get_data_type_arg_parser, get_config_yml
+from dch_utils import get_config_yml, get_data_type_arg_parser
+
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
     """Return a dictionary of the validation status with a list 

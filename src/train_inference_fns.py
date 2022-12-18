@@ -2,11 +2,12 @@
 
 import gc
 
-import torch # PyTorch
-from torchvision.ops import box_iou
+import torch
 import torchvision.transforms as T
+from torchvision.ops import box_iou
 
 from utils import draw_bboxes_on_image
+
 
 @torch.inference_mode()
 def precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):

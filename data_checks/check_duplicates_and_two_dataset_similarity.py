@@ -1,15 +1,15 @@
 """"This module checks data for duplicates and similarity between two datasets."""
 
-from pathlib import Path
 import logging
+from pathlib import Path
 
 import pandas as pd
-from deepchecks.tabular import Dataset
-from deepchecks.tabular import Suite
-from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison, 
-                                       TrainTestSamplesMix, TrainTestFeatureDrift)
+from deepchecks.tabular import Dataset, Suite
+from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison,
+                                       TrainTestFeatureDrift, TrainTestSamplesMix)
 
-from dch_utils import get_data_type_arg_parser, get_config_yml
+from dch_utils import get_config_yml, get_data_type_arg_parser
+
 
 def check_two_datasets(ds1, ds2, suite_name, checks):
     """Create a custom validation suite and return its check result.

@@ -1,8 +1,9 @@
-import pytest
 import optuna
+import pytest
 import yaml
 
 from src.optimize_hyperparams import Objective, save_best_hyper_params, save_study_plots
+
 
 @pytest.mark.slow
 def test_objective(dataloader, frcnn_model, hp_conf):

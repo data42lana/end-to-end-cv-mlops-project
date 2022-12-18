@@ -1,18 +1,18 @@
 """This module contains a class and functions to create an image dataloader with(out) transformations."""
 
 import random
-from pathlib import Path
 
+import albumentations as A
+import cv2
 import numpy as np
 import pandas as pd
-import cv2
-import albumentations as A # Image Augmentation
-import torch # PyTorch
-from torch.utils.data import Dataset, Subset, DataLoader
-from torchvision.ops import box_convert
+import torch
 import torchvision.transforms as T
+from torch.utils.data import DataLoader, Dataset, Subset
+from torchvision.ops import box_convert
 
-from utils import stratified_group_train_test_split, collate_batch
+from utils import collate_batch, stratified_group_train_test_split
+
 
 # Set partial reproducibility
 SEED = 0

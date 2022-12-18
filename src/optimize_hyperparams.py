@@ -1,18 +1,19 @@
 """This module implements automatic hyperparameter optimization with Optuna."""
 
+import logging
 import random
 from pathlib import Path
-import logging
 
-import yaml
 import numpy as np
-import optuna # Hyperparameter Optimization
-import torch # PyTorch
+import optuna
+import torch
+import yaml
 
 from image_dataloader import create_dataloaders
 from object_detection_model import faster_rcnn_mob_model_for_n_classes
-from train_inference_fns import train_one_epoch, eval_one_epoch
-from utils import get_device, get_config_yml
+from train_inference_fns import eval_one_epoch, train_one_epoch
+from utils import get_config_yml, get_device
+
 
 # Set partial reproducibility
 SEED = 0

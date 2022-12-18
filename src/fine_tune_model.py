@@ -1,20 +1,21 @@
 """This module implements fine-tuning of an object detection model."""
 
 import gc
+import logging
 import random
 from pathlib import Path
-import logging
 
-import yaml
+import mlflow
 import numpy as np
-import mlflow # Experiment Tracking and Model Registry
-import torch # PyTorch
+import torch
 import torchvision
+import yaml
 
-from train_inference_fns import train_one_epoch, eval_one_epoch
-from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from image_dataloader import create_dataloaders
-from utils import save_model_state, draw_bboxes_on_image, get_device, get_config_yml
+from object_detection_model import faster_rcnn_mob_model_for_n_classes
+from train_inference_fns import eval_one_epoch, train_one_epoch
+from utils import draw_bboxes_on_image, get_config_yml, get_device, save_model_state
+
 
 # Set partial reproducibility
 SEED = 0

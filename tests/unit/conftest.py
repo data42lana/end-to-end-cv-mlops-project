@@ -1,14 +1,15 @@
 from pathlib import Path
 
-import pytest
-import pandas as pd
 import cv2
-import yaml
 import optuna
+import pandas as pd
+import pytest
+import yaml
 from torchvision.ops import box_convert
 
 from src.image_dataloader import ImageBBoxDataset, create_dataloaders
 from src.object_detection_model import faster_rcnn_mob_model_for_n_classes
+
 
 @pytest.fixture(scope='package')
 def imgs_path():
