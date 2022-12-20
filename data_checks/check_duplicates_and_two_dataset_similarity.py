@@ -13,16 +13,22 @@ from dch_utils import get_config_yml, get_data_type_arg_parser
 
 def check_two_datasets(ds1, ds2, suite_name, checks):
     """Create a custom validation suite and return its check result.
-    
-    Parameters:
-    ds1 -- a Dataset object
-    ds2 -- a Dataset object
-    checks -- a list containing check objects for creating a custom suite
-    suite_name -- a name for the created custom suite.
+
+    Parameters
+    ----------
+    ds1: Dataset
+        A Dataset object.
+    ds2: Dataset
+        A Dataset object.
+    checks: list
+        A list containing check objects for creating a custom suite.
+    suite_name: str
+        A name for the created custom suite.
     """
     custom_suite = Suite(suite_name, *checks)
     custom_suite_result = custom_suite.run(ds1, ds2)
     return custom_suite_result
+
 
 def check_bbox_data_for_duplicates(bbox_df):
     """Check a bounding box pd.DataFrame for duplicates."""
@@ -31,14 +37,15 @@ def check_bbox_data_for_duplicates(bbox_df):
     check_result = dd_check.run(bbox_ds)
     return check_result
 
-def check_two_datasets_similarity(df1, df2, check_type='train-test', 
+
+def check_two_datasets_similarity(df1, df2, check_type='train-test',
                                   check_new_old_bbox_data=False):
-    """Check similarity of training and test datasets (pd.DataFrames) 
+    """Check similarity of training and test datasets (pd.DataFrames)
     if check_type='train-test' or new and old ones if check_type='new-old'.
     """
-    tt_cat_features=['Source', 'License']
-    ds1, ds2 = [
-        Dataset(df, cat_features=tt_cat_features, index_name='Name') for df in [df1, df2]]
+    tt_cat_features = ['Source', 'License']
+    ds1, ds2 = [Dataset(df, cat_features=tt_cat_features, index_name='Name')
+                for df in [df1, df2]]
 
     ttsm_check = TrainTestSamplesMix().add_condition_duplicates_ratio_less_or_equal(0)
     ttfd_info_check = TrainTestFeatureDrift(ignore_columns=['Name', 'Source', 'License'])
@@ -55,16 +62,18 @@ def check_two_datasets_similarity(df1, df2, check_type='train-test',
         if check_new_old_bbox_data:
             ds1, ds2 = [Dataset(df, cat_features=['label_name']) for df in [df1, df2]]
             check_suite_name = 'New Bbox Dataset Validation Suite'
-            check_suite = [ttsm_check, TrainTestFeatureDrift(ignore_columns=['label_name', 'image_name'])]
+            check_suite = [ttsm_check, TrainTestFeatureDrift(ignore_columns=['label_name',
+                                                                             'image_name'])]
         else:
             check_suite_name = 'New Info Dataset Validation Suite'
 
     else:
         raise ValueError("check_type must be equal 'train-test' or 'new-old'!")
-    
+
     check_suite_result = check_two_datasets(ds1, ds2, check_suite_name, checks=check_suite)
 
     return check_suite_result
+
 
 def check_train_test_author_group_leakage(train_df, test_df):
     """Check training and test pd.DataFrames for author group leakage."""
@@ -73,10 +82,11 @@ def check_train_test_author_group_leakage(train_df, test_df):
 
     ttsm_check = TrainTestSamplesMix().add_condition_duplicates_ratio_less_or_equal(0)
 
-    check_suite_result = check_two_datasets(author_train_ds, author_test_ds, 
-                                            'Train Test Author Group Leakage Suite', 
+    check_suite_result = check_two_datasets(author_train_ds, author_test_ds,
+                                            'Train Test Author Group Leakage Suite',
                                             checks=[ttsm_check])
     return check_suite_result
+
 
 def main(project_path, config, check_data_type, data_check_dir):
     """Check data for duplicates and similarity between two datasets."""
@@ -86,7 +96,7 @@ def main(project_path, config, check_data_type, data_check_dir):
 
     # Get image data paths from configurations
     img_data_paths = config['image_data_paths']
-    
+
     # Track total check status
     checks_passed = []
     check_results = []
@@ -97,15 +107,16 @@ def main(project_path, config, check_data_type, data_check_dir):
     if check_data_type == 'raw':
         # Data Duplicates Check
         bbox_df = pd.read_csv(project_path / img_data_paths['bboxes_csv_file'])
-        data_duplicates_check_result = check_bbox_data_for_duplicates(bbox_df)            
+        data_duplicates_check_result = check_bbox_data_for_duplicates(bbox_df)
         check_results.append(data_duplicates_check_result)
         checks_passed.append(data_duplicates_check_result.passed_conditions())
         fnames.append(f'{check_data_type}_duplicates')
         log_msgs.append("Results of checking for duplicates are saved.")
 
     elif check_data_type == 'prepared':
-        train_path, test_path = [project_path / img_data_paths[csv_file] for csv_file in ['train_csv_file',
-                                                                                          'test_csv_file']]
+        train_path, test_path = [
+            project_path / img_data_paths[csv_file] for csv_file in ['train_csv_file',
+                                                                     'test_csv_file']]
         train_df, test_df = [pd.read_csv(csv_file) for csv_file in [train_path, test_path]]
 
         # Train Test Validation
@@ -116,7 +127,8 @@ def main(project_path, config, check_data_type, data_check_dir):
         log_msgs.append("Train Test validation results are saved.")
 
         # Train Test Author Group Leakage
-        author_group_leakage_check_result = check_train_test_author_group_leakage(train_df, test_df)
+        author_group_leakage_check_result = check_train_test_author_group_leakage(
+            train_df, test_df)
         check_results.append(author_group_leakage_check_result)
         checks_passed.append(author_group_leakage_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_train_test_author_leakage')
@@ -127,10 +139,11 @@ def main(project_path, config, check_data_type, data_check_dir):
 
         # New Info Dataset Check
         info_path, new_info_path = [
-            project_path / data_path['info_csv_file'] for data_path in [img_data_paths, 
+            project_path / data_path['info_csv_file'] for data_path in [img_data_paths,
                                                                         new_img_data_paths]]
-        info_df, new_info_df = [pd.read_csv(csv_file) for csv_file in [info_path, new_info_path]]                                                                
-        new_info_ds_check_result = check_two_datasets_similarity(info_df, new_info_df, 
+        info_df, new_info_df = [
+            pd.read_csv(csv_file) for csv_file in [info_path, new_info_path]]
+        new_info_ds_check_result = check_two_datasets_similarity(info_df, new_info_df,
                                                                  check_type='new-old')
         check_results.append(new_info_ds_check_result)
         checks_passed.append(new_info_ds_check_result.passed(fail_if_check_not_run=True))
@@ -139,11 +152,12 @@ def main(project_path, config, check_data_type, data_check_dir):
 
         # New Bbox Dataset Check
         bbox_path, new_bbox_path = [
-            project_path / data_path['bboxes_csv_file'] for data_path in [img_data_paths, 
+            project_path / data_path['bboxes_csv_file'] for data_path in [img_data_paths,
                                                                           new_img_data_paths]]
-        bbox_df, new_bbox_df = [pd.read_csv(csv_file) for csv_file in [bbox_path, new_bbox_path]]   
-        new_bbox_ds_check_result = check_two_datasets_similarity(bbox_df, new_bbox_df, 
-                                                                 check_type='new-old', 
+        bbox_df, new_bbox_df = [
+            pd.read_csv(csv_file) for csv_file in [bbox_path, new_bbox_path]]
+        new_bbox_ds_check_result = check_two_datasets_similarity(bbox_df, new_bbox_df,
+                                                                 check_type='new-old',
                                                                  check_new_old_bbox_data=True)
         check_results.append(new_bbox_ds_check_result)
         checks_passed.append(new_bbox_ds_check_result.passed(fail_if_check_not_run=True))
@@ -151,7 +165,7 @@ def main(project_path, config, check_data_type, data_check_dir):
         log_msgs.append("New bbox dataset check results are saved.")
     else:
         raise ValueError("check_data_type must be one of 'raw', 'prepared', or 'new'!")
-    
+
     # Save check results
     for check_result, fname, log_msg in zip(check_results, fnames, log_msgs):
         fname += '_check_results.html'
@@ -159,6 +173,7 @@ def main(project_path, config, check_data_type, data_check_dir):
         logging.info(log_msg)
 
     return bool(sum(checks_passed))
+
 
 if __name__ == '__main__':
     project_path = Path.cwd()
@@ -174,4 +189,5 @@ if __name__ == '__main__':
                 the {img_data_type} CSV files failed.")
 
     else:
-        logging.warning(f"{img_data_type} data cannot be checked. Choose 'raw', 'prepared', or 'new'.")
+        logging.warning(f"{img_data_type} data cannot be checked. \
+            Choose 'raw', 'prepared', or 'new'.")

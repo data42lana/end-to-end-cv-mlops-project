@@ -32,39 +32,55 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     """Run a new training and evaluation cycle of a model for a fixed number of epochs
     or continue if checkpoint is passed, while saving the best model (or checkpoint).
     
-    Parameters:
-        train_dataloader (Dataloader) -- images, labels and boxes for a training step
-        val_dataloader (Dataloader) -- images, labels and boxes for an evaluation step
-        model (nn.Module) -- an object detection model
-        epochs (int) -- number of training epochs
-        optimizer_name (str) -- an optimizer name from torch.optim
-        optimizer_parameters (dict) -- relevant parameters for the optimizer
-        save_best_model_path (Path) (optional) -- a path to a directory to save the best model 
-            or its checkpoint (default None)
-        lr_scheduler_name (str) (optional) -- a learning rate scheduler name 
-            from torch.optim.lr_scheduler (default None)
-        lr_scheduler_parameters (dict) (optional) -- relevant parameters for 
-            the learning rate scheduler (default None)
-        device (torch.device) -- a type of a device used: torch.device('cpu' or 'cuda') 
-            (default torch.device('cpu'))
-        metric_to_find_best_model (str) (optional) -- a corresponding model score is tracked 
-            to find the best model (default None) 
-        init_metric_value (float) -- an initial metric value to find the best model (default 0.0)
-        eval_iou_thresh (float) -- an iou threshold to determine correct predict boxes (default 0.5)
-        eval_beta (int) -- a beta value for f_beta score (default 1)
-        model_name (str) -- a part of a filename to save (default 'best_model')
-        save_best_ckpt (bool) -- whether to save the best model (default) 
-            or its checkpoint (default False)
-        checkpoint (dict) (optional) -- a checkpoint to continue training (default None)
-        log_metrics (bool) -- whether to log metrics into MLflow (default False)
-        register_best_log_model (bool) -- whether to log and register the best model 
-            into MLflow (default False)
-        reg_model_name -- a model registration name (default 'best_model')
-        save_random_best_model_output_path (optional) (Path) -- a path to a directory to save 
-            a random image with drawn the best model prediction boxes and scores on it (default None).
+    Parameters
+    ----------
+    train_dataloader: Dataloader
+        Images, labels and boxes for a training step.
+    val_dataloader: Dataloader
+        Images, labels and boxes for an evaluation step.
+    model: nn.Module
+        An object detection model.
+    epochs: int
+        Number of training epochs.
+    optimizer_name: str
+        An optimizer name from torch.optim.
+    optimizer_parameters: dict
+        Relevant parameters for the optimizer.
+    save_best_model_path: Path, optional
+        A path to a directory to save the best model or its checkpoint (default None).
+    lr_scheduler_name: str, optional
+        A learning rate scheduler name from torch.optim.lr_scheduler (default None).
+    lr_scheduler_parameters: dict, optional
+        Relevant parameters for the learning rate scheduler (default None).
+    device: torch.device
+        A type of a device used: torch.device('cpu' or 'cuda') (default torch.device('cpu')).
+    metric_to_find_best_model: str, optional
+        A corresponding model score is tracked to find the best model (default None). 
+    init_metric_value: float
+        An initial metric value to find the best model (default 0.0).
+    eval_iou_thresh: float
+        An iou threshold to determine correct predict boxes (default 0.5).
+    eval_beta: int
+        A beta value for f_beta score (default 1).
+    model_name: str
+        A part of a filename to save (default 'best_model').
+    save_best_ckpt: bool
+        Whether to save the best model (default) or its checkpoint (default False).
+    checkpoint: dict, optional
+        A checkpoint to continue training (default None).
+    log_metrics: bool
+        Whether to log metrics into MLflow (default False).
+    register_best_log_model: bool
+        Whether to log and register the best model into MLflow (default False).
+    reg_model_name: str
+        A model registration name (default 'best_model').
+    save_random_best_model_output_path: Path, optional
+        A path to a directory to save a random image with drawn 
+        the best model prediction boxes and scores on it (default None).
 
-    Return:
-        a dictionary of training and evaluation results.
+    Return
+    ------
+        A dictionary of training and evaluation results.
     """ 
     logging.info(f"Device: {device}") 
     start_epoch = 0
