@@ -26,7 +26,8 @@ def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
 
 
 def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passed_message=''):
-    """Return a dictionary of the validation status with indices with incorrect values, if any.
+    """Return a dictionary of the validation status with indices with incorrect values,
+    if any.
 
     Parameters
     -----------
@@ -105,8 +106,8 @@ def main(project_path, config, check_data_type, data_check_dir):
 
     # Check the correctness of image parameters
     uniq_img_param_df = (img_bbox_df[['image_name', 'image_width', 'image_height']]
-                             .groupby('image_name', group_keys=True)
-                             .nunique())
+                             .groupby('image_name', group_keys=True)  # noqa: E127
+                             .nunique())  # noqa: E127
 
     for img_param in ('image_width', 'image_height'):
         validation_results["Image Parameter Correctness Check: "

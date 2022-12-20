@@ -1,13 +1,22 @@
 [flake8]
 max-line-length = 88
 max-doc-length = 88
-# ignore =
 extend-ignore = E501
-# select = 
-extend-select = E121,E123,E126,E226,E24,E704,W503,W504,B950
-extend-exclude = .dvc,.pytest_cache,.vscode,configs,data,env,great_expectations,info,mlruns,notebooks,.ipynb_checkpoints,pyttmp,tmp
+extend-select = B950
+extend-exclude = 
+    .dvc,
+    .pytest_cache,
+    .vscode,
+    data,
+    env,
+    great_expectations,
+    info,
+    mlruns,
+    notebooks,
+    .ipynb_checkpoints,
+    pyttmp,
+    tmp
 statistics = True
 count = True
-max-complexity = 10
-# enable-extensions =
+max-complexity = 15
 require-plugins = flake8-bugbear

@@ -1,4 +1,4 @@
-""""This module checks data for duplicates and similarity between two datasets."""
+"""This module checks data for duplicates and similarity between two datasets."""
 
 import logging
 from pathlib import Path
@@ -53,8 +53,8 @@ def check_two_datasets_similarity(df1, df2, check_type='train-test',
 
     if check_type == 'train-test':
         dsc_check = (DatasetsSizeComparison()
-                        .add_condition_test_train_size_ratio_greater_than(0.25)
-                        .add_condition_train_dataset_greater_or_equal_test())
+                        .add_condition_test_train_size_ratio_greater_than(0.25)  # noqa: E127
+                        .add_condition_train_dataset_greater_or_equal_test())  # noqa: E127
         check_suite_name = 'Train Test Validation Suite'
         check_suite = [dsc_check] + check_suite
     elif check_type == 'new-old':

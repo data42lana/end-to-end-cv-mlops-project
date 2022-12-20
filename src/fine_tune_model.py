@@ -23,15 +23,17 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
-def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, optimizer_parameters,
-              save_best_model_path=None, lr_scheduler_name=None, lr_scheduler_parameters=None, 
-              device=torch.device('cpu'), metric_to_find_best_model=None, 
-              init_metric_value=0.0, eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', 
-              save_best_ckpt=False, checkpoint=None, log_metrics=False, register_best_log_model=False, 
+
+def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
+              optimizer_parameters, save_best_model_path=None, lr_scheduler_name=None,
+              lr_scheduler_parameters=None, device=torch.device('cpu'),  # noqa: B008
+              metric_to_find_best_model=None, init_metric_value=0.0,
+              eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', save_best_ckpt=False,
+              checkpoint=None, log_metrics=False, register_best_log_model=False,
               reg_model_name='best_model', save_random_best_model_output_path=None):
     """Run a new training and evaluation cycle of a model for a fixed number of epochs
     or continue if checkpoint is passed, while saving the best model (or checkpoint).
-    
+
     Parameters
     ----------
     train_dataloader: Dataloader
@@ -52,10 +54,10 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         A learning rate scheduler name from torch.optim.lr_scheduler (default None).
     lr_scheduler_parameters: dict, optional
         Relevant parameters for the learning rate scheduler (default None).
-    device: torch.device
-        A type of a device used: torch.device('cpu' or 'cuda') (default torch.device('cpu')).
+    device: torch.device('cpu'|'cuda')
+        A type of a device used (default torch.device('cpu')).
     metric_to_find_best_model: str, optional
-        A corresponding model score is tracked to find the best model (default None). 
+        A corresponding model score is tracked to find the best model (default None).
     init_metric_value: float
         An initial metric value to find the best model (default 0.0).
     eval_iou_thresh: float
@@ -75,14 +77,14 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     reg_model_name: str
         A model registration name (default 'best_model').
     save_random_best_model_output_path: Path, optional
-        A path to a directory to save a random image with drawn 
+        A path to a directory to save a random image with drawn
         the best model prediction boxes and scores on it (default None).
 
     Return
     ------
         A dictionary of training and evaluation results.
-    """ 
-    logging.info(f"Device: {device}") 
+    """
+    logging.info(f"Device: {device}")
     start_epoch = 0
     best_epoch_score = init_metric_value
     lr_scheduler = None
@@ -95,55 +97,57 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
         if lr_scheduler_parameters is None:
             lr_scheduler_parameters = {}
         # Construct a learning rate scheduler
-        lr_scheduler = getattr(torch.optim.lr_scheduler, lr_scheduler_name)(optimizer, 
+        lr_scheduler = getattr(torch.optim.lr_scheduler, lr_scheduler_name)(optimizer,
                                                                             **lr_scheduler_parameters)
-    
+
     if checkpoint is not None:
         # Get state parameters from the checkpoint
         model.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         start_epoch = checkpoint['epoch']
-        best_epoch_score = checkpoint[metric_to_find_best_model + '_score'] if metric_to_find_best_model else 0.0
+        best_epoch_score = (checkpoint[metric_to_find_best_model + '_score']
+                            if metric_to_find_best_model else 0.0)
 
     model.to(device)
 
-    for epoch in range(1, epochs+1):
+    for epoch in range(1, epochs + 1):
         current_epoch = start_epoch + epoch
         logging.info(f"EPOCH [{current_epoch}/{start_epoch + epochs}]: ")
 
         # Training step
         logging.info("TRAIN:")
         train_res = train_one_epoch(train_dataloader, model, optimizer, device)
-        logging.info("  epoch loss: {0}:\n    {1}".format(train_res['epoch_loss'], 
+        logging.info("  epoch loss: {0}:\n    {1}".format(train_res['epoch_loss'],
                                                           train_res['epoch_dict_losses']))
 
         if lr_scheduler is not None:
-            lr_scheduler.step()        
-        
+            lr_scheduler.step()
+
         # Evaluation step
         logging.info("EVAL:")
         eval_res = eval_one_epoch(val_dataloader, model, eval_iou_thresh, eval_beta, device)
-        logging.info("\n  epoch scores: {}".format(eval_res['epoch_scores'])) 
-        
+        logging.info("\n  epoch scores: {}".format(eval_res['epoch_scores']))
+
         if metric_to_find_best_model:
             # Save a model with the maximum epoch score
             if best_epoch_score < eval_res['epoch_scores'][metric_to_find_best_model]:
                 best_epoch_score = eval_res['epoch_scores'][metric_to_find_best_model]
                 ckpt_dict = None
                 filename = model_name + f'_best_{metric_to_find_best_model}_{eval_beta}_weights'
-                
+
                 if register_best_log_model:
                     # Log and register the best model into MLflow
-                    mlflow.pytorch.log_model(model, filename, registered_model_name=reg_model_name, 
-                                             await_registration_for=10, 
-                                             pip_requirements=[f'torch={torch.__version__}', 
+                    mlflow.pytorch.log_model(model, filename,
+                                             registered_model_name=reg_model_name,
+                                             await_registration_for=10,
+                                             pip_requirements=[f'torch={torch.__version__}',
                                                                f'torchvision={torchvision.__version__}'])
                 if save_best_ckpt:
-                    ckpt_dict = {'epoch': current_epoch,            
+                    ckpt_dict = {'epoch': current_epoch,
                                  'optimizer_state_dict': optimizer.state_dict(),
                                  metric_to_find_best_model + '_score': best_epoch_score}
                     filename += '_ckpt'
-                    
+
                 if save_best_model_path is not None:
                     save_model_state(model, save_best_model_path / f'{filename}.pt', ckpt_dict)
                     logging.info("Model is saved. --- The best {} score: {}".format(
@@ -152,17 +156,20 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
                 with torch.no_grad():
                     if save_random_best_model_output_path:
                         sample_imgs, _ = next(iter(val_dataloader))
-                        sample_idx = random.randint(0, len(sample_imgs)-1)
+                        sample_idx = random.randint(0, len(sample_imgs) - 1)
                         preds = eval_res['results'][sample_idx]
-                        save_img_out_path = save_random_best_model_output_path / f'val_outs/epoch_{current_epoch}.jpg'
-                        draw_bboxes_on_image(sample_imgs[sample_idx], preds['boxes'], preds['scores'], 
+                        save_img_out_path = (save_random_best_model_output_path /
+                                             f'val_outs/epoch_{current_epoch}.jpg')
+                        draw_bboxes_on_image(sample_imgs[sample_idx],
+                                             preds['boxes'], preds['scores'],
                                              save_img_out_path=save_img_out_path)
                         del sample_imgs
                         del preds
-                                    
-            if log_metrics: 
-                # Log losses and scores into MLflow       
-                mlflow.log_metric('train_epoch_loss', train_res['epoch_loss'], step=current_epoch)
+
+            if log_metrics:
+                # Log losses and scores into MLflow
+                mlflow.log_metric('train_epoch_loss', train_res['epoch_loss'],
+                                  step=current_epoch)
                 mlflow.log_metrics(train_res['epoch_dict_losses'], step=current_epoch)
                 mlflow.log_metrics(eval_res['epoch_scores'], step=current_epoch)
                 logging.info("Metrics are logged.")
@@ -178,6 +185,7 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name, o
     return {'train_res': train_res,
             'eval_res': eval_res}
 
+
 def main(project_path, config):
     """Perform fine-tuning of an object detection model."""
     logging.basicConfig(level=logging.INFO, filename='app.log',
@@ -189,18 +197,18 @@ def main(project_path, config):
 
     # Get dataloaders
     imgs_path, train_csv_path, bbox_csv_path = [
-        project_path / fpath for fpath in [img_data_paths['images'], 
-                                           img_data_paths['train_csv_file'], 
+        project_path / fpath for fpath in [img_data_paths['images'],
+                                           img_data_paths['train_csv_file'],
                                            img_data_paths['bboxes_csv_file']]]
     batch_size = config['image_dataset_conf']['batch_size']
-    train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, batch_size, 
-                                          train_test_split_data=True, transform_train_imgs=True)   
+    train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, batch_size,
+                                          train_test_split_data=True, transform_train_imgs=True)
 
     # Get a modified model
     model_params = config['object_detection_model']['load_parameters']
-    num_classes = config['object_detection_model']['number_classes'] 
+    num_classes = config['object_detection_model']['number_classes']
     faster_rcnn_mob_model = faster_rcnn_mob_model_for_n_classes(num_classes, **model_params)
-    
+
     # Load the best parameters for training if a file with them exists
     best_params_dir = config['hyperparameter_optimization']['save_best_parameters_path']
     best_params = None
@@ -208,7 +216,7 @@ def main(project_path, config):
         with open(project_path / best_params_dir) as f:
             best_params = yaml.safe_load(f)
         logging.info(f"The best training parameters are loaded: \n{best_params}")
-   
+
     # Set training parameters
     train_params = {}
     for param in ['optimizer', 'lr_scheduler']:
@@ -217,13 +225,14 @@ def main(project_path, config):
             train_params['_'.join([param, k])] = val
 
     tracking_metric = TRAIN_EVAL_PARAMS['metric_to_find_best']
-    init_metric_value = best_params[tracking_metric] if tracking_metric in best_params else TRAIN_EVAL_PARAMS['initial_metric_value']
+    init_metric_value = (best_params[tracking_metric] if tracking_metric in best_params
+                         else TRAIN_EVAL_PARAMS['initial_metric_value'])
 
-    add_train_params = {'epochs': TRAIN_EVAL_PARAMS['epochs'], 
-                        'eval_iou_thresh': TRAIN_EVAL_PARAMS['evaluation_iou_threshold'], 
+    add_train_params = {'epochs': TRAIN_EVAL_PARAMS['epochs'],
+                        'eval_iou_thresh': TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
                         'eval_beta': TRAIN_EVAL_PARAMS['evaluation_beta'],
                         'device': device}
-    
+
     checkpoint = None
     save_dir = config['object_detection_model']['save_dir']
     if TRAIN_EVAL_PARAMS['checkpoint']:
@@ -241,23 +250,24 @@ def main(project_path, config):
 
     if ftm_exp is not None:
         ftm_exp_id = ftm_exp.experiment_id
-    else:  
+    else:
         ftm_exp_id = mlflow.create_experiment(mlflow_conf['experiment_name'])
 
-    with mlflow.start_run(run_name=mlflow_conf['run_name'], 
-        experiment_id=ftm_exp_id) as mlft_run:
+    with mlflow.start_run(run_name=mlflow_conf['run_name'],
+                          experiment_id=ftm_exp_id):
 
         mlflow.set_tags({'training_process': 'fine_tuning',
                          'model_name': config['object_detection_model']['name'],
                          'tools.training': 'PyTorch'})
 
         # Run model training cycles
-        _ = run_train(train_dl, val_dl, faster_rcnn_mob_model, 
+        _ = run_train(train_dl, val_dl, faster_rcnn_mob_model,
                       save_best_model_path=save_best_model_path,
-                      metric_to_find_best_model=tracking_metric, init_metric_value=init_metric_value, 
-                      log_metrics=TRAIN_EVAL_PARAMS['log_metrics'], 
-                      save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'], 
-                      model_name=config['object_detection_model']['name'], 
+                      metric_to_find_best_model=tracking_metric,
+                      init_metric_value=init_metric_value,
+                      log_metrics=TRAIN_EVAL_PARAMS['log_metrics'],
+                      save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'],
+                      model_name=config['object_detection_model']['name'],
                       register_best_log_model=TRAIN_EVAL_PARAMS['register_best_log_model'],
                       reg_model_name=config['object_detection_model']['registered_name'],
                       save_random_best_model_output_path=save_output_path,
@@ -270,14 +280,15 @@ def main(project_path, config):
                            'num_classes': num_classes})
         mlflow.log_params(add_train_params)
 
-        for params in train_params: 
+        for params in train_params:
             if params in ['optimizer_parameters', 'lr_scheduler_parameters']:
                 if train_params[params] is not None:
-                    mlflow.log_params(train_params[params]) 
+                    mlflow.log_params(train_params[params])
             else:
                 mlflow.log_param(params, train_params[params])
-        
+
         logging.info("Parameters are logged.")
+
 
 if __name__ == '__main__':
     project_path = Path.cwd()

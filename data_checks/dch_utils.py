@@ -13,6 +13,7 @@ def get_config_yml():
         config = yaml.safe_load(conf)
     return config
 
+
 def get_data_type_arg_parser():
     """Return an argument parser object with a type of data."""
     parser = argparse.ArgumentParser(
