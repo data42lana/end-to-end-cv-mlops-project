@@ -16,21 +16,21 @@ def test_get_image_transforms():
 class TestImageBBoxDataset:
 
     def test_imagebboxdataset_is_indexed(self, train_csv_path, imgs_path, bbox_path):
-        idx = random.randint(0, 2)
+        idx = random.randint(0, 2)  # nosec
         ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path)
         assert torch.is_tensor(ds[idx][0])
         assert torch.is_tensor(ds[idx][1]['boxes'])
         assert torch.is_tensor(ds[idx][1]['labels'])
 
     def test_imagebboxdataset_with_img_transform(self, train_csv_path, imgs_path, bbox_path):
-        idx = random.randint(0, 2)
+        idx = random.randint(0, 2)  # nosec
         ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path)
         dstr = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path,
                                 img_transforms=get_image_transforms('coco'))
         assert not torch.equal(ds[idx][0], dstr[idx][0])
 
     def test_imagebboxdataset_with_bbox_transform(self, train_csv_path, imgs_path, bbox_path):
-        idx = random.randint(0, 2)
+        idx = random.randint(0, 2)  # nosec
         ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path)
         dstr = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path,
                                 bbox_transform=(box_convert, 'xywh', 'xyxy'))

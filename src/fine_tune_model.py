@@ -156,9 +156,9 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
                 with torch.no_grad():
                     if save_random_best_model_output_path:
                         sample_imgs, _ = next(iter(val_dataloader))
-                        sample_idx = random.randint(0, len(sample_imgs) - 1)
+                        sample_idx = random.randint(0, len(sample_imgs) - 1)  # nosec
                         preds = eval_res['results'][sample_idx]
-                        save_img_out_path = (save_random_best_model_output_path /
+                        save_img_out_path = (save_random_best_model_output_path /  # noqa: W504
                                              f'val_outs/epoch_{current_epoch}.jpg')
                         draw_bboxes_on_image(sample_imgs[sample_idx],
                                              preds['boxes'], preds['scores'],

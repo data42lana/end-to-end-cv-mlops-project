@@ -57,8 +57,7 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passe
 
 def main(project_path, config, check_data_type, data_check_dir):
     """Check CSV files and match them with images."""
-    (project_path / 'logs').mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, filename='logs/integrity_checks_log.txt',
+    logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 
     # Get image data paths from configurations

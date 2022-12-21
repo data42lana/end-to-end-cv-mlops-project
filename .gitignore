@@ -5,6 +5,7 @@ __pycache__/
 env/
 data_check_results/
 info/
+reports/
 tmp/
 pyttmp/
 app.log

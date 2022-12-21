@@ -1,9 +1,9 @@
 image_data_paths:
-    images: data_samples/sample_imgs
-    info_csv_file: data_samples/sample_img_info.csv
-    bboxes_csv_file: data_samples/sample_bboxes.csv
-    train_csv_file: data_samples/sample_train_val.csv
-    test_csv_file: data_samples/sample_val.csv
+    images: datas/sample_imgs
+    info_csv_file: datas/sample_img_info.csv
+    bboxes_csv_file: datas/sample_bboxes.csv
+    train_csv_file: datas/sample_train_val.csv
+    test_csv_file: datas/sample_val.csv
 
 image_dataset_conf:
    box_format: coco
@@ -20,7 +20,7 @@ object_detection_model:
         box_nms_thresh: 0.4
         box_detections_per_img: 120
         box_positive_fraction: 0.4
-    save_dir: tmp
+    save_dir: res
 
 model_training_inference_conf:
     device_cuda: Off
@@ -38,7 +38,7 @@ model_training_inference_conf:
     log_metrics: On
     save_best_ckpt: Off
     register_best_log_model: On
-    save_random_best_model_output_dir: 'tmp'
+    save_random_best_model_output_dir: res
     checkpoint: null
 
 mlflow_tracking_conf:
@@ -65,5 +65,5 @@ hyperparameter_optimization:
             StepLR:
                 step_size: [{low: 1, high: 3}, int]
             None: null
-    save_best_parameters_path: tmp/best_params.yaml
-    save_study_dir: tmp
+    save_best_parameters_path: res/best_params.yaml
+    save_study_dir: res

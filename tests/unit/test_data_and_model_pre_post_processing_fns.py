@@ -27,7 +27,7 @@ def test_update_registered_model_version_stages(tmp_path):
     mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/tmlruns.db')
     client = mlflow.MlflowClient()
     client.create_registered_model(reg_model_name)
-    for i in range(3):  # noqa: B007
+    for _ in range(3):
         _ = client.create_model_version(reg_model_name, '', await_creation_for=5)
     client.transition_model_version_stage(reg_model_name, version='2', stage='Production')
 

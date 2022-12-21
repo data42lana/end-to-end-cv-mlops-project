@@ -2,9 +2,10 @@
 max-line-length = 88
 max-doc-length = 88
 extend-ignore = E501
-extend-select = B950
+extend-select = E123,E126,E24,E704,W504,B950
 extend-exclude = 
     .dvc,
+    .ipynb_checkpoints,
     .pytest_cache,
     .vscode,
     data,
@@ -12,9 +13,9 @@ extend-exclude =
     great_expectations,
     info,
     mlruns,
-    notebooks,
-    .ipynb_checkpoints,
+    notebooks,    
     pyttmp,
+    reports,
     tmp
 statistics = True
 count = True

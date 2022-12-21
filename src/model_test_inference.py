@@ -57,7 +57,7 @@ def main(project_path, config, show_random_predict=False):
         # Save a random test image sample with boxes and scores predictions
         test_imgs_df = pd.read_csv(project_path / config['image_data_paths']['test_csv_file'],
                                    usecols=['Name'])
-        test_sample_idx = random.randint(0, test_imgs_df.size - 1)
+        test_sample_idx = random.randint(0, test_imgs_df.size - 1)  # nosec
         img_path = project_path / config['image_data_paths']['images']
         test_sample_img = cv2.cvtColor(
             cv2.imread(str(img_path / test_imgs_df.iloc[test_sample_idx].Name)),
