@@ -23,7 +23,7 @@ def example_config():
 
 
 @pytest.fixture
-def data_config():
+def data_config(example_config):
     conf = {'image_data_paths':
             {'info_csv_file': example_config['image_data_paths']['info_csv_file'],
              'bboxes_csv_file': example_config['image_data_paths']['bboxes_csv_file'],
