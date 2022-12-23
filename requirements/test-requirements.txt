@@ -5,6 +5,7 @@ deepchecks==0.9.0
 dvc==2.20.1
 flake8==6.0.0
 flake8-bugbear==22.12.6
+flake8-docstrings==1.6.0
 isort==5.11.3
 kaleido==0.2.1
 matplotlib==3.5.3

@@ -65,7 +65,7 @@ def train_one_epoch(dataloader, model, optimizer, device=torch.device('cpu')):  
         images = [img.to(device) for img in images]
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-        # Сompute a model batch losses
+        # Compute a model batch losses
         batch_dict_losses = model(images, targets)
         batch_model_loss = sum([loss for loss in batch_dict_losses.values()])
 
@@ -115,7 +115,7 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1,
         outputs = model(images)
         results += outputs
 
-        # Сompute a model batch statistics
+        # Compute a model batch statistics
         batch_model_scores = precision_recall_fbeta_scores(
             targets, outputs, iou_thresh=iou_thresh, beta=beta)
 

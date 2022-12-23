@@ -1,5 +1,5 @@
 """This module contains a function to load and modify a pre-trained Faster R-CNN
-   (MobileNet) model.
+(MobileNet) model.
 """
 
 from torchvision.models.detection import fasterrcnn_mobilenet_v3_large_fpn

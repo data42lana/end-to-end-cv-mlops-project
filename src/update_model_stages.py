@@ -38,7 +38,8 @@ def update_registered_model_version_stages(mlclient, registered_model_name):
 
 def main(config):
     """Update version stages for a registered model specified
-    in a configuration file."""
+    in a configuration file.
+    """
     logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 

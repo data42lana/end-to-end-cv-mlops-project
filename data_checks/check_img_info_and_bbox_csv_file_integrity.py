@@ -25,12 +25,13 @@ def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
         return {'FAILED': not_match}
 
 
-def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign, passed_message=''):
-    """Return a dictionary of the validation status with indices with incorrect values,
-    if any.
+def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
+                                               passed_message=''):
+    """Return a dictionary of the validation status with indices
+    with incorrect values, if any.
 
     Parameters
-    -----------
+    ----------
     s1: pd.Series
         An object to be compared.
     other: pd.Series | scalar value

@@ -1,8 +1,11 @@
 [flake8]
 max-line-length = 88
 max-doc-length = 88
-extend-ignore = E501
+extend-ignore = E501,D105,D107,D203,D205,D213,D400,D404,D413,D415
 extend-select = E123,E126,E24,E704,W504,B950
+per-file-ignores = 
+    */__init__.py:D
+    tests/*:D
 extend-exclude = 
     .dvc,
     .ipynb_checkpoints,
@@ -20,4 +23,7 @@ extend-exclude =
 statistics = True
 count = True
 max-complexity = 15
-require-plugins = flake8-bugbear
+docstring-convention=all
+require-plugins = 
+    flake8-docstrings
+    flake8-bugbear    

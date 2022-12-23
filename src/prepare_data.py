@@ -21,7 +21,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
     with averages calculated for each group of these images.
 
     Parameters
-    -----------
+    ----------
     df1: pd.DataFrame
         A pd.DataFrame object to expand.
     df2: pd.DataFrame

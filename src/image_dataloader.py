@@ -1,5 +1,5 @@
 """This module contains a class and functions to create an image dataloader
-   with(out) transformations.
+with(out) transformations.
 """
 
 import random
@@ -48,6 +48,7 @@ def get_image_transforms(box_format):
 
 class ImageBBoxDataset(Dataset):
     """A Dataset from CSV to detect objects in images."""
+
     def __init__(self, csv_file_path, img_dir_path, bbox_path,
                  img_transforms=None, bbox_transform=None):
         self.img_dir_path = img_dir_path

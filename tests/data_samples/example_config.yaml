@@ -1,69 +1,69 @@
 image_data_paths:
-    images: datas/sample_imgs
-    info_csv_file: datas/sample_img_info.csv
-    bboxes_csv_file: datas/sample_bboxes.csv
-    train_csv_file: datas/sample_train_val.csv
-    test_csv_file: datas/sample_val.csv
+  images: datas/sample_imgs
+  info_csv_file: datas/sample_img_info.csv
+  bboxes_csv_file: datas/sample_bboxes.csv
+  train_csv_file: datas/sample_train_val.csv
+  test_csv_file: datas/sample_val.csv
 
 image_dataset_conf:
-   box_format: coco
-   batch_size: 2
+  box_format: coco
+  batch_size: 2
 
 object_detection_model:
-    name: tfrcnn
-    registered_name: best_tfrcnn
-    number_classes: 2
-    load_parameters:
-        trainable_backbone_layers: 1
-        rpn_score_thresh: 0.4
-        box_score_thresh: 0.5
-        box_nms_thresh: 0.4
-        box_detections_per_img: 120
-        box_positive_fraction: 0.4
-    save_dir: res
+  name: tfrcnn
+  registered_name: best_tfrcnn
+  number_classes: 2
+  load_parameters:
+    trainable_backbone_layers: 1
+    rpn_score_thresh: 0.4
+    box_score_thresh: 0.5
+    box_nms_thresh: 0.4
+    box_detections_per_img: 120
+    box_positive_fraction: 0.4
+  save_dir: res
 
 model_training_inference_conf:
-    device_cuda: Off
-    metric_to_find_best: f_beta
-    initial_metric_value: 0.5
-    evaluation_iou_threshold: 0.5
-    evaluation_beta: 1
-    optimizer: 
-        name: SGD
-        parameters: {lr: 0.001}
-    lr_sheduler:
-        name: null
-        parameters: null
-    epochs: 3 
-    log_metrics: On
-    save_best_ckpt: Off
-    register_best_log_model: On
-    save_random_best_model_output_dir: res
-    checkpoint: null
+  device_cuda: Off
+  metric_to_find_best: f_beta
+  initial_metric_value: 0.5
+  evaluation_iou_threshold: 0.5
+  evaluation_beta: 1
+  optimizer: 
+    name: SGD
+    parameters: {lr: 0.001}
+  lr_sheduler:
+    name: null
+    parameters: null
+  epochs: 3 
+  log_metrics: On
+  save_best_ckpt: Off
+  register_best_log_model: On
+  save_random_best_model_output_dir: res
+  checkpoint: null
 
 mlflow_tracking_conf:
-    run_name: test-fine-tuning
-    experiment_name: TestFTModel
+  run_name: test-fine-tuning
+  experiment_name: TestFTModel
 
 hyperparameter_optimization:
-    study_name: tfrcnn_study
-    metric: f_beta
-    sampler:
-        name: RandomSampler
-        parameters: {seed: 0}
-    pruner: 
-        name: null
-        parameters: null
-    epochs: 3
-    n_trials: 3
-    timeout: 180
-    hyperparameters:
-        optimizers: 
-            SGD: 
-                lr: [{low: 0.001, high: 0.01, log: True}, float]
-        lr_schedulers: 
-            StepLR:
-                step_size: [{low: 1, high: 3}, int]
-            None: null
-    save_best_parameters_path: res/best_params.yaml
-    save_study_dir: res
+  study_name: tfrcnn_study
+  metric: f_beta
+  sampler:
+    name: RandomSampler
+    parameters: {seed: 0}
+  pruner: 
+    name: null
+    parameters: null
+  epochs: 3
+  n_trials: 3
+  timeout: 180
+  hyperparameters:
+    optimizers: 
+      SGD: 
+        lr: [{low: 0.001, high: 0.01, log: True}, float]
+    lr_schedulers: 
+      StepLR:
+        step_size: [{low: 1, high: 3}, int]
+      None: null
+  save_best_parameters_path: res/best_params.yaml
+  save_study_dir: res

@@ -35,7 +35,7 @@ class Objective:
         self.eval_beta = eval_beta
         self.device = device
 
-    def __call__(self, trial):
+    def __call__(self, trial):  # noqa: D102
 
         trials_suggest = {'cat': trial.suggest_categorical,
                           'int': trial.suggest_int,
