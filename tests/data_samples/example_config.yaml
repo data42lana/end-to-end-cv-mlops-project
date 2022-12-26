@@ -23,21 +23,21 @@ object_detection_model:
   save_dir: res
 
 model_training_inference_conf:
-  device_cuda: Off
+  device_cuda: false
   metric_to_find_best: f_beta
   initial_metric_value: 0.5
   evaluation_iou_threshold: 0.5
   evaluation_beta: 1
-  optimizer: 
+  optimizer:
     name: SGD
     parameters: {lr: 0.001}
   lr_sheduler:
     name: null
     parameters: null
-  epochs: 3 
-  log_metrics: On
-  save_best_ckpt: Off
-  register_best_log_model: On
+  epochs: 3
+  log_metrics: true
+  save_best_ckpt: false
+  register_best_log_model: true
   save_random_best_model_output_dir: res
   checkpoint: null
 
@@ -51,17 +51,17 @@ hyperparameter_optimization:
   sampler:
     name: RandomSampler
     parameters: {seed: 0}
-  pruner: 
+  pruner:
     name: null
     parameters: null
   epochs: 3
   n_trials: 3
   timeout: 180
   hyperparameters:
-    optimizers: 
-      SGD: 
-        lr: [{low: 0.001, high: 0.01, log: True}, float]
-    lr_schedulers: 
+    optimizers:
+      SGD:
+        lr: [{low: 0.001, high: 0.01, log: true}, float]
+    lr_schedulers:
       StepLR:
         step_size: [{low: 1, high: 3}, int]
       None: null

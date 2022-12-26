@@ -1,0 +1,33 @@
+ignore-from-file: [.gitignore, .yamlignore]
+
+extends: default
+
+rules:
+  braces:
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+  brackets:
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+  document-start: disable
+  empty-lines:
+    level: warning
+    max: 1
+  empty-values: enable
+  float-values:
+    # level: warning
+    # forbid-scientific-notation: true
+    require-numeral-before-decimal: true
+  indentation:
+    level: warning
+    spaces: 2
+  line-length:
+    allow-non-breakable-inline-mappings: true
+  new-lines:
+    type: platform
+  quoted-strings:
+    quote-type: single
+    required: only-when-needed
+  truthy:
+    level: error
+    check-keys: false
