@@ -15,8 +15,7 @@ rules:
     max: 1
   empty-values: enable
   float-values:
-    # level: warning
-    # forbid-scientific-notation: true
+    forbid-scientific-notation: true
     require-numeral-before-decimal: true
   indentation:
     level: warning

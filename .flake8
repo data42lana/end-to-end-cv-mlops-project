@@ -3,10 +3,10 @@ max-line-length = 88
 max-doc-length = 88
 extend-ignore = E501,D105,D107,D203,D205,D213,D400,D404,D413,D415
 extend-select = E123,E126,E24,E704,W504,B950
-per-file-ignores = 
+per-file-ignores =
     */__init__.py:D
     tests/*:D
-extend-exclude = 
+extend-exclude =
     .dvc,
     .ipynb_checkpoints,
     .pytest_cache,
@@ -16,7 +16,7 @@ extend-exclude =
     great_expectations,
     info,
     mlruns,
-    notebooks,    
+    notebooks,
     pyttmp,
     reports,
     tmp
@@ -24,6 +24,6 @@ statistics = True
 count = True
 max-complexity = 15
 docstring-convention=all
-require-plugins = 
+require-plugins =
     flake8-docstrings
-    flake8-bugbear    
+    flake8-bugbear

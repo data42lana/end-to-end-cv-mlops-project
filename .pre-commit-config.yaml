@@ -1,0 +1,73 @@
+default_install_hook_types: [pre-commit, post-checkout]
+default_language_version:
+  python: python3
+exclude: ^(great_expectations|mlruns)/
+
+repos:
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+        files: ''
+      - id: check-ast
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: detect-private-key
+        files: ''
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+        files: ^requirements/
+      - id: trailing-whitespace
+      - id: name-tests-test
+        args: [--pytest-test-first]
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.28.0
+    hooks:
+      - id: yamllint
+        args: [--format, parsable, --strict, --config-file=.yamllint]
+
+  - repo: https://github.com/iterative/dvc
+    rev: 2.38.1
+    hooks:
+      - id: dvc-pre-commit
+        stages:
+          - commit
+      - id: dvc-post-checkout
+        stages:
+          - post-checkout
+        always_run: true
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.11.4
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: [--settings=.isort.cfg]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args: [--config=.flake8]
+        additional_dependencies: [flake8-bugbear, flake8-docstrings]
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
+    hooks:
+      - id: bandit
+        args: [--ini=.bandit, -r]
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+      - id: python-check-blanket-noqa
+      - id: python-no-log-warn
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.0
+    hooks:
+      - id: python-safety-dependencies-check
+        args: [--disable-telemetry]

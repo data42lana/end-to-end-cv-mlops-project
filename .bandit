@@ -1,6 +1,6 @@
 [bandit]
 targets = data_checks,great_expectations,mlruns,notebooks,src
-exclude = great_expectations/uncommitted,notebooks/.ipynb_checkpoints
+exclude = great_expectations/uncommitted,notebooks/.ipynb_checkpoints,tests
 skips = B610,B611,B703
 severity-level=all
 confidence-level=all
