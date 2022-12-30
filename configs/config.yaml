@@ -48,7 +48,7 @@ model_training_inference_conf:
   save_best_ckpt: true
   register_best_log_model: true
   save_random_best_model_output_dir: outputs
-  checkpoint: best_faster_rcnn_mob_f_beta_2_weights_ckpt.pt
+  checkpoint: null
 
 mlflow_tracking_conf:
   run_name: fine-tuning_with_optimized_parameters
