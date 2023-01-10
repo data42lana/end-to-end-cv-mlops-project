@@ -16,6 +16,9 @@ from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train_inference_fns import eval_one_epoch, train_one_epoch
 from utils import draw_bboxes_on_image, get_config_yml, get_device, save_model_state
 
+logging.basicConfig(level=logging.INFO, filename='app.log',
+                    format="[%(levelname)s]: %(message)s")
+
 # Set partial reproducibility
 SEED = 0
 random.seed(SEED)
@@ -188,9 +191,6 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
 
 def main(project_path, config):
     """Perform fine-tuning of an object detection model."""
-    logging.basicConfig(level=logging.INFO, filename='app.log',
-                        format="[%(levelname)s]: %(message)s")
-
     img_data_paths = config['image_data_paths']
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
@@ -223,10 +223,6 @@ def main(project_path, config):
         for k in ['name', 'parameters']:
             val = best_params[param][k] if best_params else TRAIN_EVAL_PARAMS[param][k]
             train_params['_'.join([param, k])] = val
-
-    tracking_metric = TRAIN_EVAL_PARAMS['metric_to_find_best']
-    init_metric_value = (best_params[tracking_metric] if tracking_metric in best_params
-                         else TRAIN_EVAL_PARAMS['initial_metric_value'])
 
     add_train_params = {'epochs': TRAIN_EVAL_PARAMS['epochs'],
                         'eval_iou_thresh': TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
@@ -263,8 +259,7 @@ def main(project_path, config):
         # Run model training cycles
         _ = run_train(train_dl, val_dl, faster_rcnn_mob_model,
                       save_best_model_path=save_best_model_path,
-                      metric_to_find_best_model=tracking_metric,
-                      init_metric_value=init_metric_value,
+                      metric_to_find_best_model=TRAIN_EVAL_PARAMS['metric_to_find_best'],
                       log_metrics=TRAIN_EVAL_PARAMS['log_metrics'],
                       save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'],
                       model_name=config['object_detection_model']['name'],

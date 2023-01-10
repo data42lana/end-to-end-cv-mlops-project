@@ -7,6 +7,9 @@ import pandas as pd
 
 from utils import get_config_yml, stratified_group_train_test_split
 
+logging.basicConfig(level=logging.INFO, filename='app.log',
+                    format="[%(levelname)s]: %(message)s")
+
 # Set reproducibility
 SEED = 0
 
@@ -61,9 +64,6 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
 
 def main(project_path, config):
     """Create training and test CSV data files."""
-    logging.basicConfig(level=logging.INFO, filename='app.log',
-                        format="[%(levelname)s]: %(message)s")
-
     # Get image data paths from configurations
     img_data_paths = config['image_data_paths']
 

@@ -14,6 +14,9 @@ from object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train_inference_fns import eval_one_epoch, train_one_epoch
 from utils import get_config_yml, get_device
 
+logging.basicConfig(level=logging.INFO, filename='app.log',
+                    format="[%(levelname)s]: %(message)s")
+
 # Set partial reproducibility
 SEED = 0
 random.seed(SEED)
@@ -55,9 +58,10 @@ class Objective:
         lr_scheduler_name = trial.suggest_categorical('lr_scheduler',
                                                       list(hyperparams['lr_schedulers']))
         if lr_scheduler_name != 'None':
+            lrs = hyperparams['lr_schedulers'][lr_scheduler_name]
             lr_scheduler_params = {
                 k: trials_suggest[v[1]](k, **v[0])
-                for k, v in hyperparams['lr_schedulers'][lr_scheduler_name].items()}
+                for k, v in lrs.items()} if lrs else {}
             lr_scheduler = getattr(
                 torch.optim.lr_scheduler, lr_scheduler_name)(optimizer, **lr_scheduler_params)
         else:
@@ -91,9 +95,8 @@ def save_best_hyper_params(study, hyper_opt_params_conf, save_path):
     for hp in ['optimizer', 'lr_scheduler']:
         hp_name = study.best_params[hp]
         if hp_name != 'None':
-            hps = {}
-            for k in hp_conf[hp + 's'][study.best_params[hp]]:
-                hps[k] = study.best_params[k]
+            lrs_p = hp_conf[hp + 's'][study.best_params[hp]]
+            hps = {k: study.best_params[k] for k in lrs_p} if lrs_p else {}
         else:
             hp_name = None
             hps = None
@@ -125,9 +128,6 @@ def save_study_plots(study, study_name, save_path):
 
 def main(project_path, config):
     """Run an optimization study."""
-    logging.basicConfig(level=logging.INFO, filename='app.log',
-                        format="[%(levelname)s]: %(message)s")
-
     # Get configurations for a hyperparameter optimization
     img_data_paths = config['image_data_paths']
     batch_size = config['image_dataset_conf']['batch_size']

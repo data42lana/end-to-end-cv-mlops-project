@@ -6,6 +6,9 @@ import mlflow
 
 from utils import get_config_yml
 
+logging.basicConfig(level=logging.INFO, filename='app.log',
+                    format="[%(levelname)s]: %(message)s")
+
 
 def update_registered_model_version_stages(mlclient, registered_model_name):
     """Set a stage to 'Production' for the latest version of a model, and 'Archived'
@@ -40,9 +43,6 @@ def main(config):
     """Update version stages for a registered model specified
     in a configuration file.
     """
-    logging.basicConfig(level=logging.INFO, filename='app.log',
-                        format="[%(levelname)s]: %(message)s")
-
     client = mlflow.MlflowClient()
     update_registered_model_version_stages(client,
                                            config['object_detection_model']['registered_name'])

@@ -14,6 +14,9 @@ from image_dataloader import create_dataloaders
 from train_inference_fns import eval_one_epoch, predict
 from utils import get_config_yml, get_device
 
+logging.basicConfig(level=logging.INFO, filename='app.log',
+                    format="[%(levelname)s]: %(message)s")
+
 # Set partial reproducibility
 SEED = 0
 random.seed(SEED)
@@ -26,9 +29,6 @@ def main(project_path, config, show_random_predict=False):
     """Evaluate an object detection model on test data
     and display a random prediction if show_random_predict is True.
     """
-    logging.basicConfig(level=logging.INFO, filename='app.log',
-                        format="[%(levelname)s]: %(message)s")
-
     img_data_paths = config['image_data_paths']
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
     DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])

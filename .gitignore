@@ -8,6 +8,10 @@ info/
 reports/
 tmp/
 pyttmp/
+.coverage
 app.log
 *.db
-.coverage
+*.pt
+*.pth
+outputs/
+mlruns/
