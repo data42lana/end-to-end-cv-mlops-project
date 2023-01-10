@@ -44,6 +44,7 @@ model_training_inference_conf:
 mlflow_tracking_conf:
   run_name: test-fine-tuning
   experiment_name: TestFTModel
+  metrics_to_plot: [f_beta, train_epoch_loss]
 
 hyperparameter_optimization:
   study_name: tfrcnn_study

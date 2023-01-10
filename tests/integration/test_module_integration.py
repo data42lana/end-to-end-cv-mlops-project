@@ -47,7 +47,7 @@ def test_src_module_pipeline(example_config, data_config, train_df, val_df, tmp_
     optimize_hyperparams(tmp_path, example_config)
     fine_tune_model(tmp_path, example_config)
     model_test_inference(tmp_path, example_config, show_random_predict=True)
-    update_model_stages(example_config)
+    update_model_stages(tmp_path, example_config)
 
     # Result
     prepared_train_df, prepared_test_df = [
@@ -66,3 +66,4 @@ def test_src_module_pipeline(example_config, data_config, train_df, val_df, tmp_
     assert client.get_metric_history(test_res_run, 'f_beta')
     assert [ch for ch in (tmp_path / 'res/test_outs').iterdir()]
     assert client.get_model_version('best_tfrcnn', mlst_version).current_stage == 'Production'
+    assert len([ch for ch in (tmp_path / 'plots').iterdir()]) == 2

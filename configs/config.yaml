@@ -53,6 +53,7 @@ model_training_inference_conf:
 mlflow_tracking_conf:
   run_name: fine-tuning_with_optimized_parameters
   experiment_name: Fine-Tuning_Model
+  metrics_to_plot: [f_beta, train_epoch_loss]
 
 hyperparameter_optimization:
   study_name: faster_rcnn_mob_hyper_opt_study

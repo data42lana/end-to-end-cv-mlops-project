@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import cv2
+import mlflow
 import optuna
 import pandas as pd
 import pytest
@@ -108,3 +109,17 @@ def img(imgs_path, train_df):
     img_path = imgs_path / train_df.Name.iloc[0]
     img = cv2.cvtColor(cv2.imread(str(img_path)), cv2.COLOR_BGR2RGB)
     return img
+
+
+@pytest.fixture
+def model_registry(tmp_path):
+    reg_model_name = 'test_model'
+    mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/tmlruns.db')
+    client = mlflow.MlflowClient()
+    run_id = client.create_run('0').info.run_id
+    client.create_registered_model(reg_model_name)
+    for i in range(3):
+        _ = client.create_model_version(reg_model_name, '', run_id=run_id, await_creation_for=5)
+        client.log_metric(run_id, 'metric', (i + 1.0)*10, step=i)
+    client.transition_model_version_stage(reg_model_name, version='2', stage='Production')
+    return client, reg_model_name
