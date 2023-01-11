@@ -32,7 +32,7 @@ object_detection_model:
 model_training_inference_conf:
   device_cuda: true
   metric_to_find_best: f_beta
-  initial_metric_value: 0.5
+  initial_metric_value: 0.0
   evaluation_iou_threshold: 0.4
   evaluation_beta: 2
   # These optimizer and lr_sheduler will be selected for training the model

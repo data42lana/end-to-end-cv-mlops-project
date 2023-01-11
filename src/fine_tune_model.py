@@ -224,6 +224,7 @@ def main(project_path, config):
             val = best_params[param][k] if best_params else TRAIN_EVAL_PARAMS[param][k]
             train_params['_'.join([param, k])] = val
 
+    init_metric_value = TRAIN_EVAL_PARAMS['initial_metric_value']
     add_train_params = {'epochs': TRAIN_EVAL_PARAMS['epochs'],
                         'eval_iou_thresh': TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
                         'eval_beta': TRAIN_EVAL_PARAMS['evaluation_beta'],
@@ -260,6 +261,7 @@ def main(project_path, config):
         _ = run_train(train_dl, val_dl, faster_rcnn_mob_model,
                       save_best_model_path=save_best_model_path,
                       metric_to_find_best_model=TRAIN_EVAL_PARAMS['metric_to_find_best'],
+                      init_metric_value=init_metric_value,
                       log_metrics=TRAIN_EVAL_PARAMS['log_metrics'],
                       save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'],
                       model_name=config['object_detection_model']['name'],
