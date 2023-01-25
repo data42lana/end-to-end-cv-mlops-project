@@ -9,5 +9,5 @@ permissions:
 
 jobs:
   test:
-    environment: production
+    # environment: production
     uses: ./.github/workflows/ci-tests.yml

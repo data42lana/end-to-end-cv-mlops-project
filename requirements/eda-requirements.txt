@@ -1,5 +1,4 @@
 # Require for python 3.9.13
-dvc==2.20.1
 matplotlib==3.5.3
 notebook==6.4.12
 numpy==1.23.1

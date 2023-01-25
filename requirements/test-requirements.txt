@@ -1,24 +1,7 @@
+
+-r data-check-requirements.txt
+-r train-requirements.txt
 # Require for python 3.9.13
-albumentations==1.2.1
-bandit==1.7.4
-deepchecks==0.9.0
-dvc==2.20.1
-flake8==6.0.0
-flake8-bugbear==22.12.6
-flake8-docstrings==1.6.0
-isort==5.11.3
-kaleido==0.2.1
-matplotlib==3.5.3
-mlflow==1.30.0
-numpy==1.23.1
-opencv-python==4.6.0.66
-optuna==3.0.3
-pandas==1.4.3
 pytest==7.2.0
 pytest-cov==4.0.0
 pytest-randomly==3.12.0
-pyyaml==6.0
-scikit-learn==1.1.2
-torch==1.13.0
-torchvision==0.14.0
-yamllint==1.28.0

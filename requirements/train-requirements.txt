@@ -1,8 +1,5 @@
 # Require for python 3.9.13
 albumentations==1.2.1
-dvc==2.20.1
-flake8==6.0.0
-flake8-bugbear==22.12.6
 kaleido==0.2.1
 matplotlib==3.5.3
 mlflow==1.30.0
@@ -12,6 +9,5 @@ optuna==3.0.3
 pandas==1.4.3
 pyyaml==6.0
 scikit-learn==1.1.2
-torch==1.13.0
+torch==1.13.1
 torchvision==0.14.0
-yamllint==1.28.0

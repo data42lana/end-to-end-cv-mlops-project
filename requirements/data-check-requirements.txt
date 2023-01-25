@@ -1,12 +1,8 @@
 # Require for python 3.9.13
 black==22.12.0
 deepchecks==0.9.0
-dvc==2.20.1
-flake8==6.0.0
-flake8-bugbear==22.12.6
 great_expectations==0.15.23
 notebook==6.4.12
 numpy==1.23.1
 pandas==1.4.3
-pytest==7.2.0
 pyyaml==6.0
