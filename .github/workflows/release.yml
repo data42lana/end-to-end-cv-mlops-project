@@ -1,0 +1,13 @@
+name: Publish an app release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    environment: production
+    uses: ./.github/workflows/ci-tests.yml

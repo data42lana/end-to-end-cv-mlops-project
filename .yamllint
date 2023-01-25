@@ -13,7 +13,8 @@ rules:
   empty-lines:
     level: warning
     max: 1
-  empty-values: enable
+  empty-values:
+    ignore: .github/workflows/*.yml
   float-values:
     forbid-scientific-notation: true
     require-numeral-before-decimal: true
