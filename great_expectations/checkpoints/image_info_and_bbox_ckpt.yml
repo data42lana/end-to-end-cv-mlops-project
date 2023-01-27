@@ -1,4 +1,4 @@
-name: image_info_and_bbox_checkpoint
+name: image_info_and_bbox_ckpt
 config_version: 1.0
 template_name:
 module_name: great_expectations.checkpoint
@@ -19,14 +19,14 @@ validations:
   - batch_request:
       datasource_name: image_info_and_bbox_csv_datasource
       data_connector_name: default_configured_data_connector_name
-      data_asset_name: new_image_info.csv
+      data_asset_name: image_info.csv
       data_connector_query:
         index: -1
     expectation_suite_name: image_info_ge_suite
   - batch_request:
       datasource_name: image_info_and_bbox_csv_datasource
       data_connector_name: default_configured_data_connector_name
-      data_asset_name: new_bounding_boxes.csv
+      data_asset_name: bounding_boxes.csv
       data_connector_query:
         index: -1
     expectation_suite_name: image_bboxes_ge_suite
