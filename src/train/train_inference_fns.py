@@ -155,6 +155,6 @@ def predict(img, model, show_scores=False, device=torch.device('cpu'),  # noqa: 
     if show_scores:
         scores = preds['scores']
 
-    print(str(num_bboxes) + " house sparrow(s)")
+    # print(str(num_bboxes) + " house sparrow(s)")
     draw_bboxes_on_image(img, preds['boxes'], scores, save_predict_path)
     return num_bboxes

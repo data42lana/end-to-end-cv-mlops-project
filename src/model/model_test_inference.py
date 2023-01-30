@@ -26,8 +26,9 @@ torch.cuda.manual_seed_all(SEED)
 
 
 def main(project_path, config, show_random_predict=False):
-    """Evaluate an object detection model on test data
-    and display a random prediction if show_random_predict is True.
+    """Evaluate an object detection model on test data,
+    display a random prediction if show_random_predict is True,
+    and return a value of a metric used to find the best model.
     """
     img_data_paths = config['image_data_paths']
     TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
@@ -68,8 +69,10 @@ def main(project_path, config, show_random_predict=False):
         _ = predict(test_sample_img, best_faster_rcnn_mob_model, show_scores=True,
                     save_predict_path=project_path / save_output_path)
 
+    return test_res['epoch_scores'][TRAIN_EVAL_PARAMS['metric_to_find_best']]
+
 
 if __name__ == '__main__':
     project_path = Path.cwd()
     config = get_config_yml()
-    main(project_path, config, show_random_predict=True)
+    _ = main(project_path, config, show_random_predict=True)
