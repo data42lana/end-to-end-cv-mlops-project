@@ -4,11 +4,11 @@ import pandas as pd
 import torch
 
 # isort: off
-from src.update_raw_data import update_dir_or_csv_files
-from src.prepare_data import expand_img_df_with_average_values_from_another_img_df
-from src.object_detection_model import faster_rcnn_mob_model_for_n_classes
-from src.update_model_stages import (update_registered_model_version_stages,
-                                     save_production_model_metric_history_plots)
+from src.data.update_raw_data import update_dir_or_csv_files
+from src.data.prepare_data import expand_img_df_with_average_values_from_another_img_df
+from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
+from src.model.update_model_stages import (update_registered_model_version_stages,
+                                           save_production_model_metric_history_plots)
 
 
 class TestUpdateData:

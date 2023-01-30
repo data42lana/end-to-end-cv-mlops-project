@@ -2,7 +2,8 @@ import optuna
 import pytest
 import yaml
 
-from src.optimize_hyperparams import Objective, save_best_hyper_params, save_study_plots
+from src.train.optimize_hyperparams import (Objective, save_best_hyper_params,
+                                            save_study_plots)
 
 
 @pytest.mark.slow

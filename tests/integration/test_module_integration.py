@@ -7,12 +7,12 @@ import pytest
 import yaml
 
 # isort: off
-from src.update_raw_data import main as update_raw_data
-from src.prepare_data import main as prepare_data
-from src.optimize_hyperparams import main as optimize_hyperparams
-from src.fine_tune_model import main as fine_tune_model
-from src.model_test_inference import main as model_test_inference
-from src.update_model_stages import main as update_model_stages
+from src.data.update_raw_data import main as update_raw_data
+from src.data.prepare_data import main as prepare_data
+from src.train.optimize_hyperparams import main as optimize_hyperparams
+from src.train.fine_tune_model import main as fine_tune_model
+from src.model.model_test_inference import main as model_test_inference
+from src.model.update_model_stages import main as update_model_stages
 
 
 @pytest.fixture

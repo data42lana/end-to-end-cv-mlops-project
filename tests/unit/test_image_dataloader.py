@@ -5,7 +5,7 @@ import torch
 from torchvision.ops import box_convert
 
 # isort: off
-from src.image_dataloader import get_image_transforms, ImageBBoxDataset, create_dataloaders
+from src.data.image_dataloader import get_image_transforms, ImageBBoxDataset, create_dataloaders
 
 
 def test_get_image_transforms():

@@ -11,9 +11,9 @@ import torch
 import torchvision
 import yaml
 
-from image_dataloader import create_dataloaders
-from object_detection_model import faster_rcnn_mob_model_for_n_classes
-from train_inference_fns import eval_one_epoch, train_one_epoch
+from data.image_dataloader import create_dataloaders
+from model.object_detection_model import faster_rcnn_mob_model_for_n_classes
+from train.train_inference_fns import eval_one_epoch, train_one_epoch
 from utils import draw_bboxes_on_image, get_config_yml, get_device, save_model_state
 
 logging.basicConfig(level=logging.INFO, filename='app.log',

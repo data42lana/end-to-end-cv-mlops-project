@@ -10,8 +10,8 @@ import numpy as np
 import pandas as pd
 import torch
 
-from image_dataloader import create_dataloaders
-from train_inference_fns import eval_one_epoch, predict
+from data.image_dataloader import create_dataloaders
+from train.train_inference_fns import eval_one_epoch, predict
 from utils import get_config_yml, get_device
 
 logging.basicConfig(level=logging.INFO, filename='app.log',

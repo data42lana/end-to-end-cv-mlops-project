@@ -8,8 +8,8 @@ import pytest
 import yaml
 from torchvision.ops import box_convert
 
-from src.image_dataloader import ImageBBoxDataset, create_dataloaders
-from src.object_detection_model import faster_rcnn_mob_model_for_n_classes
+from src.data.image_dataloader import ImageBBoxDataset, create_dataloaders
+from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
 
 
 @pytest.fixture(scope='package')

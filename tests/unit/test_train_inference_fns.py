@@ -3,9 +3,9 @@ import pytest
 import torch
 
 # isort: off
-from src.train_inference_fns import (precision_recall_fbeta_scores, train_one_epoch,
-                                     eval_one_epoch, predict)
-from src.fine_tune_model import run_train
+from src.train.train_inference_fns import (precision_recall_fbeta_scores, train_one_epoch,
+                                           eval_one_epoch, predict)
+from src.train.fine_tune_model import run_train
 
 
 def test_precision_recall_fbeta_scores():
