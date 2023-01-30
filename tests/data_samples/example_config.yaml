@@ -2,8 +2,11 @@ image_data_paths:
   images: datas/sample_imgs
   info_csv_file: datas/sample_img_info.csv
   bboxes_csv_file: datas/sample_bboxes.csv
-  train_csv_file: datas/sample_train_val.csv
-  test_csv_file: datas/sample_val.csv
+  train_csv_file: datas/train.csv
+  test_csv_file: datas/val.csv
+
+new_image_data_paths:
+  train_csv_file: datas/val.csv
 
 image_dataset_conf:
   box_format: coco

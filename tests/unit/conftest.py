@@ -26,6 +26,18 @@ def img_info_df():
 
 
 @pytest.fixture(scope='package')
+def bbox_path():
+    fpath = Path('tests/data_samples/sample_bboxes.csv').absolute()
+    return fpath
+
+
+@pytest.fixture(scope='package')
+def train_csv_path():
+    fpath = Path('tests/data_samples/sample_train.csv').absolute()
+    return fpath
+
+
+@pytest.fixture(scope='package')
 def dataloader(imgs_path, train_csv_path, bbox_path):
     dl = create_dataloaders(imgs_path, train_csv_path, bbox_path, 2)
     return dl
@@ -99,9 +111,15 @@ def imgbboxdataset(train_csv_path, imgs_path, bbox_path):
 
 
 @pytest.fixture
-def train_val_csv_path():
-    fpath = Path('tests/data_samples/sample_train_val.csv').absolute()
-    return fpath
+def bbox_df(bbox_path):
+    df = pd.read_csv(bbox_path)
+    return df
+
+
+@pytest.fixture
+def train_df(train_csv_path):
+    df = pd.read_csv(train_csv_path)
+    return df
 
 
 @pytest.fixture
