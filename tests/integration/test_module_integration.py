@@ -38,7 +38,7 @@ def test_src_module_pipeline(example_config, val_df, train_val_df, tmp_path):
     optimize_hyperparams(tmp_path, example_config)
     fine_tune_model(tmp_path, example_config)
     _ = model_test_inference(tmp_path, example_config, show_random_predict=True)
-    update_model_stages(tmp_path, example_config)
+    _ = update_model_stages(tmp_path, example_config, save_metric_plots=True)
 
     # Result
     prepared_test_df = (
