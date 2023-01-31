@@ -75,4 +75,5 @@ def main(project_path, config, show_random_predict=False):
 if __name__ == '__main__':
     project_path = Path.cwd()
     config = get_config_yml()
+    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
     _ = main(project_path, config, show_random_predict=True)
