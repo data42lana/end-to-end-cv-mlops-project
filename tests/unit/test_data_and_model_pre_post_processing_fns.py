@@ -62,5 +62,5 @@ def test_update_registered_model_version_stages(model_registry):
 
 def test_save_production_model_metric_history_plots(model_registry, tmp_path):
     client, reg_model_name = model_registry
-    save_production_model_metric_history_plots(['metric'], client, reg_model_name, tmp_path)
+    save_production_model_metric_history_plots(['f_beta'], client, reg_model_name, tmp_path)
     assert len([ch for ch in (tmp_path / 'plots').iterdir()]) == 1

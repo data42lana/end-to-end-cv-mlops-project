@@ -54,12 +54,20 @@ def save_production_model_metric_history_plots(metric_names, mlclient,
 
     for prod_info in production_model_info:
         run_id = prod_info.run_id
+
         for metric in metric_names:
             metric_history = mlclient.get_metric_history(run_id, metric)
+
+            if metric == 'f_beta':
+                prod_run_params = mlclient.get_run(run_id).data.params
+                if 'eval_beta' in prod_run_params:
+                    metric += '_{}'.format(prod_run_params['eval_beta'])
+
             metric_step_values = collate_batch([(mh.step, mh.value) for mh in metric_history])
-            plt.figure(figsize=(6, 6))
-            plt.plot(*metric_step_values, color='orange')
+            plt.figure(figsize=(10, 6))
+            plt.plot(*metric_step_values, color='blue' if 'loss' in metric else 'orange')
             plt.xlabel('epochs')
+            plt.ylabel(metric)
             plt.title(f"{metric.capitalize()} Plot")
             plt.savefig(save_path / f'{metric}.jpg')
             plt.close()
