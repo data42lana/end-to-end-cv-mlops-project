@@ -163,9 +163,9 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
                         preds = eval_res['results'][sample_idx]
                         save_img_out_path = (save_random_best_model_output_path /  # noqa: W504
                                              f'val_outs/epoch_{current_epoch}.jpg')
-                        draw_bboxes_on_image(sample_imgs[sample_idx],
-                                             preds['boxes'], preds['scores'],
-                                             save_img_out_path=save_img_out_path)
+                        _ = draw_bboxes_on_image(sample_imgs[sample_idx],
+                                                 preds['boxes'], preds['scores'],
+                                                 save_img_out_path=save_img_out_path)
                         del sample_imgs
                         del preds
 

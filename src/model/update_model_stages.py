@@ -5,10 +5,9 @@ save metric plots for a production stage model.
 import logging
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import mlflow
 
-from utils import collate_batch, get_config_yml
+from utils import get_config_yml, production_model_metric_history_plot
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -49,43 +48,9 @@ def update_registered_model_version_stages(mlclient, registered_model_name):
     return prod_run_id
 
 
-def production_model_metric_history_plot(metric_name, mlclient,
-                                         registered_model_name, save_path=''):
-    """Create metric plots for a production stage models and save them
-    if save_path is specified.
-    """
-    production_model_info = mlclient.get_latest_versions(registered_model_name,
-                                                         stages=['Production'])
-    prod_metric_plots = []
-    for prod_info in production_model_info:
-        run_id = prod_info.run_id
-        metric_history = mlclient.get_metric_history(run_id, metric_name)
-
-        if metric_name == 'f_beta':
-            prod_run_params = mlclient.get_run(run_id).data.params
-            metric_name += '_{}'.format(prod_run_params.get('eval_beta', 1))
-
-        metric_step_values = collate_batch([(mh.step, mh.value) for mh in metric_history])
-        fig = plt.figure(figsize=(10, 6))
-        plt.plot(*metric_step_values, color='blue' if 'loss' in metric_name else 'orange')
-        plt.xlabel('epochs')
-        plt.ylabel(metric_name)
-        plt.title(f"{metric_name.capitalize()} Plot")
-        prod_metric_plots.append(fig)
-
-        if save_path:
-            save_path = Path(save_path) / 'plots'
-            save_path.mkdir(exist_ok=True)
-            plt.savefig(save_path / f'{metric_name}.jpg')
-            plt.close()
-            logging.info("Metric plots of a production stage model are saved.")
-
-    return prod_metric_plots
-
-
 def main(project_path, config, save_metric_plots=False):
-    """Update version stages for a registered model specified
-    in a configuration file and create metric plots for production stage model.
+    """Update version stages for a registered model, return a run id,
+    and create and return metric plots for a model with 'Production' stage.
     """
     registered_model_name = config['object_detection_model']['registered_name']
     client = mlflow.MlflowClient()
@@ -93,18 +58,14 @@ def main(project_path, config, save_metric_plots=False):
     logging.info("Stages are updated.")
 
     mltracking_conf = config['mlflow_tracking_conf']
+    save_path = project_path if save_metric_plots else None
+    metric_plots = []
 
-    if 'metrics_to_plot' in mltracking_conf:
-        metric_plots = []
-
-        for metric in mltracking_conf['metrics_to_plot']:
-            metric_plots.append(production_model_metric_history_plot(
-                metric, client, registered_model_name,
-                save_path=project_path if save_metric_plots else ''))
-
-        return production_run_id, metric_plots
-    else:
-        return production_run_id
+    for metric in mltracking_conf['metrics_to_plot']:
+        metric_plots.append(production_model_metric_history_plot(metric, client,
+                                                                 registered_model_name,
+                                                                 save_path=save_path))
+    return production_run_id, metric_plots
 
 
 if __name__ == '__main__':

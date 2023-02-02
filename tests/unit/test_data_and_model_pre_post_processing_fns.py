@@ -7,8 +7,7 @@ import torch
 from src.data.update_raw_data import update_dir_or_csv_files
 from src.data.prepare_data import expand_img_df_with_average_values_from_another_img_df
 from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
-from src.model.update_model_stages import (update_registered_model_version_stages,
-                                           production_model_metric_history_plot)
+from src.model.update_model_stages import update_registered_model_version_stages
 
 
 class TestUpdateData:
@@ -53,14 +52,12 @@ def test_faster_rcnn_mob_model_for_n_classes():
 
 
 def test_update_registered_model_version_stages(model_registry):
-    client, reg_model_name = model_registry
+    client, reg_model_name, run_id, _ = model_registry
+    client.create_registered_model(reg_model_name)
+    for _ in range(3):
+        _ = client.create_model_version(reg_model_name, '', run_id=run_id, await_creation_for=5)
+    client.transition_model_version_stage(reg_model_name, version='2', stage='Production')
     _ = update_registered_model_version_stages(client, reg_model_name)
     assert client.get_model_version(reg_model_name, '2').current_stage == 'Archived'
     assert client.get_model_version(reg_model_name, '3').current_stage == 'Production'
     assert len(client.get_latest_versions(reg_model_name, stages=['Production'])) == 1
-
-
-def test_production_model_metric_history_plot_is_saved(model_registry, tmp_path):
-    client, reg_model_name = model_registry
-    _ = production_model_metric_history_plot('f_beta', client, reg_model_name, tmp_path)
-    assert len([ch for ch in (tmp_path / 'plots').iterdir()]) == 1

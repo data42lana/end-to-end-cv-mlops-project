@@ -30,14 +30,14 @@ def test_src_module_pipeline(example_config, val_df, train_val_df, tmp_path):
                         ignore=shutil.ignore_patterns('*.yaml', '*val.csv', '*train.csv'))
     mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/tmlruns.db')
     exp_id = mlflow.create_experiment(example_config['mlflow_tracking_conf']['experiment_name'],
-                                      tmp_path.as_uri())
+                                      tmp_path.joinpath('tmlruns').as_uri())
 
     # Act
     prepare_data(tmp_path, example_config)
     update_raw_data(tmp_path, example_config)
     optimize_hyperparams(tmp_path, example_config)
     fine_tune_model(tmp_path, example_config)
-    _ = model_test_inference(tmp_path, example_config, show_random_predict=True)
+    _ = model_test_inference(tmp_path, example_config, get_random_prediction=True)
     _ = update_model_stages(tmp_path, example_config, save_metric_plots=True)
 
     # Result

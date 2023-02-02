@@ -5,8 +5,8 @@ import mlflow
 import optuna
 import pandas as pd
 import pytest
+import torchvision
 import yaml
-from torchvision.ops import box_convert
 
 from src.data.image_dataloader import ImageBBoxDataset, create_dataloaders
 from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
@@ -106,7 +106,7 @@ def simple_study():
 @pytest.fixture(scope='class')
 def imgbboxdataset(train_csv_path, imgs_path, bbox_path):
     ds = ImageBBoxDataset(train_csv_path, imgs_path, bbox_path,
-                          bbox_transform=(box_convert, 'xywh', 'xyxy'))
+                          bbox_transform=(torchvision.ops.box_convert, 'xywh', 'xyxy'))
     return ds
 
 
@@ -131,14 +131,15 @@ def img(imgs_path, train_df):
 
 @pytest.fixture
 def model_registry(tmp_path):
-    reg_model_name = 'test_model'
     mlflow.set_tracking_uri(f'sqlite:///{tmp_path}/tmlruns.db')
     client = mlflow.MlflowClient()
-    run_id = client.create_run('0').info.run_id
-    client.create_registered_model(reg_model_name)
-    for i in range(3):
-        _ = client.create_model_version(reg_model_name, '', run_id=run_id, await_creation_for=5)
-        client.log_metric(run_id, 'f_beta', (i + 1.0)*10, step=i)
-    client.log_param(run_id, 'eval_beta', 2)
-    client.transition_model_version_stage(reg_model_name, version='2', stage='Production')
-    return client, reg_model_name
+    exp_name = 'TestMLFuncs'
+    exp = mlflow.get_experiment_by_name(exp_name)
+    if exp is not None:
+        exp_id = exp.experiment_id
+    else:
+        exp_id = client.create_experiment(
+            exp_name, artifact_location=tmp_path.joinpath('tmlruns').as_uri())
+    run_id = client.create_run(exp_id).info.run_id
+    reg_model_name = 'test_model'
+    return client, reg_model_name, run_id, exp_id

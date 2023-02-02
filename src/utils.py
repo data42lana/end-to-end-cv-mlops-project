@@ -1,8 +1,13 @@
-"""This module contains helper functions for model training."""
+"""This module contains helper functions for model training and inference."""
 
+import logging
+import random
 from pathlib import Path
 
+import cv2
 import matplotlib.pyplot as plt
+import mlflow
+import pandas as pd
 import torch
 import torchvision.transforms as T
 import yaml
@@ -48,7 +53,7 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
 
     img_box = draw_bounding_boxes(img.detach(), boxes=bboxes, colors='orange', width=2)
     img = to_pil_image(img_box.detach())
-    plt.figure(figsize=(8, 10))
+    fig = plt.figure(figsize=(8, 10))
     plt.imshow(img)
     plt.axis('off')
     ax = plt.gca()
@@ -66,6 +71,7 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
         plt.close()
     else:
         plt.show()
+    return fig
 
 
 def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
@@ -77,3 +83,67 @@ def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
                     **ckpt_params_dict}, filepath)
     else:
         torch.save(model_to_save.state_dict(), filepath)
+
+
+def get_latest_registared_pytorch_model(mlclient, registered_model_name):
+    """Return the latest version of a registered PyTorch model."""
+    model_registry_info = mlclient.get_latest_versions(registered_model_name)
+    model_latest_version = max([m.version for m in model_registry_info])
+    model_uri = 'models:/{}/{}'.format(registered_model_name, model_latest_version)
+    latest_pytorch_model = mlflow.pytorch.load_model(model_uri)
+    return latest_pytorch_model
+
+
+def get_random_img_with_info(csv_file_path, img_dir_path, license_pattern='',
+                             random_seed=None):
+    """Return a image loaded from a CSV file and selected based on a license pattern
+    and return it and its source and author.
+    """
+    if isinstance(random_seed, int):
+        random.seed(random_seed)
+
+    imgs_df = pd.read_csv(csv_file_path,
+                          usecols=['Name', 'Author', 'Source', 'License'])
+    imgs_df = imgs_df.loc[imgs_df.License.str.contains(license_pattern, regex=False)]
+
+    if not imgs_df.empty:
+        image_sample_info = random.choice(imgs_df.to_dict('index'))  # nosec
+        image_sample = cv2.cvtColor(cv2.imread(str(img_dir_path / image_sample_info['Name'])),
+                                    cv2.COLOR_BGR2RGB)
+        return image_sample, image_sample_info
+    else:
+        return None
+
+
+def production_model_metric_history_plot(metric_name, mlclient,
+                                         registered_model_name, save_path=None):
+    """Create metric plots for a production stage models and save them
+    if save_path is specified.
+    """
+    production_model_info = mlclient.get_latest_versions(registered_model_name,
+                                                         stages=['Production'])
+    prod_metric_plots = []
+    for prod_info in production_model_info:
+        run_id = prod_info.run_id
+        metric_history = mlclient.get_metric_history(run_id, metric_name)
+
+        if metric_name == 'f_beta':
+            prod_run_params = mlclient.get_run(run_id).data.params
+            metric_name += '_{}'.format(prod_run_params.get('eval_beta', ''))
+
+        metric_step_values = collate_batch([(mh.step, mh.value) for mh in metric_history])
+        fig = plt.figure(figsize=(10, 6))
+        plt.plot(*metric_step_values, color='blue' if 'loss' in metric_name else 'orange')
+        plt.xlabel('epochs')
+        plt.ylabel(metric_name)
+        plt.title(f"{metric_name.capitalize()} Plot")
+        prod_metric_plots.append(fig)
+
+        if save_path:
+            save_path = Path(save_path) / 'plots'
+            save_path.mkdir(exist_ok=True)
+            plt.savefig(save_path / f'{metric_name}.jpg')
+            plt.close()
+            logging.info("Metric plots of a production stage model are saved.")
+
+    return prod_metric_plots

@@ -40,8 +40,8 @@ def test_eval_one_epoch(dataloader, frcnn_model):
 def test_predict(img, frcnn_model, tmp_path):
     frcnn_model.eval()
     res = predict(img, frcnn_model, save_predict_path=tmp_path / 'pred.jpg')
-    assert isinstance(res, int)
-    assert res >= 0
+    assert isinstance(res[0], int)
+    assert res[0] >= 0
 
 
 @pytest.mark.slow
