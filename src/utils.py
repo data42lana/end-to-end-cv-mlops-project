@@ -85,9 +85,11 @@ def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
         torch.save(model_to_save.state_dict(), filepath)
 
 
-def get_latest_registared_pytorch_model(mlclient, registered_model_name):
-    """Return the latest version of a registered PyTorch model."""
-    model_registry_info = mlclient.get_latest_versions(registered_model_name)
+def get_latest_registared_pytorch_model(mlclient, registered_model_name, stages=None):
+    """Return the latest version of a PyTorch model among registered ones
+    with one of given stages.
+    """
+    model_registry_info = mlclient.get_latest_versions(registered_model_name, stages)
     model_latest_version = max([m.version for m in model_registry_info])
     model_uri = 'models:/{}/{}'.format(registered_model_name, model_latest_version)
     latest_pytorch_model = mlflow.pytorch.load_model(model_uri)
