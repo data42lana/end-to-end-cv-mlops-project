@@ -51,7 +51,7 @@ def main(project_path, config, get_random_prediction=False):
                                    TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
                                    TRAIN_EVAL_PARAMS['evaluation_beta'], DEVICE)
     test_score = test_eval_res['epoch_scores'][TRAIN_EVAL_PARAMS['metric_to_find_best']]
-    test_res = [test_score]
+    test_res = {'test_score': test_score}
     logging.info(test_eval_res['epoch_scores'])
 
     if get_random_prediction:
@@ -70,7 +70,7 @@ def main(project_path, config, get_random_prediction=False):
             test_pred_res = {'test_predict_number': test_pred_res[0],
                              'test_predict_img': test_pred_res[1],
                              'test_img_info': test_img_info}
-            test_res.append(test_pred_res)
+            test_res = {**test_res, **test_pred_res}
 
     return test_res
 
