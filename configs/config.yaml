@@ -31,6 +31,7 @@ object_detection_model:
 
 model_training_inference_conf:
   device_cuda: true
+  # maximization metric:
   metric_to_find_best: f_beta
   initial_metric_value: 0.0
   evaluation_iou_threshold: 0.4
@@ -49,7 +50,7 @@ model_training_inference_conf:
   register_best_log_model: true
   save_random_best_model_output_dir: outputs
   checkpoint: null
-  license_pattern_to_select_images: !!str "(CC BY 2.0)"
+  license_pattern_to_select_images: !!str "(CC0 1.0)"
 
 mlflow_tracking_conf:
   run_name: fine-tuning_with_optimized_parameters
@@ -58,6 +59,7 @@ mlflow_tracking_conf:
 
 hyperparameter_optimization:
   study_name: faster_rcnn_mob_hyper_opt_study
+  # maximization metric:
   metric: f_beta
   # sampler and pruner and their parameters can contain null values
   sampler:

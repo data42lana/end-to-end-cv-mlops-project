@@ -50,8 +50,13 @@ def main(project_path, config, get_random_prediction=False):
     test_eval_res = eval_one_epoch(test_dl, latest_faster_rcnn_mob_model,
                                    TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
                                    TRAIN_EVAL_PARAMS['evaluation_beta'], DEVICE)
-    test_score = test_eval_res['epoch_scores'][TRAIN_EVAL_PARAMS['metric_to_find_best']]
-    test_res = {'test_score': test_score}
+    test_score_name = TRAIN_EVAL_PARAMS['metric_to_find_best']
+    test_score = test_eval_res['epoch_scores'][test_score_name]
+
+    if test_score_name == 'f_beta':
+        test_score_name += '_{}'.format(TRAIN_EVAL_PARAMS['evaluation_beta'])
+
+    test_res = {'test_score_value': test_score, 'test_score_name': test_score_name}
     logging.info(test_eval_res['epoch_scores'])
 
     if get_random_prediction:
