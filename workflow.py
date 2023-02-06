@@ -225,10 +225,13 @@ class MLWorkFlow(FlowSpec):
         current.card.append(Markdown("# Model Performance Report"))
 
         # Add a current test score
-        current.card.append(Markdown("## Test {0} score: {1:0.2f}".format(
+        current.card.append(Markdown("### Test {0} score: {1:0.2f}".format(
             self.test_score[0], self.test_score[1])))
 
         if 'production' in Flow(current.flow_name)[current.run_id].user_tags():
+            # Add a Mlflow run id
+            current.card.append(Markdown(f"Mlflow Run Id: {self.prod_run_id_in_mlflow}"))
+
             # Add training metric plots
             current.card.append(Markdown("## Metric History Plots:"))
             for plot in self.prod_metric_plots:
