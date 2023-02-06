@@ -1,4 +1,6 @@
-"""This module creates a workflow for this ml project."""
+"""This module creates a workflow for the current project."""
+# Warning: Metaflow does not run on Windows!
+
 from pathlib import Path
 
 from metaflow import (Flow, FlowSpec, Parameter, card, current, project, retry, step,
@@ -13,7 +15,7 @@ PROJECT_PATH = Path.cwd()
 MLTRACKING_URI = 'sqlite:///mlruns/mlruns.db'
 
 
-@project(name='object_detection_with_mlops_project')
+@project(name='end-to-end-cv-mlops-project')
 class MLWorkFlow(FlowSpec):
     """A flow containing steps of working with data, optimizing
     hyperparameters, training a model, and preparing it for production.
