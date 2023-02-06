@@ -12,7 +12,7 @@ import yaml
 from data.image_dataloader import create_dataloaders
 from model.object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train.train_inference_fns import eval_one_epoch, train_one_epoch
-from utils import get_config_yml, get_device
+from utils import get_device, get_param_config_yaml
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -126,17 +126,17 @@ def save_study_plots(study, study_name, save_path):
         fig.write_image(save_path / f'{fname}.jpg')
 
 
-def main(project_path, config):
+def main(project_path, param_config):
     """Run an optimization study."""
     # Get configurations for a hyperparameter optimization
-    img_data_paths = config['image_data_paths']
-    batch_size = config['image_dataset_conf']['batch_size']
-    model_params = config['object_detection_model']['load_parameters']
-    num_classes = config['object_detection_model']['number_classes']
-    eval_iou_thresh = config['model_training_inference_conf']['evaluation_iou_threshold']
-    eval_beta = config['model_training_inference_conf']['evaluation_beta']
-    device = get_device(config['model_training_inference_conf']['device_cuda'])
-    HYPER_OPT_PARAMS = config['hyperparameter_optimization']
+    img_data_paths = param_config['image_data_paths']
+    batch_size = param_config['image_dataset_conf']['batch_size']
+    model_params = param_config['object_detection_model']['load_parameters']
+    num_classes = param_config['object_detection_model']['number_classes']
+    eval_iou_thresh = param_config['model_training_inference_conf']['evaluation_iou_threshold']
+    eval_beta = param_config['model_training_inference_conf']['evaluation_beta']
+    device = get_device(param_config['model_training_inference_conf']['device_cuda'])
+    HYPER_OPT_PARAMS = param_config['hyperparameter_optimization']
     sampler = HYPER_OPT_PARAMS['sampler']
     pruner = HYPER_OPT_PARAMS['pruner']
 
@@ -189,5 +189,5 @@ def main(project_path, config):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
-    main(project_path, config)
+    param_config = get_param_config_yaml(project_path)
+    main(project_path, param_config)

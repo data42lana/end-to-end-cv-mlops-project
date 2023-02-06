@@ -16,12 +16,12 @@ from torchvision.transforms.functional import to_pil_image
 from torchvision.utils import draw_bounding_boxes
 
 
-def get_config_yml():
-    """Get configurations from a yaml file."""
-    config_path = Path.cwd() / 'configs/config.yaml'
+def get_param_config_yaml(project_path, param_config_file_path='configs/params.yaml'):
+    """Get configurations from params.yaml or other yaml files."""
+    config_path = project_path / param_config_file_path
     with open(config_path) as conf:
-        config = yaml.safe_load(conf)
-    return config
+        param_config = yaml.safe_load(conf)
+    return param_config
 
 
 def get_device(use_cuda_config_param):

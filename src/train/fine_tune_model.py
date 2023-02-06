@@ -9,12 +9,12 @@ import mlflow
 import numpy as np
 import torch
 import torchvision
-import yaml
 
 from data.image_dataloader import create_dataloaders
 from model.object_detection_model import faster_rcnn_mob_model_for_n_classes
 from train.train_inference_fns import eval_one_epoch, train_one_epoch
-from utils import draw_bboxes_on_image, get_config_yml, get_device, save_model_state
+from utils import (draw_bboxes_on_image, get_device, get_param_config_yaml,
+                   save_model_state)
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -189,10 +189,10 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
             'eval_res': eval_res}
 
 
-def main(project_path, config):
+def main(project_path, param_config):
     """Perform fine-tuning of an object detection model."""
-    img_data_paths = config['image_data_paths']
-    TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
+    img_data_paths = param_config['image_data_paths']
+    TRAIN_EVAL_PARAMS = param_config['model_training_inference_conf']
     device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
     # Get dataloaders
@@ -200,21 +200,20 @@ def main(project_path, config):
         project_path / fpath for fpath in [img_data_paths['images'],
                                            img_data_paths['train_csv_file'],
                                            img_data_paths['bboxes_csv_file']]]
-    batch_size = config['image_dataset_conf']['batch_size']
+    batch_size = param_config['image_dataset_conf']['batch_size']
     train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, batch_size,
                                           train_test_split_data=True, transform_train_imgs=True)
 
     # Get a modified model
-    model_params = config['object_detection_model']['load_parameters']
-    num_classes = config['object_detection_model']['number_classes']
+    model_params = param_config['object_detection_model']['load_parameters']
+    num_classes = param_config['object_detection_model']['number_classes']
     faster_rcnn_mob_model = faster_rcnn_mob_model_for_n_classes(num_classes, **model_params)
 
     # Load the best parameters for training if a file with them exists
-    best_params_dir = config['hyperparameter_optimization']['save_best_parameters_path']
+    best_params_path = param_config['hyperparameter_optimization']['save_best_parameters_path']
     best_params = None
-    if best_params_dir and (project_path / best_params_dir).exists():
-        with open(project_path / best_params_dir) as f:
-            best_params = yaml.safe_load(f)
+    if best_params_path and (project_path / best_params_path).exists():
+        best_params = get_param_config_yaml(project_path, best_params_path)
         logging.info(f"The best training parameters are loaded: \n{best_params}")
 
     # Set training parameters
@@ -231,7 +230,7 @@ def main(project_path, config):
                         'device': device}
 
     checkpoint = None
-    save_dir = config['object_detection_model']['save_dir']
+    save_dir = param_config['object_detection_model']['save_dir']
     if TRAIN_EVAL_PARAMS['checkpoint']:
         checkpoint_path = project_path / save_dir / TRAIN_EVAL_PARAMS['checkpoint']
         checkpoint = torch.load(checkpoint_path) if checkpoint_path.exists() else None
@@ -242,7 +241,7 @@ def main(project_path, config):
                         if TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'] else None)
 
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
-    mlflow_conf = config['mlflow_tracking_conf']
+    mlflow_conf = param_config['mlflow_tracking_conf']
     ftm_exp = mlflow.get_experiment_by_name(mlflow_conf['experiment_name'])
 
     if ftm_exp is not None:
@@ -254,7 +253,7 @@ def main(project_path, config):
                           experiment_id=ftm_exp_id):
 
         mlflow.set_tags({'training_process': 'fine_tuning',
-                         'model_name': config['object_detection_model']['name'],
+                         'model_name': param_config['object_detection_model']['name'],
                          'tools.training': 'PyTorch'})
 
         # Run model training cycles
@@ -264,9 +263,9 @@ def main(project_path, config):
                       init_metric_value=init_metric_value,
                       log_metrics=TRAIN_EVAL_PARAMS['log_metrics'],
                       save_best_ckpt=TRAIN_EVAL_PARAMS['save_best_ckpt'],
-                      model_name=config['object_detection_model']['name'],
+                      model_name=param_config['object_detection_model']['name'],
                       register_best_log_model=TRAIN_EVAL_PARAMS['register_best_log_model'],
-                      reg_model_name=config['object_detection_model']['registered_name'],
+                      reg_model_name=param_config['object_detection_model']['registered_name'],
                       save_random_best_model_output_path=save_output_path,
                       checkpoint=checkpoint, **train_params, **add_train_params)
 
@@ -289,6 +288,6 @@ def main(project_path, config):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
+    param_config = get_param_config_yaml(project_path)
     mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    main(project_path, config)
+    main(project_path, param_config)

@@ -1,4 +1,4 @@
-# Configurations for *.py modules
+# Configurations for the machine learning project (for src/*.py modules)
 
 image_data_paths:
   images: data/raw/images
@@ -88,5 +88,5 @@ hyperparameter_optimization:
         gamma: [{low: 0.1, high: 0.2, log: true}, float]
       LinearLR: null
       None: null
-  save_best_parameters_path: configs/best_train_params.yaml
+  save_best_parameters_path: configs/best_params.yaml
   save_study_dir: hyper_opt

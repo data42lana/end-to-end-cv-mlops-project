@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
 
 @pytest.fixture(scope='session')
@@ -26,3 +27,14 @@ def train_val_csv_path():
 def train_val_df(train_val_csv_path):
     df = pd.read_csv(train_val_csv_path)
     return df
+
+
+@pytest.fixture
+def config_yaml_file(tmp_path):
+    fname = 'tconfig.yaml'
+    fpath = tmp_path / fname
+    fpath.parent.mkdir(exist_ok=True)
+    config_dict = {'image_data_paths': {'images': 'datas/images'}}
+    with open(fpath, 'w') as f:
+        yaml.safe_dump(config_dict, f)
+    return fname

@@ -5,15 +5,15 @@ import torch
 import torchvision.transforms as T
 
 # isort: off
-from src.utils import (get_config_yml, get_device, stratified_group_train_test_split,
+from src.utils import (get_param_config_yaml, get_device, stratified_group_train_test_split,
                        collate_batch, draw_bboxes_on_image, save_model_state,
                        get_latest_registared_pytorch_model, get_random_img_with_info,
                        production_model_metric_history_plot)
 
 
-def test_get_config_yml():
-    yaml_config = get_config_yml()
-    assert yaml_config['image_data_paths']['images'] == 'data/raw/images'
+def test_get_param_config_yaml(config_yaml_file, tmp_path):
+    yaml_config = get_param_config_yaml(tmp_path, config_yaml_file)
+    assert yaml_config['image_data_paths']['images'] == 'datas/images'
 
 
 def test_get_device():

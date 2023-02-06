@@ -12,8 +12,8 @@ import torch
 
 from data.image_dataloader import create_dataloaders
 from train.train_inference_fns import eval_one_epoch, predict
-from utils import (get_config_yml, get_device, get_latest_registared_pytorch_model,
-                   get_random_img_with_info)
+from utils import (get_device, get_latest_registared_pytorch_model,
+                   get_param_config_yaml, get_random_img_with_info)
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -26,18 +26,18 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 
-def main(project_path, config, get_random_prediction=False):
+def main(project_path, param_config, get_random_prediction=False):
     """Evaluate the latest version of a registered model on test data,
     and make and save a prediction on a randomly selected test image
     if get_random_predict is True.
     """
-    IMG_DATA_PATHS = config['image_data_paths']
-    TRAIN_EVAL_PARAMS = config['model_training_inference_conf']
+    IMG_DATA_PATHS = param_config['image_data_paths']
+    TRAIN_EVAL_PARAMS = param_config['model_training_inference_conf']
     DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
     # Load the latest version of a model from the MLflow registry
     client = mlflow.MlflowClient()
-    reg_model_name = config['object_detection_model']['registered_name']
+    reg_model_name = param_config['object_detection_model']['registered_name']
     latest_faster_rcnn_mob_model = get_latest_registared_pytorch_model(client, reg_model_name)
 
     # Evaluate the model on test data
@@ -45,7 +45,7 @@ def main(project_path, config, get_random_prediction=False):
         project_path / fpath for fpath in [IMG_DATA_PATHS['images'],
                                            IMG_DATA_PATHS['test_csv_file'],
                                            IMG_DATA_PATHS['bboxes_csv_file']]]
-    batch_size = config['image_dataset_conf']['batch_size']
+    batch_size = param_config['image_dataset_conf']['batch_size']
     test_dl = create_dataloaders(imgs_path, test_csv_path, bbox_csv_path, batch_size)
     test_eval_res = eval_one_epoch(test_dl, latest_faster_rcnn_mob_model,
                                    TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
@@ -82,6 +82,6 @@ def main(project_path, config, get_random_prediction=False):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
+    param_config = get_param_config_yaml(project_path)
     mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    _ = main(project_path, config, get_random_prediction=True)
+    _ = main(project_path, param_config, get_random_prediction=True)

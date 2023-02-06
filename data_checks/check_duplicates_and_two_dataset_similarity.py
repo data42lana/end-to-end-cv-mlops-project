@@ -8,7 +8,7 @@ from deepchecks.tabular import Dataset, Suite
 from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison,
                                        TrainTestFeatureDrift, TrainTestSamplesMix)
 
-from dch_utils import get_config_yml, get_data_type_arg_parser
+from dch_utils import get_data_path_config_yaml, get_data_type_arg_parser
 
 
 def check_two_datasets(ds1, ds2, suite_name, checks):
@@ -88,13 +88,13 @@ def check_train_test_author_group_leakage(train_df, test_df):
     return check_suite_result
 
 
-def main(project_path, config, check_data_type, data_check_dir):
+def main(project_path, data_path_config, check_data_type, data_check_dir):
     """Check data for duplicates and similarity between two datasets."""
     logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 
     # Get image data paths from configurations
-    img_data_paths = config['image_data_paths']
+    img_data_paths = data_path_config['image_data_paths']
 
     # Track total check status
     checks_passed = []
@@ -134,7 +134,7 @@ def main(project_path, config, check_data_type, data_check_dir):
         log_msgs.append("Author Group Leakage check results are saved.")
 
     elif check_data_type == 'new':
-        new_img_data_paths = config['new_image_data_paths']
+        new_img_data_paths = data_path_config['new_image_data_paths']
 
         # New Info Dataset Check
         info_path, new_info_path = [
@@ -176,12 +176,13 @@ def main(project_path, config, check_data_type, data_check_dir):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
+    data_path_config = get_data_path_config_yaml(project_path)
     data_check_dir = Path(__file__).parent
     img_data_type = get_data_type_arg_parser().parse_args()
 
     if img_data_type.check_data_type in ['raw', 'prepared', 'new']:
-        check_passed = main(project_path, config, img_data_type.check_data_type, data_check_dir)
+        check_passed = main(project_path, data_path_config, img_data_type.check_data_type,
+                            data_check_dir)
 
         if not check_passed:
             logging.warning(f"Checking for duplicates or similarity of \

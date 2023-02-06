@@ -9,6 +9,7 @@ from data_checks.check_img_info_and_bbox_csv_file_integrity import (
 from data_checks.check_duplicates_and_two_dataset_similarity import (
     check_two_datasets, check_bbox_data_for_duplicates,
     check_two_datasets_similarity, check_train_test_author_group_leakage)
+from data_checks.dch_utils import get_data_path_config_yaml
 
 
 class TestIdentityCheckFns:
@@ -85,3 +86,8 @@ class TestSimilarityCheckFns:
         train_train_df = pd.concat([train_df, train_df], ignore_index=True)
         check_suite_res = check_train_test_author_group_leakage(train_train_df, train_df)
         assert not check_suite_res.passed(fail_if_check_not_run=True)
+
+
+def test_get_data_path_config_yaml(config_yaml_file, tmp_path):
+    yaml_config = get_data_path_config_yaml(tmp_path, config_yaml_file)
+    assert yaml_config['image_data_paths']['images'] == 'datas/images'

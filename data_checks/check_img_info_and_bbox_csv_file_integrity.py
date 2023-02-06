@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from dch_utils import get_config_yml, get_data_type_arg_parser
+from dch_utils import get_data_path_config_yaml, get_data_type_arg_parser
 
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
@@ -56,14 +56,14 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
         return {'FAILED': s1[~comp_series_result].index}
 
 
-def main(project_path, config, check_data_type, data_check_dir):
+def main(project_path, data_path_config, check_data_type, data_check_dir):
     """Check CSV files and match them with images."""
     logging.basicConfig(level=logging.INFO, filename='app.log',
                         format="[%(levelname)s]: %(message)s")
 
     # Get image data paths from configurations
-    img_data_paths = (config['image_data_paths'] if check_data_type == 'raw'
-                      else config['new_image_data_paths'])
+    img_data_paths = (data_path_config['image_data_paths'] if check_data_type == 'raw'
+                      else data_path_config['new_image_data_paths'])
 
     # Get a list of image names
     img_names = [img.parts[-1] for img in (project_path / img_data_paths['images']).iterdir()]
@@ -144,12 +144,13 @@ def main(project_path, config, check_data_type, data_check_dir):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
+    data_path_config = get_data_path_config_yaml(project_path)
     data_check_dir = Path(__file__).parent
     img_data_type = get_data_type_arg_parser().parse_args()
 
     if img_data_type.check_data_type in ['raw', 'new']:
-        check_passed = main(project_path, config, img_data_type.check_data_type, data_check_dir)
+        check_passed = main(project_path, data_path_config, img_data_type.check_data_type,
+                            data_check_dir)
 
         if not check_passed:
             logging.warning(f"Checking for the integrity \

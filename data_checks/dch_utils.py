@@ -1,17 +1,16 @@
 """This module contains helper functions for data validation."""
 
 import argparse
-from pathlib import Path
 
 import yaml
 
 
-def get_config_yml():
-    """Get configurations from a yaml file."""
-    config_path = Path.cwd() / 'configs/config.yaml'
+def get_data_path_config_yaml(project_path, data_path_config_file_path='configs/params.yaml'):
+    """Get data path configurations from a params.yaml or other yaml files."""
+    config_path = project_path / data_path_config_file_path
     with open(config_path) as conf:
-        config = yaml.safe_load(conf)
-    return config
+        data_path_config = yaml.safe_load(conf)
+    return data_path_config
 
 
 def get_data_type_arg_parser():

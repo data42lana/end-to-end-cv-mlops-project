@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from utils import get_config_yml
+from utils import get_param_config_yaml
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -22,11 +22,11 @@ def update_dir_or_csv_files(source, destination):
         updated_df.to_csv(destination, index=False)
 
 
-def main(project_path, config):
+def main(project_path, param_config):
     """Update raw data with new ones."""
     # Get raw and new image data paths from configurations
-    img_data_paths = config['image_data_paths']
-    new_img_data_paths = config['new_image_data_paths']
+    img_data_paths = param_config['image_data_paths']
+    new_img_data_paths = param_config['new_image_data_paths']
 
     # Check if new data exists
     new_data_exist = np.all([project_path.joinpath(new_img_data_paths[fpath]).exists()
@@ -45,5 +45,5 @@ def main(project_path, config):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
-    main(project_path, config)
+    param_config = get_param_config_yaml(project_path)
+    main(project_path, param_config)

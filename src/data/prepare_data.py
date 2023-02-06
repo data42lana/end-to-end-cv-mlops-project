@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from utils import get_config_yml, stratified_group_train_test_split
+from utils import get_param_config_yaml, stratified_group_train_test_split
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -62,10 +62,10 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
     return new_expanded_df
 
 
-def main(project_path, config):
+def main(project_path, param_config):
     """Create training and test CSV data files."""
     # Get image data paths from configurations
-    img_data_paths = config['image_data_paths']
+    img_data_paths = param_config['image_data_paths']
 
     # Split data into training and test sets
     img_info_df, img_bbox_df = [
@@ -91,5 +91,5 @@ def main(project_path, config):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
-    main(project_path, config)
+    param_config = get_param_config_yaml(project_path)
+    main(project_path, param_config)

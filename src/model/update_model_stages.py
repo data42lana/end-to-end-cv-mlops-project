@@ -7,7 +7,7 @@ from pathlib import Path
 
 import mlflow
 
-from utils import get_config_yml, production_model_metric_history_plot
+from utils import get_param_config_yaml, production_model_metric_history_plot
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")
@@ -48,16 +48,16 @@ def update_registered_model_version_stages(mlclient, registered_model_name):
     return prod_run_id
 
 
-def main(project_path, config, save_metric_plots=False):
+def main(project_path, param_config, save_metric_plots=False):
     """Update version stages for a registered model, return a run id,
     and create and return metric plots for a model with 'Production' stage.
     """
-    registered_model_name = config['object_detection_model']['registered_name']
+    registered_model_name = param_config['object_detection_model']['registered_name']
     client = mlflow.MlflowClient()
     production_run_id = update_registered_model_version_stages(client, registered_model_name)
     logging.info("Stages are updated.")
 
-    mltracking_conf = config['mlflow_tracking_conf']
+    mltracking_conf = param_config['mlflow_tracking_conf']
     save_path = project_path if save_metric_plots else None
     metric_plots = []
 
@@ -70,6 +70,6 @@ def main(project_path, config, save_metric_plots=False):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    config = get_config_yml()
+    param_config = get_param_config_yaml(project_path)
     mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    _ = main(project_path, config, save_metric_plots=True)
+    _ = main(project_path, param_config, save_metric_plots=True)
