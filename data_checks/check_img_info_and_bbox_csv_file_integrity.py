@@ -129,7 +129,8 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
     fname = f'{check_data_type}_csv_file_check_results.json'
     file_save_path = project_path / data_check_dir / f'data_check_results/{fname}'
     file_save_path.parent.mkdir(parents=True, exist_ok=True)
-    json.dump(validation_results, file_save_path)
+    with open(file_save_path, 'w') as f:
+        json.dump(validation_results, f)
     logging.info("Data integrity check results are saved.")
 
     # Find total check status
@@ -146,11 +147,10 @@ if __name__ == '__main__':
     project_path = Path.cwd()
     data_path_config = get_data_path_config_yaml(project_path)
     data_check_dir = Path(__file__).parent
-    img_data_type = get_data_type_arg_parser().parse_args()
+    img_data_type = get_data_type_arg_parser().parse_args().check_data_type
 
-    if img_data_type.check_data_type in ['raw', 'new']:
-        check_passed = main(project_path, data_path_config, img_data_type.check_data_type,
-                            data_check_dir)
+    if img_data_type in ['raw', 'new']:
+        check_passed = main(project_path, data_path_config, img_data_type, data_check_dir)
 
         if not check_passed:
             logging.warning(f"Checking for the integrity \

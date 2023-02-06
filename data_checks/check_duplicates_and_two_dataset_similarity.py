@@ -168,7 +168,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
     # Save check results
     for check_result, fname, log_msg in zip(check_results, fnames, log_msgs):
         fname += '_check_results.html'
-        check_result.save_as_html(data_check_dir / fname)
+        check_result.save_as_html(str(data_check_dir / 'data_check_results' / fname))
         logging.info(log_msg)
 
     return bool(sum(checks_passed))
@@ -178,11 +178,10 @@ if __name__ == '__main__':
     project_path = Path.cwd()
     data_path_config = get_data_path_config_yaml(project_path)
     data_check_dir = Path(__file__).parent
-    img_data_type = get_data_type_arg_parser().parse_args()
+    img_data_type = get_data_type_arg_parser().parse_args().check_data_type
 
-    if img_data_type.check_data_type in ['raw', 'prepared', 'new']:
-        check_passed = main(project_path, data_path_config, img_data_type.check_data_type,
-                            data_check_dir)
+    if img_data_type in ['raw', 'prepared', 'new']:
+        check_passed = main(project_path, data_path_config, img_data_type, data_check_dir)
 
         if not check_passed:
             logging.warning(f"Checking for duplicates or similarity of \
