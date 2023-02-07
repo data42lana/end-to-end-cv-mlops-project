@@ -1,4 +1,4 @@
-"""This module creates a workflow for the current project."""
+"""This module creates a workflow for the machine learning project."""
 # Warning: Metaflow does not run on Windows!
 
 from pathlib import Path
@@ -7,11 +7,11 @@ from metaflow import (Flow, FlowSpec, Parameter, card, current, project, retry, 
                       timeout)
 from metaflow.cards import Image, Markdown
 
-from src.utils import get_config_yml
+from src.utils import get_param_config_yaml
 
 # isort: off
-MLCONFIG = get_config_yml()
 PROJECT_PATH = Path.cwd()
+MLCONFIG = get_param_config_yaml(PROJECT_PATH)
 MLTRACKING_URI = 'sqlite:///mlruns/mlruns.db'
 
 
@@ -53,20 +53,6 @@ class MLWorkFlow(FlowSpec):
                 raise ValueError("New Data Expectation Check is failed!")
         else:
             print("New Data Expectation Check is skipped: New data is not available!")
-        self.next(self.new_data_duplication_check)
-
-    @step
-    def new_data_duplication_check(self):
-        """Check new data for duplicates."""
-        from data_checks.check_duplicates_and_two_dataset_similarity import (
-            main as check_csv_duplication)
-        if self.new_data_is_available:
-            check_passed = check_csv_duplication(PROJECT_PATH, MLCONFIG, 'new',
-                                                 PROJECT_PATH / 'data_checks')
-            if not check_passed:
-                raise ValueError("New Data Duplication Check is failed!")
-        else:
-            print("New Data Duplication Check is skipped: New data is not available!")
         self.next(self.new_data_integrity_check)
 
     @step
@@ -86,7 +72,7 @@ class MLWorkFlow(FlowSpec):
     @step
     def new_data_similarity_check(self):
         """Check new and raw datasets for similarity."""
-        from data_checks.check_duplicates_and_two_dataset_similarity import (
+        from data_checks.check_bbox_duplicates_and_two_dataset_similarity import (
             main as check_two_dataset_similarity)
         if self.new_data_is_available:
             check_passed = check_two_dataset_similarity(PROJECT_PATH, MLCONFIG, 'new',
@@ -121,15 +107,15 @@ class MLWorkFlow(FlowSpec):
             run_name=None)
         if not result['success']:
             raise ValueError("Raw Data Expectation Check is failed!")
-        self.next(self.raw_data_duplication_check)
+        self.next(self.raw_data_bbox_duplication_check)
 
     @step
-    def raw_data_duplication_check(self):
-        """Check raw data for duplicates."""
-        from data_checks.check_duplicates_and_two_dataset_similarity import (
-            main as check_csv_duplication)
-        check_passed = check_csv_duplication(PROJECT_PATH, MLCONFIG, 'raw',
-                                             PROJECT_PATH / 'data_checks')
+    def raw_data_bbox_duplication_check(self):
+        """Check raw data for bbox duplicates."""
+        from data_checks.check_bbox_duplicates_and_two_dataset_similarity import (
+            main as check_bbox_csv_duplication)
+        check_passed = check_bbox_csv_duplication(PROJECT_PATH, MLCONFIG, 'raw',
+                                                  PROJECT_PATH / 'data_checks')
         if not check_passed:
             raise ValueError("Raw Data Duplication Check is failed!")
         self.next(self.raw_data_integrity_check)
@@ -147,7 +133,7 @@ class MLWorkFlow(FlowSpec):
 
     @step
     def train_test_data_split(self):
-        """Split raw data into traininig and test sets."""
+        """Split raw data into training and test sets."""
         from src.data.prepare_data import main as split_data_into_train_test
         split_data_into_train_test(PROJECT_PATH, MLCONFIG)
         self.next(self.train_test_similarity_check)
@@ -155,7 +141,7 @@ class MLWorkFlow(FlowSpec):
     @step
     def train_test_similarity_check(self):
         """Check training and test datasets for similarity."""
-        from data_checks.check_duplicates_and_two_dataset_similarity import (
+        from data_checks.check_bbox_duplicates_and_two_dataset_similarity import (
             main as check_two_dataset_similarity)
         check_passed = check_two_dataset_similarity(PROJECT_PATH, MLCONFIG, 'prepared',
                                                     PROJECT_PATH / 'data_checks')
@@ -190,12 +176,12 @@ class MLWorkFlow(FlowSpec):
         self.test_res = run_model_test_inference(PROJECT_PATH, MLCONFIG,
                                                  get_random_prediction=True)
         self.test_score = [self.test_res['test_score_name'],
-                           self.test_res['test_score_value']]
+                           round(self.test_res['test_score_value'], 2)]
         self.next(self.model_stage_update)
 
     @step
     def model_stage_update(self):
-        """Update model version stages and tags to 'production' or 'archived.'"""
+        """Update model version stages and tags to 'production' or 'archived'."""
         import mlflow
         from src.model.update_model_stages import main as update_model_version_stages
 
@@ -227,7 +213,7 @@ class MLWorkFlow(FlowSpec):
         current.card.append(Markdown("# Model Performance Report"))
 
         # Add a current test score
-        current.card.append(Markdown("### Test {0} score: {1:0.2f}".format(
+        current.card.append(Markdown("### Test {0} score: {1}".format(
             self.test_score[0], self.test_score[1])))
 
         if 'production' in Flow(current.flow_name)[current.run_id].user_tags():
