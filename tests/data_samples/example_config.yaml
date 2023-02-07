@@ -23,11 +23,11 @@ object_detection_model:
     box_nms_thresh: 0.4
     box_detections_per_img: 120
     box_positive_fraction: 0.4
-  save_dir: res
+  save_dir: &RES res
 
 model_training_inference_conf:
   device_cuda: false
-  metric_to_find_best: f_beta
+  metric_to_find_best: &BM f_beta
   initial_metric_value: 0.5
   evaluation_iou_threshold: 0.5
   evaluation_beta: 1
@@ -41,18 +41,18 @@ model_training_inference_conf:
   log_metrics: true
   save_best_ckpt: false
   register_best_log_model: true
-  save_random_best_model_output_dir: res
+  save_random_best_model_output_dir: *RES
   checkpoint: null
   license_pattern_to_select_images: !!str "(CC0 1.0)"
 
 mlflow_tracking_conf:
   run_name: test-fine-tuning
   experiment_name: TestFTModel
-  metrics_to_plot: [f_beta, train_epoch_loss]
+  metrics_to_plot: [*BM, train_epoch_loss]
 
 hyperparameter_optimization:
   study_name: tfrcnn_study
-  metric: f_beta
+  metric: *BM
   sampler:
     name: RandomSampler
     parameters: {seed: 0}
@@ -70,5 +70,5 @@ hyperparameter_optimization:
       StepLR:
         step_size: [{low: 1, high: 3}, int]
       None: null
-  save_best_parameters_path: res/best_params.yaml
-  save_study_dir: res
+  save_best_parameters_path: res/best_tparams.yaml
+  save_study_dir: *RES
