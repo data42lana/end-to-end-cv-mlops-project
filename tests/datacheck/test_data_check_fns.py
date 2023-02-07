@@ -6,7 +6,7 @@ from deepchecks.tabular.checks import TrainTestSamplesMix
 from data_checks.check_img_info_and_bbox_csv_file_integrity import (
     check_that_two_sorted_lists_are_equal,
     check_that_series_is_less_than_or_equal_to)
-from data_checks.check_duplicates_and_two_dataset_similarity import (
+from data_checks.check_bbox_duplicates_and_two_dataset_similarity import (
     check_two_datasets, check_bbox_data_for_duplicates,
     check_two_datasets_similarity, check_train_test_author_group_leakage)
 from data_checks.dch_utils import get_data_path_config_yaml

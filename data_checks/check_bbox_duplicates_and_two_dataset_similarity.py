@@ -3,6 +3,7 @@
 import logging
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from deepchecks.tabular import Dataset, Suite
 from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison,
@@ -104,13 +105,13 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
     log_msgs = []
 
     if check_data_type == 'raw':
-        # Data Duplicates Check
+        # Bbox Duplicates Check
         bbox_df = pd.read_csv(project_path / img_data_paths['bboxes_csv_file'])
         data_duplicates_check_result = check_bbox_data_for_duplicates(bbox_df)
         check_results.append(data_duplicates_check_result)
         checks_passed.append(data_duplicates_check_result.passed_conditions())
-        fnames.append(f'{check_data_type}_duplicates')
-        log_msgs.append("Results of checking for duplicates are saved.")
+        fnames.append(f'{check_data_type}_bbox_duplicates')
+        log_msgs.append("Results of checking for bbox duplicates are saved.")
 
     elif check_data_type == 'prepared':
         train_path, test_path = [
@@ -147,7 +148,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_results.append(new_info_ds_check_result)
         checks_passed.append(new_info_ds_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_old_info')
-        log_msgs.append("New info dataset check results are saved.")
+        log_msgs.append("New info similarity check results are saved.")
 
         # New Bbox Dataset Check
         bbox_path, new_bbox_path = [
@@ -161,7 +162,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_results.append(new_bbox_ds_check_result)
         checks_passed.append(new_bbox_ds_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_old_bbox')
-        log_msgs.append("New bbox dataset check results are saved.")
+        log_msgs.append("New bbox similarity check results are saved.")
     else:
         raise ValueError("check_data_type must be one of 'raw', 'prepared', or 'new'!")
 
@@ -171,7 +172,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_result.save_as_html(str(data_check_dir / 'data_check_results' / fname))
         logging.info(log_msg)
 
-    return bool(sum(checks_passed))
+    return np.all(checks_passed)
 
 
 if __name__ == '__main__':
