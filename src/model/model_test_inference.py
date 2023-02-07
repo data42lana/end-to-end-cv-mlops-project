@@ -2,6 +2,7 @@
 of a registered model on test data.
 """
 
+import json
 import logging
 import random
 from pathlib import Path
@@ -26,10 +27,11 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 
-def main(project_path, param_config, get_random_prediction=False):
-    """Evaluate the latest version of a registered model on test data,
-    and make and save a prediction on a randomly selected test image
-    if get_random_predict is True.
+def main(project_path, param_config, get_random_prediction=False,
+         compare_with_production_model=False):
+    """Evaluate the latest version of a registered model on test data, and
+    compare with a production model if compare_with_production_model is True,
+    and save and return the evaluation result.
     """
     IMG_DATA_PATHS = param_config['image_data_paths']
     TRAIN_EVAL_PARAMS = param_config['model_training_inference_conf']
@@ -38,7 +40,7 @@ def main(project_path, param_config, get_random_prediction=False):
     # Load the latest version of a model from the MLflow registry
     client = mlflow.MlflowClient()
     reg_model_name = param_config['object_detection_model']['registered_name']
-    latest_faster_rcnn_mob_model = get_latest_registared_pytorch_model(client, reg_model_name)
+    latest_reg_model = get_latest_registared_pytorch_model(client, reg_model_name)
 
     # Evaluate the model on test data
     imgs_path, test_csv_path, bbox_csv_path = [
@@ -47,17 +49,35 @@ def main(project_path, param_config, get_random_prediction=False):
                                            IMG_DATA_PATHS['bboxes_csv_file']]]
     batch_size = param_config['image_dataset_conf']['batch_size']
     test_dl = create_dataloaders(imgs_path, test_csv_path, bbox_csv_path, batch_size)
-    test_eval_res = eval_one_epoch(test_dl, latest_faster_rcnn_mob_model,
-                                   TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
-                                   TRAIN_EVAL_PARAMS['evaluation_beta'], DEVICE)
+    test_eval_params = {'dataloader': test_dl,
+                        'iou_thresh': TRAIN_EVAL_PARAMS['evaluation_iou_threshold'],
+                        'beta': TRAIN_EVAL_PARAMS['evaluation_beta'],
+                        'device': DEVICE}
+    test_eval_res = eval_one_epoch(model=latest_reg_model, **test_eval_params)
+
+    # Get a value of the metric used to find the best model
     test_score_name = TRAIN_EVAL_PARAMS['metric_to_find_best']
     test_score = test_eval_res['epoch_scores'][test_score_name]
-
     if test_score_name == 'f_beta':
         test_score_name += '_{}'.format(TRAIN_EVAL_PARAMS['evaluation_beta'])
-
     test_res = {'test_score_value': test_score, 'test_score_name': test_score_name}
-    logging.info(test_eval_res['epoch_scores'])
+
+    # Compare the model with the latest version of a production model
+    if compare_with_production_model:
+        prod_reg_model = get_latest_registared_pytorch_model(client, reg_model_name,
+                                                             stages=['Production'])
+        prod_score = (eval_one_epoch(model=prod_reg_model,
+                                     **test_eval_params)['epoch_scores'][test_score_name]
+                      if prod_reg_model else 0)
+        test_res['not_best'] = test_score < prod_score
+
+    # Save the test score in a json file
+    save_output_path = project_path.joinpath('/'.join([
+        TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'], 'test_outs']))
+    save_output_path.mkdir(exits_ok=True, parents=True)
+    with open(save_output_path / 'test_scores.json', 'w') as f:
+        json.dump(test_res, f)
+    logging.info('The test score is saved!')
 
     if get_random_prediction:
         # Make a random prediction (boxes and scores) on a test image sample and save it
@@ -67,11 +87,10 @@ def main(project_path, param_config, get_random_prediction=False):
 
         if random_img:
             test_img, test_img_info = random_img
-            save_output_path = '/'.join([
-                TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'],
-                'test_outs/sample_img_{}'.format(test_img_info['Name'])])
-            test_pred_res = predict(test_img, latest_faster_rcnn_mob_model, show_scores=True,
-                                    save_predict_path=project_path / save_output_path)
+            save_test_predict_path = save_output_path.joinpath(
+                'sample_img_{}'.format(test_img_info['Name']))
+            test_pred_res = predict(test_img, latest_reg_model, show_scores=True,
+                                    save_predict_path=save_test_predict_path)
             test_pred_res = {'test_predict_number': test_pred_res[0],
                              'test_predict_img': test_pred_res[1],
                              'test_img_info': test_img_info}
@@ -84,4 +103,5 @@ if __name__ == '__main__':
     project_path = Path.cwd()
     param_config = get_param_config_yaml(project_path)
     mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    _ = main(project_path, param_config, get_random_prediction=True)
+    _ = main(project_path, param_config, get_random_prediction=True,
+             compare_with_production_model=True)

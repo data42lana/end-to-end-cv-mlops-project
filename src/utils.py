@@ -87,13 +87,17 @@ def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
 
 def get_latest_registared_pytorch_model(mlclient, registered_model_name, stages=None):
     """Return the latest version of a PyTorch model among registered ones
-    with one of given stages.
+    with one of given stages if the model exists.
     """
     model_registry_info = mlclient.get_latest_versions(registered_model_name, stages)
-    model_latest_version = max([m.version for m in model_registry_info])
-    model_uri = 'models:/{}/{}'.format(registered_model_name, model_latest_version)
-    latest_pytorch_model = mlflow.pytorch.load_model(model_uri)
-    return latest_pytorch_model
+    model_versions = [m.version for m in model_registry_info]
+    if model_versions:
+        model_latest_version = max(model_versions)
+        model_uri = 'models:/{}/{}'.format(registered_model_name, model_latest_version)
+        latest_pytorch_model = mlflow.pytorch.load_model(model_uri)
+        return latest_pytorch_model
+    else:
+        return None
 
 
 def get_random_img_with_info(csv_file_path, img_dir_path, license_pattern='',

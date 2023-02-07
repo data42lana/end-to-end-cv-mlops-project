@@ -236,7 +236,7 @@ def main(project_path, param_config):
         checkpoint = torch.load(checkpoint_path) if checkpoint_path.exists() else None
 
     # Set paths to save the best model and its outputs
-    save_best_model_path = project_path / save_dir if save_dir else save_dir
+    save_best_model_path = project_path / save_dir if save_dir else None
     save_output_path = (project_path / TRAIN_EVAL_PARAMS['save_random_best_model_output_dir']
                         if TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'] else None)
 
