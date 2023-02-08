@@ -13,6 +13,7 @@ from src.train.optimize_hyperparams import main as optimize_hyperparams
 from src.train.fine_tune_model import main as fine_tune_model
 from src.model.model_test_inference import main as model_test_inference
 from src.model.update_model_stages import main as update_model_stages
+from src.model.generate_model_report import main as generate_model_report
 
 
 @pytest.fixture
@@ -39,6 +40,7 @@ def test_src_module_pipeline(example_config, val_df, train_val_df, tmp_path):
     fine_tune_model(tmp_path, example_config)
     _ = model_test_inference(tmp_path, example_config, get_random_prediction=True)
     _ = update_model_stages(tmp_path, example_config, save_metric_plots=True)
+    generate_model_report(tmp_path, example_config)
 
     # Result
     prepared_test_df = (
@@ -61,4 +63,5 @@ def test_src_module_pipeline(example_config, val_df, train_val_df, tmp_path):
     assert client.get_metric_history(test_res_run, 'f_beta')
     assert [ch for ch in (tmp_path / 'res/test_outs').iterdir()]
     assert client.get_model_version('best_tfrcnn', mlst_version).current_stage == 'Production'
-    assert len([ch for ch in (tmp_path / 'plots').iterdir()]) == 2
+    assert len([ch for ch in (tmp_path / 'res/plots').iterdir()]) == 2
+    assert (tmp_path / 'reports/model_report.md').exists()

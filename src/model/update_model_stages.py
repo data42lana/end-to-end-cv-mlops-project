@@ -58,7 +58,9 @@ def main(project_path, param_config, save_metric_plots=False):
     logging.info("Stages are updated.")
 
     mltracking_conf = param_config['mlflow_tracking_conf']
-    save_path = project_path if save_metric_plots else None
+    save_path = (project_path.joinpath(
+        param_config['model_training_inference_conf']['save_model_output_dir'])
+        if save_metric_plots else None)
     metric_plots = []
 
     for metric in mltracking_conf['metrics_to_plot']:

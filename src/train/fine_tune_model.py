@@ -237,8 +237,8 @@ def main(project_path, param_config):
 
     # Set paths to save the best model and its outputs
     save_best_model_path = project_path / save_dir if save_dir else None
-    save_output_path = (project_path / TRAIN_EVAL_PARAMS['save_random_best_model_output_dir']
-                        if TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'] else None)
+    save_output_path = (project_path / TRAIN_EVAL_PARAMS['save_model_output_dir']
+                        if TRAIN_EVAL_PARAMS['save_model_output_dir'] else None)
 
     # Train the model (fine-tuning) and log metrics and parameters into MLflow
     mlflow_conf = param_config['mlflow_tracking_conf']

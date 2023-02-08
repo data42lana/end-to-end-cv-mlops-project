@@ -73,11 +73,11 @@ def main(project_path, param_config, get_random_prediction=False,
 
     # Save the test score in a json file
     save_output_path = project_path.joinpath('/'.join([
-        TRAIN_EVAL_PARAMS['save_random_best_model_output_dir'], 'test_outs']))
+        TRAIN_EVAL_PARAMS['save_model_output_dir'], 'test_outs']))
     save_output_path.mkdir(exits_ok=True, parents=True)
-    with open(save_output_path / 'test_scores.json', 'w') as f:
+    with open(save_output_path / 'test_score.json', 'w') as f:
         json.dump(test_res, f)
-    logging.info('The test score is saved!')
+    logging.info('Test score is saved!')
 
     if get_random_prediction:
         # Make a random prediction (boxes and scores) on a test image sample and save it
@@ -88,9 +88,10 @@ def main(project_path, param_config, get_random_prediction=False,
         if random_img:
             test_img, test_img_info = random_img
             save_test_predict_path = save_output_path.joinpath(
-                'sample_img_{}'.format(test_img_info['Name']))
+                'predict-{}'.format(test_img_info['Name']))
             test_pred_res = predict(test_img, latest_reg_model, show_scores=True,
                                     save_predict_path=save_test_predict_path)
+            logging.info('Test image with predictions is saved!')
             test_pred_res = {'test_predict_number': test_pred_res[0],
                              'test_predict_img': test_pred_res[1],
                              'test_img_info': test_img_info}

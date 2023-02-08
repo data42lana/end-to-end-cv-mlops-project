@@ -41,7 +41,7 @@ model_training_inference_conf:
   log_metrics: true
   save_best_ckpt: false
   register_best_log_model: true
-  save_random_best_model_output_dir: *RES
+  save_model_output_dir: *RES
   checkpoint: null
   license_pattern_to_select_images: !!str "(CC0 1.0)"
 
