@@ -210,7 +210,7 @@ class MLWorkFlow(FlowSpec):
     def end(self):
         """Generate a report using card components."""
         # Set a report title
-        current.card.append(Markdown("# Model Performance Report"))
+        current.card.append(Markdown("# Model Training Result Report"))
 
         # Add a current test score
         current.card.append(Markdown("### Test {0} score: {1}".format(
@@ -221,12 +221,12 @@ class MLWorkFlow(FlowSpec):
             current.card.append(Markdown(f"Mlflow Run Id: {self.prod_run_id_in_mlflow}"))
 
             # Add training metric plots
-            current.card.append(Markdown("## Metric History Plots:"))
+            current.card.append(Markdown("## Metric History Plot(s):"))
             for plot in self.prod_metric_plots:
                 current.card.append(Image.from_matplotlib(plot))
 
             # Add a test prediction result
-            current.card.append(Markdown("## Model Test Prediction:"))
+            current.card.append(Markdown("## Model Test Prediction(s):"))
             current.card.append(Markdown(
                 "The Number of House Sparrows on the Image: {}".format(
                     self.test_res['test_predict_number'])))
@@ -239,7 +239,7 @@ class MLWorkFlow(FlowSpec):
             photo_number = self.test_res['test_img_info']['Name'].split('_', maxsplit=1)[0]
             photo_license = self.test_res['test_img_info']['License'].split(')')[0].split('(')[1]  # noqa: B950
             current.card.append(Markdown(
-                "Photo by {0} on [{1}]({2}). № {3}. License: {4} \
+                "Photo by {0} on [{1}]({2}). No {3}. License: {4} \
                 *The photo modified: boxes and scores drawn*.".format(
                     photo_author, photo_source, photo_source_link,
                     photo_number, photo_license)))
