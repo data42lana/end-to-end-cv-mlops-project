@@ -5,13 +5,11 @@ __pycache__/
 env/
 data_check_results/
 info/
-reports/
-tmp/
+reports/test_report
 pyttmp/
 .coverage
 app.log
 *.db
 *.pt
 *.pth
-outputs/
-mlruns/
+mlruns/artifacts
