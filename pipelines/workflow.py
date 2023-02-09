@@ -1,5 +1,5 @@
 """This module creates a workflow for the machine learning project."""
-# Warning: Metaflow does not run on Windows!
+# Note: Metaflow does not run on Windows!
 
 from pathlib import Path
 
