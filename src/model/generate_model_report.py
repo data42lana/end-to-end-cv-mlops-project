@@ -27,10 +27,10 @@ def main(project_path, param_config):
     test_score_path = project_path / test_output_dir / 'test_score.json'
     with open(test_score_path) as f:
         test_score = json.load(f)
-    test_score_name_value = [kv for kv in test_score.items() if kv[0] != 'not_best'][0]
+    test_score_name_value = [kv for kv in test_score.items() if kv[0] != 'best'][0]
     report_content.append("### Test {0} score: {1}\n".format(*test_score_name_value))
 
-    test_score_is_best = not test_score['not_best'] if 'not_best' in test_score else False
+    test_score_is_best = test_score.get('best', False)
 
     if test_score_is_best:
         # Add training metric plots

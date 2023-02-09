@@ -69,7 +69,7 @@ def main(project_path, param_config, get_random_prediction=False,
         prod_score = (eval_one_epoch(model=prod_reg_model,
                                      **test_eval_params)['epoch_scores'][test_score_name]
                       if prod_reg_model else 0)
-        test_res['not_best'] = test_score < prod_score
+        test_res['best'] = test_score > prod_score
 
     # Save the test score in a json file
     save_output_path = project_path.joinpath('/'.join([
