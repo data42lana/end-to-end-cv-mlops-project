@@ -247,7 +247,9 @@ def main(project_path, param_config):
     if ftm_exp is not None:
         ftm_exp_id = ftm_exp.experiment_id
     else:
-        ftm_exp_id = mlflow.create_experiment(mlflow_conf['experiment_name'])
+        ftm_exp_id = mlflow.create_experiment(
+            mlflow_conf['experiment_name'],
+            artifact_location=project_path.joinpath('mlruns/artifacts').as_uri())
 
     with mlflow.start_run(run_name=mlflow_conf['run_name'],
                           experiment_id=ftm_exp_id):

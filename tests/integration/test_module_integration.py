@@ -25,7 +25,7 @@ def example_config():
 
 
 @pytest.mark.slow
-def test_src_module_pipeline(example_config, val_df, train_val_df, tmp_path):
+def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
     # Arrange
     _ = shutil.copytree(Path.cwd().joinpath('tests/data_samples'), tmp_path / 'datas',
                         ignore=shutil.ignore_patterns('*.yaml', '*val.csv', '*train.csv'))
