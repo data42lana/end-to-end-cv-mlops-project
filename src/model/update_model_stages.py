@@ -3,6 +3,7 @@ save metric plots for a production stage model.
 """
 
 import argparse
+import json
 import logging
 from pathlib import Path
 
@@ -71,17 +72,28 @@ def main(project_path, param_config, save_metric_plots=False):
 
 
 if __name__ == '__main__':
+    project_path = Path.cwd()
+    param_config = get_param_config_yaml(project_path)
+    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
+
     run_parser = argparse.ArgumentParser(
-        description='Specify whether to run this module.',
+        description='Specify a condition to run this module.',
         add_help=False)
     run_parser.add_argument(
-        '--run', type=bool,
-        default=False, help='whether to run this module')
+        '--only_if_test_score_is_best', type=bool,
+        default=False, help='whether to run this module only if a test score is the best')
 
-    if run_parser().parse_args().run:
-        project_path = Path.cwd()
-        param_config = get_param_config_yaml(project_path)
-        mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-        _ = main(project_path, param_config, save_metric_plots=True)
+    if run_parser().parse_args().only_if_test_score_is_best:
+        test_score_path = project_path.joinpath(
+            param_config['model_training_inference_conf']['save_model_output_dir'],
+            '/test_outs/test_score.json')
+        with open(test_score_path) as f:
+            test_score_is_best = json.load(f)['best']
+
+        if test_score_is_best:
+            main(project_path, param_config, save_metric_plots=True)
+        else:
+            logging.info("Stages update did not run: a test score is not the best!")
+
     else:
-        logging.info("Stages update did not run!")
+        main(project_path, param_config)

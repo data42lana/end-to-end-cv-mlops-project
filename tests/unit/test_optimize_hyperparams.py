@@ -43,4 +43,4 @@ class TestSaveBestHyperParams:
 
 def test_save_study_plots(simple_study, tmp_path):
     save_study_plots(simple_study, 'test_study', tmp_path)
-    assert len([ch for ch in (tmp_path / 'test_study' / 'plots').iterdir()]) == 7
+    assert len([ch for ch in (tmp_path / 'test_study/plots').iterdir()]) == 7
