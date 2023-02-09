@@ -57,13 +57,12 @@ def main(project_path, param_config, save_metric_plots=False):
     production_run_id = update_registered_model_version_stages(client, registered_model_name)
     logging.info("Stages are updated.")
 
-    mltracking_conf = param_config['mlflow_tracking_conf']
-    save_path = (project_path.joinpath(
-        param_config['model_training_inference_conf']['save_model_output_dir'])
-        if save_metric_plots else None)
+    mltraining_conf = param_config['model_training_inference_conf']
+    save_path = (project_path.joinpath(mltraining_conf['save_model_output_dir'])
+                 if save_metric_plots else None)
     metric_plots = []
 
-    for metric in mltracking_conf['metrics_to_plot']:
+    for metric in mltraining_conf['metrics_to_plot']:
         metric_plots.append(production_model_metric_history_plot(metric, client,
                                                                  registered_model_name,
                                                                  save_path=save_path))

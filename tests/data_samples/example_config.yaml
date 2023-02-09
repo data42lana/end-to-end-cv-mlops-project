@@ -1,3 +1,5 @@
+# Configurations for an integration test
+
 image_data_paths:
   images: datas/sample_imgs
   info_csv_file: datas/sample_img_info.csv
@@ -27,10 +29,13 @@ object_detection_model:
 
 model_training_inference_conf:
   device_cuda: false
+  # maximization metric:
   metric_to_find_best: &BM f_beta
   initial_metric_value: 0.5
   evaluation_iou_threshold: 0.5
   evaluation_beta: 1
+  # Default optimizer and lr_sheduler for model training
+  # if there are no saved best parameters
   optimizer:
     name: SGD
     parameters: {lr: 0.001}
@@ -39,20 +44,22 @@ model_training_inference_conf:
     parameters: null
   epochs: 3
   log_metrics: true
-  save_best_ckpt: false
   register_best_log_model: true
-  save_model_output_dir: *RES
+  save_best_ckpt: false
   checkpoint: null
+  metrics_to_plot: [*BM, train_epoch_loss]
   license_pattern_to_select_images: !!str "(CC0 1.0)"
+  save_model_output_dir: *RES
 
 mlflow_tracking_conf:
   run_name: test-fine-tuning
   experiment_name: TestFTModel
-  metrics_to_plot: [*BM, train_epoch_loss]
 
 hyperparameter_optimization:
   study_name: tfrcnn_study
+  # maximization metric:
   metric: *BM
+  # sampler and pruner and their parameters can contain null values
   sampler:
     name: RandomSampler
     parameters: {seed: 0}
@@ -63,6 +70,8 @@ hyperparameter_optimization:
   n_trials: 3
   timeout: 180
   hyperparameters:
+    # At least one optimizer must be defined with
+    # at least one optimization parameter (and a scheduler)
     optimizers:
       SGD:
         lr: [{low: 0.001, high: 0.01, log: true}, float]

@@ -36,8 +36,8 @@ model_training_inference_conf:
   initial_metric_value: 0.0
   evaluation_iou_threshold: 0.4
   evaluation_beta: 2
-  # These optimizer and lr_sheduler will be selected for training the model
-  # if there are no saved best parameters found during optimization
+  # Default optimizer and lr_sheduler for model training
+  # if there are no saved best parameters
   optimizer:
     name: SGD
     parameters: {lr: 0.001}
@@ -46,16 +46,16 @@ model_training_inference_conf:
     parameters: null
   epochs: 15
   log_metrics: true
-  save_best_ckpt: true
   register_best_log_model: true
-  save_model_output_dir: outputs
+  save_best_ckpt: true
   checkpoint: null
+  metrics_to_plot: [*BM, train_epoch_loss]
   license_pattern_to_select_images: !!str "(CC0 1.0)"
+  save_model_output_dir: outputs
 
 mlflow_tracking_conf:
   run_name: fine-tuning_with_optimized_parameters
   experiment_name: Fine-Tuning_Model
-  metrics_to_plot: [*BM, train_epoch_loss]
 
 hyperparameter_optimization:
   study_name: faster_rcnn_mob_hyper_opt_study
