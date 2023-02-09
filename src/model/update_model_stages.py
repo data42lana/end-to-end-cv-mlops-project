@@ -2,6 +2,7 @@
 save metric plots for a production stage model.
 """
 
+import argparse
 import logging
 from pathlib import Path
 
@@ -70,7 +71,17 @@ def main(project_path, param_config, save_metric_plots=False):
 
 
 if __name__ == '__main__':
-    project_path = Path.cwd()
-    param_config = get_param_config_yaml(project_path)
-    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    _ = main(project_path, param_config, save_metric_plots=True)
+    run_parser = argparse.ArgumentParser(
+        description='Specify whether to run this module.',
+        add_help=False)
+    run_parser.add_argument(
+        '--run', type=bool,
+        default=False, help='whether to run this module')
+
+    if run_parser().parse_args().run:
+        project_path = Path.cwd()
+        param_config = get_param_config_yaml(project_path)
+        mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
+        _ = main(project_path, param_config, save_metric_plots=True)
+    else:
+        logging.info("Stages update did not run!")
