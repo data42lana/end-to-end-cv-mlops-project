@@ -1,0 +1,241 @@
+# Pipeline configurations for the machine learning project
+
+# Note: Stages with new data are frozen by default.
+#       If necessary, unfreeze them before using dvc repro.
+
+vars:
+  - ../configs/params.yaml
+
+stages:
+  new_data_expectation_check:
+    frozen: true
+    cmd: great_expectations checkpoint run new_image_info_and_bbox_ckpt
+    # cmd: python great_expectations/uncommitted/run_new_image_info_and_bbox_ckpt.py
+    wdir: ..
+    deps:
+      - ${new_image_data_paths.info_csv_file}
+      - ${new_image_data_paths.bboxes_csv_file}
+    outs:
+      - great_expectations/uncommitted/validations/image_info_ge_suite:
+          cache: false
+          persist: true
+      - great_expectations/uncommitted/validations/image_bboxes_ge_suite:
+          cache: false
+          persist: true
+    desc: 'Check new data against defined expectations'
+
+  new_data_integrity_check:
+    frozen: true
+    cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=new
+    wdir: ..
+    deps:
+      - ${new_image_data_paths.images}
+      - ${new_image_data_paths.info_csv_file}
+      - ${new_image_data_paths.bboxes_csv_file}
+    outs:
+      - data_checks/data_check_results/new_csv_file_check_results.json:
+          cache: false
+    desc: 'Check new data for integrity'
+
+  new_data_similarity_check:
+    frozen: true
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=new
+    wdir: ..
+    deps:
+      - ${image_data_paths.info_csv_file}
+      - ${image_data_paths.bboxes_csv_file}
+      - ${new_image_data_paths.info_csv_file}
+      - ${new_image_data_paths.bboxes_csv_file}
+    outs:
+      - data_checks/data_check_results/new_old_info_check_results.html:
+          cache: false
+      - data_checks/data_check_results/new_old_bbox_check_results.html:
+          cache: false
+    desc: 'Check new and raw datasets for similarity'
+
+  adding_new_data_to_raw:
+    frozen: true
+    cmd: python src/data/update_raw_data.py
+    wdir: ..
+    deps:
+      - ${image_data_paths.images}
+      - ${image_data_paths.info_csv_file}
+      - ${image_data_paths.bboxes_csv_file}
+      - ${new_image_data_paths.images}
+      - ${new_image_data_paths.info_csv_file}
+      - ${new_image_data_paths.bboxes_csv_file}
+    outs:
+      - ${image_data_paths.images}:
+          persist: true
+      - ${image_data_paths.info_csv_file}:
+          persist: true
+      - ${image_data_paths.bboxes_csv_file}:
+          persist: true
+    desc: 'Add new images to raw ones and update raw csv files'
+
+  raw_data_expectation_check:
+    cmd: great_expectations checkpoint run image_info_and_bbox_ckpt
+    # cmd: python great_expectations/uncommitted/run_image_info_and_bbox_ckpt.py
+    wdir: ..
+    deps:
+      - ${image_data_paths.info_csv_file}
+      - ${image_data_paths.bboxes_csv_file}
+    outs:
+      - great_expectations/uncommitted/validations/image_info_ge_suite:
+          cache: false
+          persist: true
+      - great_expectations/uncommitted/validations/image_bboxes_ge_suite:
+          cache: false
+          persist: true
+    desc: 'Check raw data against defined expectations'
+
+  raw_data_bbox_duplication_check:
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=raw
+    wdir: ..
+    deps:
+      - ${image_data_paths.bboxes_csv_file}
+    outs:
+      - data_checks/data_check_results/raw_bbox_duplicates_check_results.html:
+          cache: false
+    desc: 'Check raw data for bbox duplicates'
+
+  raw_data_integrity_check:
+    cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=raw
+    wdir: ..
+    deps:
+      - ${image_data_paths.images}
+      - ${image_data_paths.info_csv_file}
+      - ${image_data_paths.bboxes_csv_file}
+    outs:
+      - data_checks/data_check_results/raw_csv_file_check_results.json:
+          cache: false
+    desc: 'Check raw data for integrity'
+
+  train_test_data_split:
+    cmd: python src/data/prepare_data.py
+    wdir: ..
+    deps:
+      - ${image_data_paths.info_csv_file}
+      - ${image_data_paths.bboxes_csv_file}
+    outs:
+      - ${image_data_paths.train_csv_file}
+      - ${image_data_paths.test_csv_file}
+    desc: 'Split raw data into training and test sets'
+
+  train_test_similarity_check:
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=prepared
+    wdir: ..
+    deps:
+      - ${image_data_paths.train_csv_file}
+      - ${image_data_paths.test_csv_file}
+    outs:
+      - data_checks/data_check_results/prepared_train_test_similarity_check_results.html:
+          cache: false
+      - data_checks/data_check_results/prepared_train_test_author_leakage_check_results.html:
+          cache: false
+    desc: 'Check training and test datasets for similarity'
+
+  hyperparam_optimization:
+    cmd: python src/train/optimize_hyperparams.py
+    wdir: ..
+    deps:
+      - ${image_data_paths.images}
+      - ${image_data_paths.bboxes_csv_file}
+      - ${image_data_paths.train_csv_file}
+    params:
+      - hyperparameter_optimization
+      - image_dataset_conf
+      - object_detection_model.load_parameters
+      - object_detection_model.number_classes
+      - model_training_inference_conf.evaluation_iou_threshold
+      - model_training_inference_conf.evaluation_beta
+      - model_training_inference_conf.device_cuda
+    outs:
+      - ${hyperparameter_optimization.save_best_parameters_path}:
+          cache: false
+      - ${hyperparameter_optimization.save_study_dir}/hyper_opt_studies.db:
+          cache: false
+          persist: true
+      - ${hyperparameter_optimization.save_study_dir}/${hyperparameter_optimization.study_name}/plots
+    desc: 'Find the best hyperparameters for model training'
+
+  model_fine_tuning:
+    cmd: python src/train/fine_tune_model.py
+    wdir: ..
+    deps:
+      - ${image_data_paths.images}
+      - ${image_data_paths.bboxes_csv_file}
+      - ${image_data_paths.train_csv_file}
+    params:
+      - ${hyperparameter_optimization.save_best_parameters_path}:
+      - model_training_inference_conf.epochs
+      - model_training_inference_conf.metric_to_find_best
+      - model_training_inference_conf.initial_metric_value
+      - model_training_inference_conf.optimizer
+      - model_training_inference_conf.lr_scheduler
+      - model_training_inference_conf.evaluation_iou_threshold
+      - model_training_inference_conf.evaluation_beta
+      - model_training_inference_conf.log_metrics
+      - model_training_inference_conf.register_best_log_model
+      - model_training_inference_conf.save_best_ckpt
+      - model_training_inference_conf.checkpoint
+      - model_training_inference_conf.device_cuda
+      - image_dataset_conf
+      - object_detection_model
+      - mlflow_tracking_conf
+    outs:
+      - mlruns:
+          cache: false
+          persist: true
+      - ${object_detection_model.save_dir}:
+          persist: true
+      - ${model_training_inference_conf.save_model_output_dir}/val_outs:
+          cache: false
+    desc: 'Fine-tune a model on a specific dataset'
+
+  model_inference_on_test_data:
+    cmd: python src/model/model_test_inference.py
+    wdir: ..
+    deps:
+      - mlruns
+      - ${image_data_paths.images}
+      - ${image_data_paths.bboxes_csv_file}
+      - ${image_data_paths.test_csv_file}
+    params:
+      - model_training_inference_conf.metric_to_find_best
+      - model_training_inference_conf.evaluation_beta
+      - model_training_inference_conf.evaluation_iou_threshold
+      - model_training_inference_conf.license_pattern_to_select_images
+      - model_training_inference_conf.device_cuda
+      - image_dataset_conf
+      - object_detection_model
+    outs:
+      - ${model_training_inference_conf.save_model_output_dir}/test_outs
+    metrics:
+      - ${model_training_inference_conf.save_model_output_dir}/test_outs/test_score.json:
+          cache: false
+    desc: 'Run a model inference on a test dataset'
+
+  model_stage_update:
+    cmd: python src/model/update_model_stages.py --only_if_test_score_is_best=True
+    wdir: ..
+    deps:
+      - mlruns/mlruns.db
+    params:
+      - ${model_training_inference_conf.save_model_output_dir}/test_outs/test_score.json:
+      - object_detection_model.registered_name
+      - mlflow_tracking_conf.metrics_to_plot
+    outs:
+      - ${model_training_inference_conf.save_model_output_dir}/plots
+    desc: 'Update model version stages to "Production" or "Archived" in a Mlflow registry'
+
+  model_report_generation:
+    cmd: python src/model/generate_model_report.py
+    wdir: ..
+    deps:
+      - ${model_training_inference_conf.save_model_output_dir}/test_outs
+      - ${model_training_inference_conf.save_model_output_dir}/plots
+    outs:
+      - reports/model_report.md:
+          cache: false
+    desc: 'Generate a report with model training results'
