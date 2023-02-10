@@ -40,7 +40,7 @@ class TestIdentityCheckFns:
         s = pd.Series([23, 44, 61])
         check_res = check_that_series_is_less_than_or_equal_to(s, s - 2, '<=')
         assert 'FAILED' in check_res
-        assert list(check_res['FAILED']) == list(s.iloc[[0, 1, 2]].index)
+        assert check_res['FAILED'] == s.iloc[[0, 1, 2]].to_dict()
 
 
 class TestSimilarityCheckFns:

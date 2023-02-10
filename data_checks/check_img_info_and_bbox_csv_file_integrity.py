@@ -27,7 +27,7 @@ def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
 
 def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
                                                passed_message=''):
-    """Return a dictionary of the validation status with indices
+    """Return a dictionary of the validation status with
     with incorrect values, if any.
 
     Parameters
@@ -53,7 +53,7 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
     if comp_series_result.sum() == s1.shape[0]:
         return {'PASSED': passed_message}
     else:
-        return {'FAILED': s1[~comp_series_result].index}
+        return {'FAILED': s1[~comp_series_result].to_dict()}
 
 
 def main(project_path, data_path_config, check_data_type, data_check_dir):

@@ -169,7 +169,12 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
     # Save check results
     for check_result, fname, log_msg in zip(check_results, fnames, log_msgs):
         fname += '_check_results.html'
-        check_result.save_as_html(str(data_check_dir / 'data_check_results' / fname))
+        fpath = data_check_dir / 'data_check_results' / fname
+        if fpath.exists():
+            fpath.unlink(missing_ok=True)
+        else:
+            fpath.parent.mkdir(parents=True, exist_ok=True)
+        check_result.save_as_html(str(fpath))
         logging.info(log_msg)
 
     return np.all(checks_passed)
