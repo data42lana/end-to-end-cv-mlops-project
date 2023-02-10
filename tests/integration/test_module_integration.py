@@ -58,7 +58,7 @@ def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
     assert updated_train_df.equals(train_val_df.sort_values('Name', ignore_index=True))
     assert (tmp_path / 'res/hyper_opt_studies.db').exists()
     assert len([ch for ch in (tmp_path / 'res/tfrcnn_study/plots').iterdir()]) == 7
-    assert (tmp_path / 'res/best_params.yaml').exists()
+    assert (tmp_path / 'res/best_tparams.yaml').exists()
     assert [ch for ch in (tmp_path / 'res/val_outs').iterdir()]
     assert client.get_metric_history(test_res_run, 'f_beta')
     assert [ch for ch in (tmp_path / 'res/test_outs').iterdir()]

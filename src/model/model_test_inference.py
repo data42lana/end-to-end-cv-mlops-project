@@ -74,7 +74,7 @@ def main(project_path, param_config, get_random_prediction=False,
     # Save the test score in a json file
     save_output_path = project_path.joinpath(
         TRAIN_EVAL_PARAMS['save_model_output_dir'], 'test_outs')
-    save_output_path.mkdir(exits_ok=True, parents=True)
+    save_output_path.mkdir(exist_ok=True, parents=True)
     with open(save_output_path / 'test_score.json', 'w') as f:
         json.dump(test_res, f)
     logging.info('Test score is saved!')
