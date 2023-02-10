@@ -13,3 +13,4 @@ app.log
 *.pt
 *.pth
 mlruns/artifacts
+metaflow_card_cache/

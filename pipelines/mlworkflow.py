@@ -3,8 +3,8 @@
 
 from pathlib import Path
 
-from metaflow import (Flow, FlowSpec, Parameter, card, current, project, retry, step,
-                      timeout)
+from metaflow import (Flow, FlowSpec, Parameter, card, catch, current, project, retry,
+                      step, timeout)
 from metaflow.cards import Image, Markdown
 
 from src.utils import get_param_config_yaml
@@ -15,7 +15,7 @@ MLCONFIG = get_param_config_yaml(PROJECT_PATH)
 MLTRACKING_URI = 'sqlite:///mlruns/mlruns.db'
 
 
-@project(name='end-to-end-cv-mlops-project')
+@project(name='end_to_end_cv_mlops_project')
 class MLWorkFlow(FlowSpec):
     """A flow containing steps of working with data, optimizing
     hyperparameters, training a model, and preparing it for production.
@@ -23,7 +23,7 @@ class MLWorkFlow(FlowSpec):
 
     mltracking_uri = Parameter('mltracking_uri', default=MLTRACKING_URI)
 
-    @retry(times=1)
+    @retry(times=1, minutes_between_retries=5)
     @step
     def start(self):
         """Check if raw and new data is available."""
@@ -33,8 +33,8 @@ class MLWorkFlow(FlowSpec):
             data_path_exists = np.all([PROJECT_PATH.joinpath(dpath).exists()
                                        for dpath in MLCONFIG[data_path]])
             data_is_available.append(data_path_exists)
-            self.raw_data_is_available, self.new_data_is_available = data_is_available
-        self.next(self.data_expectation_check)
+        self.raw_data_is_available, self.new_data_is_available = data_is_available
+        self.next(self.new_data_expectation_check)
 
     @step
     def new_data_expectation_check(self):
@@ -149,6 +149,7 @@ class MLWorkFlow(FlowSpec):
             raise ValueError("Train Test Similarity Check is failed!")
         self.next(self.hyperparam_optimization)
 
+    @retry(times=0)
     @step
     def hyperparam_optimization(self):
         """Find the best hyperparameters for model training."""
@@ -156,6 +157,7 @@ class MLWorkFlow(FlowSpec):
         optimize_hyperparams(PROJECT_PATH, MLCONFIG)
         self.next(self.model_fine_tuning)
 
+    @retry(times=0)
     @timeout(minutes=45)
     @step
     def model_fine_tuning(self):
@@ -179,6 +181,7 @@ class MLWorkFlow(FlowSpec):
                            round(self.test_res['test_score_value'], 2)]
         self.next(self.model_stage_update)
 
+    @retry(times=0)
     @step
     def model_stage_update(self):
         """Update model version stages and tags to 'production' or 'archived'."""
@@ -188,7 +191,7 @@ class MLWorkFlow(FlowSpec):
         # Get a production test score
         prod_runs = list(Flow(current.flow_name).runs('production'))
         if prod_runs:
-            prod_test_score = max([prod_run[current.step_name].task.data.test_score
+            prod_test_score = max([prod_run[current.step_name].task.data.test_score[1]
                                    for prod_run in prod_runs])
         else:
             prod_test_score = 0
@@ -205,6 +208,7 @@ class MLWorkFlow(FlowSpec):
             Flow(current.flow_name)[current.run_id].add_tag('production')
         self.next(self.end)
 
+    @catch
     @card(type='blank')
     @step
     def end(self):
@@ -216,7 +220,7 @@ class MLWorkFlow(FlowSpec):
         current.card.append(Markdown("### Test {0} score: {1}".format(
             self.test_score[0], self.test_score[1])))
 
-        if 'production' in Flow(current.flow_name)[current.run_id].user_tags():
+        if 'production' in Flow(current.flow_name)[current.run_id].user_tags:
             # Add a Mlflow run id
             current.card.append(Markdown(f"Mlflow Run Id: {self.prod_run_id_in_mlflow}"))
 
@@ -246,4 +250,11 @@ class MLWorkFlow(FlowSpec):
 
 
 if __name__ == '__main__':
+    import os
+    import sys
+    if 'USERNAME' not in os.environ:
+        os.environ['USERNAME'] = 'user1'
+    for ppath in [str(PROJECT_PATH), str(PROJECT_PATH / 'src'),
+                  str(PROJECT_PATH / 'data_checks')]:
+        sys.path.append(ppath)
     MLWorkFlow()
