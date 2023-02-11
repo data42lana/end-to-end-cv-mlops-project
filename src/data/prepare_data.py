@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from utils import get_param_config_yaml, stratified_group_train_test_split
+from src.utils import get_param_config_yaml, stratified_group_train_test_split
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")

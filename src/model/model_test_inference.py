@@ -11,10 +11,10 @@ import mlflow
 import numpy as np
 import torch
 
-from data.image_dataloader import create_dataloaders
-from train.train_inference_fns import eval_one_epoch, predict
-from utils import (get_device, get_latest_registared_pytorch_model,
-                   get_param_config_yaml, get_random_img_with_info)
+from src.data.image_dataloader import create_dataloaders
+from src.train.train_inference_fns import eval_one_epoch, predict
+from src.utils import (get_device, get_latest_registared_pytorch_model,
+                       get_param_config_yaml, get_random_img_with_info)
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")

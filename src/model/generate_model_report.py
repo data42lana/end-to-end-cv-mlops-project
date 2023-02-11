@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from utils import get_param_config_yaml
+from src.utils import get_param_config_yaml
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")

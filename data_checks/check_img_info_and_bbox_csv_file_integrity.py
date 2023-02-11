@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from dch_utils import get_data_path_config_yaml, get_data_type_arg_parser
+from data_checks.dch_utils import get_data_path_config_yaml, get_data_type_arg_parser
 
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import mlflow
 
-from utils import get_param_config_yaml, production_model_metric_history_plot
+from src.utils import get_param_config_yaml, production_model_metric_history_plot
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")

@@ -9,7 +9,7 @@ from deepchecks.tabular import Dataset, Suite
 from deepchecks.tabular.checks import (DataDuplicates, DatasetsSizeComparison,
                                        TrainTestFeatureDrift, TrainTestSamplesMix)
 
-from dch_utils import get_data_path_config_yaml, get_data_type_arg_parser
+from data_checks.dch_utils import get_data_path_config_yaml, get_data_type_arg_parser
 
 
 def check_two_datasets(ds1, ds2, suite_name, checks):

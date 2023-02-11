@@ -9,10 +9,10 @@ import optuna
 import torch
 import yaml
 
-from data.image_dataloader import create_dataloaders
-from model.object_detection_model import faster_rcnn_mob_model_for_n_classes
-from train.train_inference_fns import eval_one_epoch, train_one_epoch
-from utils import get_device, get_param_config_yaml
+from src.data.image_dataloader import create_dataloaders
+from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
+from src.train.train_inference_fns import eval_one_epoch, train_one_epoch
+from src.utils import get_device, get_param_config_yaml
 
 logging.basicConfig(level=logging.INFO, filename='app.log',
                     format="[%(levelname)s]: %(message)s")

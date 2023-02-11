@@ -6,7 +6,7 @@ import torch
 import torchvision.transforms as T
 from torchvision.ops import box_iou
 
-from utils import draw_bboxes_on_image
+from src.utils import draw_bboxes_on_image
 
 
 @torch.inference_mode()

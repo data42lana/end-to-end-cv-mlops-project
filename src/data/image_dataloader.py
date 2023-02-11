@@ -13,7 +13,7 @@ import torchvision.transforms as T
 from torch.utils.data import DataLoader, Dataset, Subset
 from torchvision.ops import box_convert
 
-from utils import collate_batch, stratified_group_train_test_split
+from src.utils import collate_batch, stratified_group_train_test_split
 
 # Set partial reproducibility
 SEED = 0
