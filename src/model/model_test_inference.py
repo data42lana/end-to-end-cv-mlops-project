@@ -58,9 +58,9 @@ def main(project_path, param_config, get_random_prediction=False,
     # Get a value of the metric used to find the best model
     test_score_name = TRAIN_EVAL_PARAMS['metric_to_find_best']
     test_score = test_eval_res['epoch_scores'][test_score_name]
-    if test_score_name == 'f_beta':
-        test_score_name += '_{}'.format(TRAIN_EVAL_PARAMS['evaluation_beta'])
     test_res = {'test_score_value': test_score, 'test_score_name': test_score_name}
+    if test_score_name == 'f_beta':
+        test_res['test_score_name'] = 'f_beta_' + str(TRAIN_EVAL_PARAMS['evaluation_beta'])
 
     # Compare the model with the latest version of a production model
     if compare_with_production_model:
