@@ -1,7 +1,9 @@
 """This module creates a workflow for the machine learning project."""
 # Note: Metaflow does not run on Windows!
 
+# import sys
 from pathlib import Path
+# sys.path.append(str(Path.cwd()))
 
 from metaflow import (Flow, FlowSpec, Parameter, card, catch, current, project, retry,
                       step, timeout)
@@ -9,7 +11,6 @@ from metaflow.cards import Image, Markdown
 
 from src.utils import get_param_config_yaml
 
-# isort: off
 PROJECT_PATH = Path.cwd()
 MLCONFIG = get_param_config_yaml(PROJECT_PATH)
 MLTRACKING_URI = 'sqlite:///mlruns/mlruns.db'
@@ -30,10 +31,13 @@ class MLWorkFlow(FlowSpec):
         import numpy as np
         data_is_available = []
         for data_path in ['image_data_paths', 'new_image_data_paths']:
-            data_path_exists = np.all([PROJECT_PATH.joinpath(dpath).exists()
-                                       for dpath in MLCONFIG[data_path]])
+            data_path_exists = np.all(
+                [PROJECT_PATH.joinpath(MLCONFIG[data_path][dpath]).exists()
+                 for dpath in MLCONFIG[data_path]])
             data_is_available.append(data_path_exists)
         self.raw_data_is_available, self.new_data_is_available = data_is_available
+        if not self.raw_data_is_available:
+            raise ValueError("Raw data is not available!")
         self.next(self.new_data_expectation_check)
 
     @step
@@ -158,7 +162,7 @@ class MLWorkFlow(FlowSpec):
         self.next(self.model_fine_tuning)
 
     @retry(times=0)
-    @timeout(minutes=45)
+    @timeout(hours=1)
     @step
     def model_fine_tuning(self):
         """Fine-tune a model on a specific dataset."""
@@ -251,10 +255,6 @@ class MLWorkFlow(FlowSpec):
 
 if __name__ == '__main__':
     import os
-    import sys
     if 'USERNAME' not in os.environ:
         os.environ['USERNAME'] = 'user1'
-    for ppath in [str(PROJECT_PATH), str(PROJECT_PATH / 'src'),
-                  str(PROJECT_PATH / 'data_checks')]:
-        sys.path.append(ppath)
     MLWorkFlow()
