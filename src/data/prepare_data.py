@@ -75,6 +75,10 @@ def main(project_path, param_config):
                                                             img_info_df['Number_HSparrows'],
                                                             img_info_df['Author'],
                                                             SEED)
+    # The training set must be larger than the test one
+    if train_ids.size < test_ids.size:
+        train_ids, test_ids = test_ids, train_ids
+
     # Create training and test CSV files
     for ids, fpath in zip((train_ids, test_ids), ('train_csv_file', 'test_csv_file')):
         fpath = project_path / img_data_paths[fpath]

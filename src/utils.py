@@ -113,7 +113,7 @@ def get_random_img_with_info(csv_file_path, img_dir_path, license_pattern='',
     imgs_df = imgs_df.loc[imgs_df.License.str.contains(license_pattern, regex=False)]
 
     if not imgs_df.empty:
-        image_sample_info = random.choice(imgs_df.to_dict('index'))  # nosec
+        image_sample_info = random.choice(imgs_df.to_dict('records'))  # nosec
         image_sample = cv2.cvtColor(cv2.imread(str(img_dir_path / image_sample_info['Name'])),
                                     cv2.COLOR_BGR2RGB)
         return image_sample, image_sample_info

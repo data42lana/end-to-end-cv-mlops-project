@@ -78,6 +78,16 @@ class TestSimilarityCheckFns:
         check_suite_res = check_two_datasets_similarity(train_df, train_df)
         assert not check_suite_res.passed(fail_if_check_not_run=True)
 
+    def test_check_two_datasets_similarity_bboxes_passed(self, bbox_df):
+        check_suite_res = check_two_datasets_similarity(
+            bbox_df[:9], bbox_df[9:], check_type='new-old', check_bbox_data=True)
+        assert 'Train Test Samples Mix' == check_suite_res.get_passed_checks()[0].get_header()
+
+    def test_check_two_datasets_similarity_bboxes_failed(self, bbox_df):
+        check_suite_res = check_two_datasets_similarity(
+            bbox_df, bbox_df, check_type='new-old', check_bbox_data=True)
+        assert not check_suite_res.passed(fail_if_check_not_run=True)
+
     def test_check_train_test_author_group_leakage_passed(self, train_df, val_df):
         check_suite_res = check_train_test_author_group_leakage(train_df, val_df)
         assert check_suite_res.passed(fail_if_check_not_run=True)

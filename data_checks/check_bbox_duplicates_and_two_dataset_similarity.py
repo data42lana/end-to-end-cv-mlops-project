@@ -40,17 +40,26 @@ def check_bbox_data_for_duplicates(bbox_df):
 
 
 def check_two_datasets_similarity(df1, df2, check_type='train-test',
-                                  check_new_old_bbox_data=False):
+                                  check_bbox_data=False):
     """Check similarity of training and test datasets (pd.DataFrames)
     if check_type='train-test' or new and old ones if check_type='new-old'.
     """
-    tt_cat_features = ['Source', 'License']
-    ds1, ds2 = [Dataset(df, cat_features=tt_cat_features, index_name='Name')
-                for df in [df1, df2]]
+    if check_bbox_data:
+        index_name = None
+        cat_features = ['label_name']
+        ignore_columns = ['label_name', 'image_name']
+        check_suite_name = 'Bbox Dataset Validation Suite'
+    else:
+        index_name = 'Name'
+        cat_features = ['Source', 'License']
+        ignore_columns = ['Name', 'Source', 'License']
+        check_suite_name = 'Info Dataset Validation Suite'
 
+    ds1, ds2 = [Dataset(df, cat_features=cat_features, index_name=index_name)
+                for df in [df1, df2]]
     ttsm_check = TrainTestSamplesMix().add_condition_duplicates_ratio_less_or_equal(0)
-    ttfd_info_check = TrainTestFeatureDrift(ignore_columns=['Name', 'Source', 'License'])
-    check_suite = [ttsm_check, ttfd_info_check]
+    ttfd_check = TrainTestFeatureDrift(ignore_columns=ignore_columns)
+    check_suite = [ttsm_check, ttfd_check]
 
     if check_type == 'train-test':
         dsc_check = (DatasetsSizeComparison()
@@ -59,15 +68,7 @@ def check_two_datasets_similarity(df1, df2, check_type='train-test',
         check_suite_name = 'Train Test Validation Suite'
         check_suite = [dsc_check] + check_suite
     elif check_type == 'new-old':
-
-        if check_new_old_bbox_data:
-            ds1, ds2 = [Dataset(df, cat_features=['label_name']) for df in [df1, df2]]
-            check_suite_name = 'New Bbox Dataset Validation Suite'
-            check_suite = [ttsm_check, TrainTestFeatureDrift(ignore_columns=['label_name',
-                                                                             'image_name'])]
-        else:
-            check_suite_name = 'New Info Dataset Validation Suite'
-
+        check_suite_name = 'New ' + check_suite_name
     else:
         raise ValueError("check_type must be equal 'train-test' or 'new-old'!")
 
@@ -120,7 +121,8 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         train_df, test_df = [pd.read_csv(csv_file) for csv_file in [train_path, test_path]]
 
         # Train Test Validation
-        train_test_check_result = check_two_datasets_similarity(train_df, test_df)
+        train_test_check_result = check_two_datasets_similarity(train_df, test_df,
+                                                                check_type='train-test')
         check_results.append(train_test_check_result)
         checks_passed.append(train_test_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_train_test_similarity')
@@ -158,7 +160,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
             pd.read_csv(csv_file) for csv_file in [bbox_path, new_bbox_path]]
         new_bbox_ds_check_result = check_two_datasets_similarity(bbox_df, new_bbox_df,
                                                                  check_type='new-old',
-                                                                 check_new_old_bbox_data=True)
+                                                                 check_bbox_data=True)
         check_results.append(new_bbox_ds_check_result)
         checks_passed.append(new_bbox_ds_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_old_bbox')
