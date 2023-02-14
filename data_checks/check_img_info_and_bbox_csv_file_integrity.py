@@ -153,8 +153,8 @@ if __name__ == '__main__':
         check_passed = main(project_path, data_path_config, img_data_type, data_check_dir)
 
         if not check_passed:
-            logging.warning(f"Checking for the integrity \
-                of the {img_data_type} CSV files failed.")
+            raise ValueError(
+                f"Checking for the integrity of the {img_data_type} CSV files failed.")
 
     else:
-        logging.warning(f"{img_data_type} data cannot be checked. Choose 'raw' or 'new'.")
+        raise ValueError(f"{img_data_type} data cannot be checked: choose 'raw' or 'new'.")

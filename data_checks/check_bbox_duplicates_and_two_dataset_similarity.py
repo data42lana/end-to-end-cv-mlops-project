@@ -192,9 +192,9 @@ if __name__ == '__main__':
         check_passed = main(project_path, data_path_config, img_data_type, data_check_dir)
 
         if not check_passed:
-            logging.warning(f"Checking for duplicates or similarity of \
-                the {img_data_type} CSV files failed.")
+            raise ValueError(
+                f"Checking for duplicates/similarity of the {img_data_type} CSV files failed.")  # noqa: B950
 
     else:
-        logging.warning(f"{img_data_type} data cannot be checked. \
-            Choose 'raw', 'prepared', or 'new'.")
+        raise ValueError(
+            f"{img_data_type} data cannot be checked: choose 'raw', 'prepared', or 'new'.")
