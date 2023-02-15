@@ -1,0 +1,62 @@
+# Data pipeline configurations for the project with new data
+
+vars:
+  - data_path:
+      new: data/new
+
+stages:
+  new_data_expectation_check:
+    cmd: python great_expectations/uncommitted/run_new_image_info_and_bbox_ckpt.py
+    wdir: ...
+    deps:
+      - ${data_path.new}
+    outs:
+      - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt:
+          cache: false
+          persist: true
+      - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt:
+          cache: false
+          persist: true
+      - great_expectations/uncommitted/data_docs/local_site/validations/image_info_ge_suite/run-new-ckpt:
+          cache: false
+          persist: true
+      - great_expectations/uncommitted/data_docs/local_site/validations/image_bboxes_ge_suite/run-new-ckpt:
+          cache: false
+          persist: true
+    desc: 'Check new data against defined expectations'
+
+  new_data_integrity_check:
+    cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=new
+    wdir: ...
+    deps:
+      - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+    outs:
+      - data_checks/data_check_results/new_csv_file_check_results.json:
+          cache: false
+    desc: 'Check new data for integrity'
+
+  new_data_similarity_check:
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=new
+    wdir: ...
+    deps:
+      - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+      - data_checks/data_check_results/new_csv_file_check_results.json
+    outs:
+      - data_checks/data_check_results/new_old_info_check_results.html:
+          cache: false
+      - data_checks/data_check_results/new_old_bbox_check_results.html:
+          cache: false
+    desc: 'Check new and raw datasets for similarity'
+
+  updating_raw_data:
+    cmd: python src/data/update_raw_data.py
+    wdir: ...
+    deps:
+      - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+      - data_checks/data_check_results/new_csv_file_check_results.json
+      - data_checks/data_check_results/new_old_info_check_results.html
+      - data_checks/data_check_results/new_old_bbox_check_results.html
+    desc: 'Add new images to raw ones and update raw csv files'
