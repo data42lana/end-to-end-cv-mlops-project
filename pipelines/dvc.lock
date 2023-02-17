@@ -300,14 +300,14 @@ stages:
       nfiles: 2
     outs:
     - path: reports/model_report.md
-      md5: 01e8171279c48134d5c9eaf5afa96728
-      size: 474
+      md5: f787e46cdeff8a9445f5417f754f2314
+      size: 475
   dag_saving:
     cmd: dvc dag --md > pipelines/dvc_dag.md
     deps:
     - path: reports/model_report.md
-      md5: 01e8171279c48134d5c9eaf5afa96728
-      size: 474
+      md5: f787e46cdeff8a9445f5417f754f2314
+      size: 475
     outs:
     - path: pipelines/dvc_dag.md
       md5: 2ae260e1b56948befdb67fd7a57f6839
