@@ -8,9 +8,10 @@ data_check_results/
 reports/test_report
 pyttmp/
 .coverage
-app.log
+*.log
 *.db
 *.pt
 *.pth
 mlruns/artifacts/
-/models
+.metaflow/
+metaflow_card_cache/

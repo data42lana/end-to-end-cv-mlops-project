@@ -86,12 +86,13 @@ stages:
       - data_checks/data_check_results/prepared_train_test_similarity_check_results.html
       - data_checks/data_check_results/prepared_train_test_author_leakage_check_results.html
     params:
-      - hyperparameter_optimization
-      - image_dataset_conf.batch_size
-      - object_detection_model.load_parameters
-      - object_detection_model.number_classes
-      - model_training_inference_conf.evaluation_iou_threshold
-      - model_training_inference_conf.evaluation_beta
+      - configs/params.yaml:
+        - hyperparameter_optimization
+        - image_dataset_conf.batch_size
+        - object_detection_model.load_parameters
+        - object_detection_model.number_classes
+        - model_training_inference_conf.evaluation_iou_threshold
+        - model_training_inference_conf.evaluation_beta
     outs:
       - ${hyperparameter_optimization.save_best_parameters_path}:
           cache: false
@@ -108,15 +109,16 @@ stages:
       - ${hyperparameter_optimization.save_best_parameters_path}
     params:
       - ${hyperparameter_optimization.save_best_parameters_path}:
-      - model_training_inference_conf.epochs
-      - model_training_inference_conf.metric_to_find_best
-      - model_training_inference_conf.initial_metric_value
-      - model_training_inference_conf.evaluation_iou_threshold
-      - model_training_inference_conf.evaluation_beta
-      - model_training_inference_conf.checkpoint
-      - image_dataset_conf.batch_size
-      - object_detection_model
-      - mlflow_tracking_conf
+      - configs/params.yaml:
+        - model_training_inference_conf.epochs
+        - model_training_inference_conf.metric_to_find_best
+        - model_training_inference_conf.initial_metric_value
+        - model_training_inference_conf.evaluation_iou_threshold
+        - model_training_inference_conf.evaluation_beta
+        - model_training_inference_conf.checkpoint
+        - image_dataset_conf.batch_size
+        - object_detection_model
+        - mlflow_tracking_conf
     outs:
       - mlruns:
           cache: false
@@ -133,7 +135,8 @@ stages:
       - mlruns
       - ${image_data_paths.test_csv_file}
     params:
-      - model_training_inference_conf.license_pattern_to_select_images
+      - configs/params.yaml:
+        - model_training_inference_conf.license_pattern_to_select_images
     outs:
       - ${model_training_inference_conf.save_model_output_dir}/test_outs
     desc: 'Run a model inference on a test dataset'
@@ -146,7 +149,8 @@ stages:
       - ${model_training_inference_conf.save_model_output_dir}/test_outs/test_score.json
     params:
       - ${model_training_inference_conf.save_model_output_dir}/test_outs/test_score.json:
-      - mlflow_tracking_conf.metrics_to_plot
+      - configs/params.yaml:
+        - model_training_inference_conf.metrics_to_plot
     outs:
       - ${model_training_inference_conf.save_model_output_dir}/plots
     desc: 'Update model version stages to "Production" or "Archived" in a Mlflow registry'
@@ -168,6 +172,6 @@ stages:
     deps:
       - reports/model_report.md
     outs:
-      - dvc_dag.md:
+      - pipelines/dvc_dag.md:
           cache: false
     desc: 'Save visualization of this ML pipeline as a DAG'
