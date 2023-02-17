@@ -11,8 +11,8 @@ import mlflow
 
 from src.utils import get_param_config_yaml, production_model_metric_history_plot
 
-logging.basicConfig(level=logging.INFO, filename='app.log',
-                    format="[%(levelname)s]: %(message)s")
+logging.basicConfig(level=logging.INFO, filename='pipe.log',
+                    format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
 
 def update_registered_model_version_stages(mlclient, registered_model_name):

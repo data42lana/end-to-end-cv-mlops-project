@@ -14,8 +14,8 @@ from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
 from src.train.train_inference_fns import eval_one_epoch, train_one_epoch
 from src.utils import get_device, get_param_config_yaml
 
-logging.basicConfig(level=logging.INFO, filename='app.log',
-                    format="[%(levelname)s]: %(message)s")
+logging.basicConfig(level=logging.INFO, filename='pipe.log',
+                    format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
 # Set partial reproducibility
 SEED = 0

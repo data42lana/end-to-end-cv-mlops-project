@@ -7,8 +7,8 @@ import pandas as pd
 
 from src.utils import get_param_config_yaml, stratified_group_train_test_split
 
-logging.basicConfig(level=logging.INFO, filename='app.log',
-                    format="[%(levelname)s]: %(message)s")
+logging.basicConfig(level=logging.INFO, filename='pipe.log',
+                    format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
 # Set reproducibility
 SEED = 0

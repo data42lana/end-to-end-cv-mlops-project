@@ -58,8 +58,8 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
 
 def main(project_path, data_path_config, check_data_type, data_check_dir):
     """Check CSV files and match them with images."""
-    logging.basicConfig(level=logging.INFO, filename='app.log',
-                        format="[%(levelname)s]: %(message)s")
+    logging.basicConfig(level=logging.INFO, filename='pipe.log',
+                        format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
     # Get image data paths from configurations
     img_data_paths = (data_path_config['image_data_paths'] if check_data_type == 'raw'

@@ -9,8 +9,8 @@ import pandas as pd
 
 from src.utils import get_param_config_yaml
 
-logging.basicConfig(level=logging.INFO, filename='app.log',
-                    format="[%(levelname)s]: %(message)s")
+logging.basicConfig(level=logging.INFO, filename='pipe.log',
+                    format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
 
 def update_dir_or_csv_files(source, destination):

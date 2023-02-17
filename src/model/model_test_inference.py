@@ -16,8 +16,8 @@ from src.train.train_inference_fns import eval_one_epoch, predict
 from src.utils import (get_device, get_latest_registared_pytorch_model,
                        get_param_config_yaml, get_random_img_with_info)
 
-logging.basicConfig(level=logging.INFO, filename='app.log',
-                    format="[%(levelname)s]: %(message)s")
+logging.basicConfig(level=logging.INFO, filename='pipe.log',
+                    format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
 # Set partial reproducibility
 SEED = 0
