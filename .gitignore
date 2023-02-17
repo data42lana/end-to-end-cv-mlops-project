@@ -3,8 +3,8 @@
 __pycache__/
 .pytest_cache/
 env/
-data_check_results/
 info/
+data_check_results/
 reports/test_report
 pyttmp/
 .coverage
@@ -12,5 +12,5 @@ app.log
 *.db
 *.pt
 *.pth
-mlruns/artifacts
-metaflow_card_cache/
+mlruns/artifacts/
+/models

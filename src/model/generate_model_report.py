@@ -27,15 +27,15 @@ def main(project_path, param_config):
     test_score_path = project_path / test_output_dir / 'test_score.json'
     with open(test_score_path) as f:
         test_score = json.load(f)
-    test_score_name_value = [kv for kv in test_score.items() if kv[0] != 'best'][0]
-    report_content.append("### Test {0} score: {1}\n".format(*test_score_name_value))
+    report_content.append("### Test {0} score: {1}\n".format(
+        test_score['test_score_name'], round(test_score['test_score_value'], 2)))
 
     test_score_is_best = test_score.get('best', False)
 
     if test_score_is_best:
         # Add training metric plots
         metric_plots_section_content = ["## Metric History Plot(s):\n"]
-        metric_plots_path = data_for_report_dir / 'plots'
+        metric_plots_path = '/'.join([data_for_report_dir, 'plots'])
         for plot_path in (project_path / metric_plots_path).iterdir():
             metric_plots_section_content.append(
                 "![Metric History Plot](../{0}/{1})".format(metric_plots_path,

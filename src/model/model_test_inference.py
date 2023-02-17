@@ -40,7 +40,8 @@ def main(project_path, param_config, get_random_prediction=False,
     # Load the latest version of a model from the MLflow registry
     client = mlflow.MlflowClient()
     reg_model_name = param_config['object_detection_model']['registered_name']
-    latest_reg_model = get_latest_registared_pytorch_model(client, reg_model_name)
+    latest_reg_model = get_latest_registared_pytorch_model(client, reg_model_name,
+                                                           device=DEVICE)
 
     # Evaluate the model on test data
     imgs_path, test_csv_path, bbox_csv_path = [
@@ -64,8 +65,8 @@ def main(project_path, param_config, get_random_prediction=False,
 
     # Compare the model with the latest version of a production model
     if compare_with_production_model:
-        prod_reg_model = get_latest_registared_pytorch_model(client, reg_model_name,
-                                                             stages=['Production'])
+        prod_reg_model = get_latest_registared_pytorch_model(
+            client, reg_model_name, stages=['Production'], device=DEVICE)
         prod_score = (eval_one_epoch(model=prod_reg_model,
                                      **test_eval_params)['epoch_scores'][test_score_name]
                       if prod_reg_model else 0)

@@ -1,0 +1,314 @@
+schema: '2.0'
+stages:
+  raw_data_expectation_check:
+    cmd: python great_expectations/uncommitted/run_image_info_and_bbox_ckpt.py
+    deps:
+    - path: data/raw/bboxes/bounding_boxes.csv
+      md5: 711bdddad271e9e270c22f6332c185b9
+      size: 81187
+    - path: data/raw/image_info.csv
+      md5: 68a67afc032f13d401000c176d8a7f40
+      size: 47917
+    outs:
+    - path: great_expectations/uncommitted/data_docs/local_site/validations/image_bboxes_ge_suite/run-ckpt
+      md5: cb6eb15ad49a3edce57f2af7859542e1.dir
+      size: 189885
+      nfiles: 3
+    - path: great_expectations/uncommitted/data_docs/local_site/validations/image_info_ge_suite/run-ckpt
+      md5: a9fee5aa7f1672adfe9d553e47f95919.dir
+      size: 161109
+      nfiles: 3
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-ckpt
+      md5: 596f2589f7a8a6dc932ba1c5040d5e9a.dir
+      size: 76359
+      nfiles: 3
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-ckpt
+      md5: a724e2fb40389c66193ca4177041caea.dir
+      size: 44343
+      nfiles: 3
+  raw_data_bbox_duplication_check:
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=raw
+    deps:
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-ckpt
+      md5: 596f2589f7a8a6dc932ba1c5040d5e9a.dir
+      size: 76359
+      nfiles: 3
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-ckpt
+      md5: a724e2fb40389c66193ca4177041caea.dir
+      size: 44343
+      nfiles: 3
+    outs:
+    - path: data_checks/data_check_results/raw_bbox_duplicates_check_results.html
+      md5: 0fb64286bbf60b503fd800e8ec746c2c
+      size: 7669372
+  raw_data_integrity_check:
+    cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=raw
+    deps:
+    - path: data_checks/data_check_results/raw_bbox_duplicates_check_results.html
+      md5: 0fb64286bbf60b503fd800e8ec746c2c
+      size: 7669372
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-ckpt
+      md5: 596f2589f7a8a6dc932ba1c5040d5e9a.dir
+      size: 76359
+      nfiles: 3
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-ckpt
+      md5: a724e2fb40389c66193ca4177041caea.dir
+      size: 44343
+      nfiles: 3
+    outs:
+    - path: data_checks/data_check_results/raw_csv_file_check_results.json
+      md5: 7ae7b3562339543f14e9c868e23e68c4
+      size: 961
+  train_test_data_split:
+    cmd: python src/data/prepare_data.py
+    deps:
+    - path: data_checks/data_check_results/raw_bbox_duplicates_check_results.html
+      md5: 0fb64286bbf60b503fd800e8ec746c2c
+      size: 7669372
+    - path: data_checks/data_check_results/raw_csv_file_check_results.json
+      md5: 7ae7b3562339543f14e9c868e23e68c4
+      size: 961
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-ckpt
+      md5: 596f2589f7a8a6dc932ba1c5040d5e9a.dir
+      size: 76359
+      nfiles: 3
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-ckpt
+      md5: a724e2fb40389c66193ca4177041caea.dir
+      size: 44343
+      nfiles: 3
+    outs:
+    - path: data/prepared
+      md5: 21c0899c28a2af7c39e9eeb220676bb2.dir
+      size: 59978
+      nfiles: 2
+  train_test_similarity_check:
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=prepared
+    deps:
+    - path: data/prepared/test.csv
+      md5: f71126c7a03bc91c56581b5030785e9f
+      size: 17909
+    - path: data/prepared/train.csv
+      md5: faeea0f526f31a901da513023a9e299c
+      size: 42069
+    outs:
+    - path: data_checks/data_check_results/prepared_train_test_author_leakage_check_results.html
+      md5: d272e4ab2651dbddc5b4f1e9156df1cd
+      size: 7678280
+    - path: data_checks/data_check_results/prepared_train_test_similarity_check_results.html
+      md5: 5df70865c018d5bc26d4ef12168249f9
+      size: 7781558
+  hyperparam_optimization:
+    cmd: python src/train/optimize_hyperparams.py
+    deps:
+    - path: data/prepared/train.csv
+      md5: faeea0f526f31a901da513023a9e299c
+      size: 42069
+    - path: data_checks/data_check_results/prepared_train_test_author_leakage_check_results.html
+      md5: d272e4ab2651dbddc5b4f1e9156df1cd
+      size: 7678280
+    - path: data_checks/data_check_results/prepared_train_test_similarity_check_results.html
+      md5: 5df70865c018d5bc26d4ef12168249f9
+      size: 7781558
+    params:
+      configs/params.yaml:
+        hyperparameter_optimization:
+          study_name: faster_rcnn_mob_hyper_opt_study
+          metric: f_beta
+          sampler:
+            name: TPESampler
+            parameters:
+          pruner:
+            name: MedianPruner
+            parameters:
+              n_warmup_steps: 3
+          epochs: 10
+          n_trials: 100
+          timeout: 2400
+          hyperparameters:
+            optimizers:
+              SGD:
+                lr:
+                - low: 1e-05
+                  high: 0.01
+                  log: true
+                - float
+                weight_decay:
+                - low: 0.0
+                  high: 0.001
+                  step: 0.0001
+                - float
+                momentum:
+                - low: 0.0
+                  high: 0.9
+                  step: 0.3
+                - float
+              Adam:
+                lr:
+                - low: 1e-05
+                  high: 0.01
+                  log: true
+                - float
+                weight_decay:
+                - low: 0.0
+                  high: 0.001
+                  step: 0.0001
+                - float
+            lr_schedulers:
+              StepLR:
+                step_size:
+                - low: 1
+                  high: 3
+                - int
+                gamma:
+                - low: 0.1
+                  high: 0.2
+                  log: true
+                - float
+              LinearLR:
+              None:
+          save_best_parameters_path: configs/best_params.yaml
+          save_study_dir: hyper_opt
+        image_dataset_conf.batch_size: 16
+        model_training_inference_conf.evaluation_beta: 2
+        model_training_inference_conf.evaluation_iou_threshold: 0.4
+        object_detection_model.load_parameters:
+          trainable_backbone_layers: 1
+          rpn_score_thresh: 0.4
+          box_score_thresh: 0.5
+          box_nms_thresh: 0.4
+          box_detections_per_img: 120
+          box_positive_fraction: 0.4
+        object_detection_model.number_classes: 2
+    outs:
+    - path: configs/best_params.yaml
+      md5: 0af5886aeaec7c06c6bcb4754678bccc
+      size: 212
+    - path: hyper_opt/faster_rcnn_mob_hyper_opt_study/plots
+      md5: 21dd25b3d81d5a5f4b7ad3796bb38c81.dir
+      size: 290688
+      nfiles: 7
+    - path: hyper_opt/hyper_opt_studies.db
+      md5: 2a957bd6978a03daabb85594495c33fa
+      size: 122880
+  model_fine_tuning:
+    cmd: python src/train/fine_tune_model.py
+    deps:
+    - path: configs/best_params.yaml
+      md5: 0af5886aeaec7c06c6bcb4754678bccc
+      size: 212
+    params:
+      configs/best_params.yaml:
+        f_beta: 0.82
+        lr_scheduler:
+          name: StepLR
+          parameters:
+            gamma: 0.1491746734976624
+            step_size: 2
+        optimizer:
+          name: SGD
+          parameters:
+            lr: 0.004668558203562765
+            momentum: 0.0
+            weight_decay: 0.0004
+      configs/params.yaml:
+        image_dataset_conf.batch_size: 16
+        mlflow_tracking_conf:
+          run_name: fine-tuning_with_optimized_parameters
+          experiment_name: Fine-Tuning_Model
+        model_training_inference_conf.checkpoint:
+        model_training_inference_conf.epochs: 15
+        model_training_inference_conf.evaluation_beta: 2
+        model_training_inference_conf.evaluation_iou_threshold: 0.4
+        model_training_inference_conf.initial_metric_value: 0.0
+        model_training_inference_conf.metric_to_find_best: f_beta
+        object_detection_model:
+          name: faster_rcnn_mob
+          registered_name: best_faster_rcnn_mob
+          number_classes: 2
+          load_parameters:
+            trainable_backbone_layers: 1
+            rpn_score_thresh: 0.4
+            box_score_thresh: 0.5
+            box_nms_thresh: 0.4
+            box_detections_per_img: 120
+            box_positive_fraction: 0.4
+          save_dir: models
+    outs:
+    - path: mlruns
+      md5: ac77969317118d421474e70860c48ab0.dir
+      size: 76200759
+      nfiles: 7
+    - path: models
+      md5: 556fb3b0890b3d6d60f9d43d2126f106.dir
+      size: 76035171
+      nfiles: 1
+    - path: outputs/val_outs
+      md5: d9085d4dde0d27688adc047edd51234b.dir
+      size: 150356
+      nfiles: 3
+  model_inference_on_test_data:
+    cmd: python src/model/model_test_inference.py
+    deps:
+    - path: data/prepared/test.csv
+      md5: f71126c7a03bc91c56581b5030785e9f
+      size: 17909
+    - path: mlruns
+      md5: ac77969317118d421474e70860c48ab0.dir
+      size: 76200759
+      nfiles: 7
+    params:
+      configs/params.yaml:
+        model_training_inference_conf.license_pattern_to_select_images: (CC0 1.0)
+    outs:
+    - path: outputs/test_outs
+      md5: 06f34a240ab477e782755758520f57f1.dir
+      size: 59845
+      nfiles: 2
+  model_stage_update:
+    cmd: python src/model/update_model_stages.py --only_if_test_score_is_best=True
+    deps:
+    - path: mlruns/mlruns.db
+      md5: e863a4d9e8dad81757f373e9808cb41e
+      size: 159744
+    - path: outputs/test_outs/test_score.json
+      md5: 0046e738babd52cc2e0d2403e5bf9bfd
+      size: 84
+    params:
+      configs/params.yaml:
+        model_training_inference_conf.metrics_to_plot:
+        - f_beta
+        - train_epoch_loss
+      outputs/test_outs/test_score.json:
+        best: true
+        test_score_name: f_beta_2
+        test_score_value: 0.780935751435571
+    outs:
+    - path: outputs/plots
+      md5: de923b37c0c24f5420f2c9e7185a4521.dir
+      size: 51715
+      nfiles: 2
+  model_report_generation:
+    cmd: python src/model/generate_model_report.py
+    deps:
+    - path: outputs/plots
+      md5: de923b37c0c24f5420f2c9e7185a4521.dir
+      size: 51715
+      nfiles: 2
+    - path: outputs/test_outs
+      md5: 06f34a240ab477e782755758520f57f1.dir
+      size: 59845
+      nfiles: 2
+    outs:
+    - path: reports/model_report.md
+      md5: 01e8171279c48134d5c9eaf5afa96728
+      size: 474
+  dag_saving:
+    cmd: dvc dag --md > pipelines/dvc_dag.md
+    deps:
+    - path: reports/model_report.md
+      md5: 01e8171279c48134d5c9eaf5afa96728
+      size: 474
+    outs:
+    - path: pipelines/dvc_dag.md
+      md5: 2ae260e1b56948befdb67fd7a57f6839
+      size: 946

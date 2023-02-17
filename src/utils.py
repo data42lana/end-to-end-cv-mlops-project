@@ -85,7 +85,8 @@ def save_model_state(model_to_save, filepath, ckpt_params_dict=None):
         torch.save(model_to_save.state_dict(), filepath)
 
 
-def get_latest_registared_pytorch_model(mlclient, registered_model_name, stages=None):
+def get_latest_registared_pytorch_model(mlclient, registered_model_name, stages=None,
+                                        device=torch.device('cpu')):  # noqa: B008
     """Return the latest version of a PyTorch model among registered ones
     with one of given stages if the model exists.
     """
@@ -94,7 +95,8 @@ def get_latest_registared_pytorch_model(mlclient, registered_model_name, stages=
     if model_versions:
         model_latest_version = max(model_versions)
         model_uri = 'models:/{}/{}'.format(registered_model_name, model_latest_version)
-        latest_pytorch_model = mlflow.pytorch.load_model(model_uri)
+
+        latest_pytorch_model = mlflow.pytorch.load_model(model_uri, map_location=device)
         return latest_pytorch_model
     else:
         return None

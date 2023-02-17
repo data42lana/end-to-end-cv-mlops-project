@@ -83,10 +83,10 @@ if __name__ == '__main__':
         '--only_if_test_score_is_best', type=bool,
         default=False, help='whether to run this module only if a test score is the best')
 
-    if run_parser().parse_args().only_if_test_score_is_best:
+    if run_parser.parse_args().only_if_test_score_is_best:
         test_score_path = project_path.joinpath(
             param_config['model_training_inference_conf']['save_model_output_dir'],
-            '/test_outs/test_score.json')
+            'test_outs/test_score.json')
         with open(test_score_path) as f:
             test_score_is_best = json.load(f)['best']
 
