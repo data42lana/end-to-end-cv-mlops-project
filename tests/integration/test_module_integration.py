@@ -15,6 +15,8 @@ from src.model.model_test_inference import main as model_test_inference
 from src.model.update_model_stages import main as update_model_stages
 from src.model.generate_model_report import main as generate_model_report
 
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
+
 
 @pytest.fixture
 def example_config():
@@ -24,7 +26,6 @@ def example_config():
     return config
 
 
-@pytest.mark.slow
 def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
     # Arrange
     _ = shutil.copytree(Path.cwd().joinpath('tests/data_samples'), tmp_path / 'datas',
