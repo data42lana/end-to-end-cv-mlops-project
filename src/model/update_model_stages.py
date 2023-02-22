@@ -91,9 +91,9 @@ if __name__ == '__main__':
             test_score_is_best = json.load(f)['best']
 
         if test_score_is_best:
-            main(project_path, param_config, save_metric_plots=True)
+            _ = main(project_path, param_config, save_metric_plots=True)
         else:
             logging.info("Stages update did not run: a test score is not the best!")
 
     else:
-        main(project_path, param_config)
+        _ = main(project_path, param_config)
