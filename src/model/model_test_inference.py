@@ -13,7 +13,7 @@ import torch
 
 from src.data.image_dataloader import create_dataloaders
 from src.train.train_inference_fns import eval_one_epoch, predict
-from src.utils import (get_device, get_latest_registared_pytorch_model,
+from src.utils import (get_device, get_latest_registered_pytorch_model,
                        get_param_config_yaml, get_random_img_with_info)
 
 logging.basicConfig(level=logging.INFO, filename='pipe.log',
@@ -40,7 +40,7 @@ def main(project_path, param_config, get_random_prediction=False,
     # Load the latest version of a model from the MLflow registry
     client = mlflow.MlflowClient()
     reg_model_name = param_config['object_detection_model']['registered_name']
-    latest_reg_model = get_latest_registared_pytorch_model(client, reg_model_name,
+    latest_reg_model = get_latest_registered_pytorch_model(client, reg_model_name,
                                                            device=DEVICE)
 
     # Evaluate the model on test data
@@ -65,7 +65,7 @@ def main(project_path, param_config, get_random_prediction=False,
 
     # Compare the model with the latest version of a production model
     if compare_with_production_model:
-        prod_reg_model = get_latest_registared_pytorch_model(
+        prod_reg_model = get_latest_registered_pytorch_model(
             client, reg_model_name, stages=['Production'], device=DEVICE)
         prod_score = (eval_one_epoch(model=prod_reg_model,
                                      **test_eval_params)['epoch_scores'][test_score_name]

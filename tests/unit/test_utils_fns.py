@@ -7,7 +7,7 @@ import torchvision.transforms as T
 # isort: off
 from src.utils import (get_param_config_yaml, get_device, stratified_group_train_test_split,
                        collate_batch, draw_bboxes_on_image, save_model_state,
-                       get_latest_registared_pytorch_model, get_random_img_with_info,
+                       get_latest_registered_pytorch_model, get_random_img_with_info,
                        production_model_metric_history_plot)
 
 
@@ -77,7 +77,7 @@ def test_save_model_state(frcnn_model, tmp_path):
     assert sum(compared_tensors) == len(current_mst)
 
 
-def test_get_latest_registared_pytorch_model(model_registry, frcnn_model):
+def test_get_latest_registered_pytorch_model(model_registry, frcnn_model):
     client, reg_model_name, run_id, exp_id = model_registry
     # exp = client.get_experiment(exp_id)
     with mlflow.start_run(run_id, exp_id):
@@ -85,7 +85,7 @@ def test_get_latest_registared_pytorch_model(model_registry, frcnn_model):
             mlflow.pytorch.log_model(frcnn_model, reg_model_name,
                                      registered_model_name=reg_model_name,
                                      await_registration_for=5)
-    pt_model = get_latest_registared_pytorch_model(client, reg_model_name)
+    pt_model = get_latest_registered_pytorch_model(client, reg_model_name)
     assert isinstance(pt_model, torch.nn.Module)
 
 
