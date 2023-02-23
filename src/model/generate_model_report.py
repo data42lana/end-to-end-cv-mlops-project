@@ -62,8 +62,8 @@ def main(project_path, param_config):
                 photo_number = test_img_info['Name'].split('_', maxsplit=1)[0]
                 photo_license = test_img_info['License'].split(')')[0].split('(')[1]
                 img_pred_section_content.append(
-                    "\nPhoto by {0} on [{1}]({2}). No {3}. License: {4} \
-                    *The photo modified: boxes and scores drawn*.".format(
+                    "\nPhoto by {0} on [{1}]({2}). No {3}. License: {4}"
+                    "*The photo modified: boxes and scores drawn*.".format(
                         photo_author, photo_source, photo_source_link,
                         photo_number, photo_license))
 

@@ -247,8 +247,8 @@ class MLWorkFlow(FlowSpec):
             photo_number = self.test_res['test_img_info']['Name'].split('_', maxsplit=1)[0]
             photo_license = self.test_res['test_img_info']['License'].split(')')[0].split('(')[1]  # noqa: B950
             current.card.append(Markdown(
-                "Photo by {0} on [{1}]({2}). No {3}. License: {4} \
-                *The photo modified: boxes and scores drawn*.".format(
+                "Photo by {0} on [{1}]({2}). No {3}. License: {4}"
+                "*The photo modified: boxes and scores drawn*.".format(
                     photo_author, photo_source, photo_source_link,
                     photo_number, photo_license)))
 

@@ -121,8 +121,8 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
                                                                  .squeeze())
     number_bboxes = img_bbox_df['image_name'].sort_values().value_counts(sort=False)
 
-    validation_results["Number Match Check: \
-        Number_HSparrows vs image_name"] = check_that_series_is_less_than_or_equal_to(
+    validation_results["Number Match Check: Number_HSparrows vs image_name"
+                       ] = check_that_series_is_less_than_or_equal_to(
         number_hsparrows, number_bboxes, '==', passed_message="The numbers match.")
 
     # Save validation results to a file
