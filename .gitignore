@@ -12,6 +12,7 @@ pyttmp/
 *.db
 *.pt
 *.pth
-mlruns/artifacts/
-.metaflow/
+models/*
+mlruns/*
+.metaflow/*
 metaflow_card_cache/

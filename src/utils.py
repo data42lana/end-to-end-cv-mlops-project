@@ -46,14 +46,17 @@ def collate_batch(batch):
     return tuple(zip(*batch))
 
 
-def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
+def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None,
+                         color='orange', width=2, imgsize_in_inches=None):
     """Draw or save an image with bounding boxes from Tensors."""
     if (img.dtype != torch.uint8):
         img = T.functional.convert_image_dtype(img, dtype=torch.uint8)
 
-    img_box = draw_bounding_boxes(img.detach(), boxes=bboxes, colors='orange', width=2)
+    img_box = draw_bounding_boxes(img.detach(), boxes=bboxes, colors=color, width=width)
     img = to_pil_image(img_box.detach())
-    fig = plt.figure(figsize=(8, 10))
+    if imgsize_in_inches is None:
+        imgsize_in_inches = tuple(map(lambda x: x / 100, img.size))
+    fig = plt.figure(figsize=imgsize_in_inches)
     plt.imshow(img)
     plt.axis('off')
     ax = plt.gca()
@@ -63,7 +66,7 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None):
             x, y = bb.tolist()[:2]
             text_sc = f"{sc:0.2f}"
             ax.text(x, y, text_sc, fontsize=12,
-                    bbox=dict(facecolor='orange', alpha=0.5))
+                    bbox=dict(facecolor=color, alpha=0.5))
 
     if save_img_out_path:
         Path(save_img_out_path).parent.mkdir(parents=True, exist_ok=True)
