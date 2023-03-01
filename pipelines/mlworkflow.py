@@ -180,7 +180,7 @@ class MLWorkFlow(FlowSpec):
         from src.model.model_test_inference import main as run_model_test_inference
         mlflow.set_tracking_uri(self.mltracking_uri)
         self.test_res = run_model_test_inference(PROJECT_PATH, MLCONFIG,
-                                                 get_random_prediction=True)
+                                                 get_random_prediction_image=True)
         self.test_score = [self.test_res['test_score_name'],
                            round(self.test_res['test_score_value'], 2)]
         self.next(self.model_stage_update)

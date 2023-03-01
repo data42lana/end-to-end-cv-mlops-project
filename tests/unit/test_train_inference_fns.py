@@ -4,7 +4,7 @@ import torch
 
 # isort: off
 from src.train.train_inference_fns import (precision_recall_fbeta_scores, train_one_epoch,
-                                           eval_one_epoch, predict)
+                                           eval_one_epoch, predict, predict_image)
 from src.train.fine_tune_model import run_train
 
 
@@ -37,9 +37,14 @@ def test_eval_one_epoch(dataloader, frcnn_model):
     assert len(res['results']) == len(dataloader.dataset)
 
 
-def test_predict(img, frcnn_model, tmp_path):
-    frcnn_model.eval()
-    res = predict(img, frcnn_model, save_predict_path=tmp_path / 'pred.jpg')
+def test_predict(img, frcnn_model):
+    res = predict(img, frcnn_model)
+    assert isinstance(res, dict)
+    assert sorted(res.keys()) == ['boxes', 'labels', 'scores']
+
+
+def test_predict_image(img, frcnn_model, tmp_path):
+    res = predict_image(img, frcnn_model, save_predict_path=tmp_path / 'pred.jpg')
     assert isinstance(res[0], int)
     assert res[0] >= 0
 

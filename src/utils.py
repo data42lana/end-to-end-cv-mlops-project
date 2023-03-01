@@ -100,7 +100,7 @@ def get_latest_registered_pytorch_model(mlclient, registered_model_name, stages=
         model_uri = 'models:/{}/{}'.format(registered_model_name, model_latest_version)
 
         latest_pytorch_model = mlflow.pytorch.load_model(model_uri, map_location=device)
-        return latest_pytorch_model
+        return latest_pytorch_model, model_uri
     else:
         return None
 

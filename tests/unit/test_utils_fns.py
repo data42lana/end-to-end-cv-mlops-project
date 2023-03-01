@@ -85,8 +85,9 @@ def test_get_latest_registered_pytorch_model(model_registry, frcnn_model):
             mlflow.pytorch.log_model(frcnn_model, reg_model_name,
                                      registered_model_name=reg_model_name,
                                      await_registration_for=5)
-    pt_model = get_latest_registered_pytorch_model(client, reg_model_name)
+    pt_model, model_uri = get_latest_registered_pytorch_model(client, reg_model_name)
     assert isinstance(pt_model, torch.nn.Module)
+    assert model_uri == f'models:/{reg_model_name}/2'
 
 
 class TestGetRandomImg:

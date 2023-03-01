@@ -140,22 +140,28 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1,
 
 
 @torch.inference_mode()
-def predict(img, model, show_scores=False, device=torch.device('cpu'),  # noqa: B008
-            save_predict_path=None):
-    """Draw an image with bounding boxes (and scores) and return it and
-    a number of object detection targets on it.
-    """
+def predict(img, model, device=torch.device('cpu')):  # noqa: B008
+    """Return a prediction result containing scores, boxes, and labels."""
     img = T.ToTensor()(img).to(device)
     model.to(device)
     model.eval()
     preds = model([img])[0]
+    return preds
+
+
+@torch.inference_mode()
+def predict_image(img, model, show_scores=False, device=torch.device('cpu'),  # noqa: B008
+                  save_predict_path=None):
+    """Draw an image with bounding boxes (and scores) and return it, and
+    a number of object detection targets on it.
+    """
+    preds = predict(img, model, device)
     num_bboxes = len(preds['boxes'])
 
     scores = None
     if show_scores:
         scores = preds['scores']
 
-    # print(str(num_bboxes) + " house sparrow(s)")
     res_img = draw_bboxes_on_image(img, preds['boxes'], scores, save_predict_path,
                                    imgsize_in_inches=(8, 10))
     return num_bboxes, res_img

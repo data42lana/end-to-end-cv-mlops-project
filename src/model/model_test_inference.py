@@ -12,7 +12,7 @@ import numpy as np
 import torch
 
 from src.data.image_dataloader import create_dataloaders
-from src.train.train_inference_fns import eval_one_epoch, predict
+from src.train.train_inference_fns import eval_one_epoch, predict_image
 from src.utils import (get_device, get_latest_registered_pytorch_model,
                        get_param_config_yaml, get_random_img_with_info)
 
@@ -27,7 +27,7 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 
-def main(project_path, param_config, get_random_prediction=False,
+def main(project_path, param_config, get_random_prediction_image=False,
          compare_with_production_model=False):
     """Evaluate the latest version of a registered model on test data, and
     compare with a production model if compare_with_production_model is True,
@@ -40,8 +40,8 @@ def main(project_path, param_config, get_random_prediction=False,
     # Load the latest version of a model from the MLflow registry
     client = mlflow.MlflowClient()
     reg_model_name = param_config['object_detection_model']['registered_name']
-    latest_reg_model = get_latest_registered_pytorch_model(client, reg_model_name,
-                                                           device=DEVICE)
+    latest_reg_model, _ = get_latest_registered_pytorch_model(client, reg_model_name,
+                                                              device=DEVICE)
 
     # Evaluate the model on test data
     imgs_path, test_csv_path, bbox_csv_path = [
@@ -65,7 +65,7 @@ def main(project_path, param_config, get_random_prediction=False,
 
     # Compare the model with the latest version of a production model
     if compare_with_production_model:
-        prod_reg_model = get_latest_registered_pytorch_model(
+        prod_reg_model, _ = get_latest_registered_pytorch_model(
             client, reg_model_name, stages=['Production'], device=DEVICE)
         prod_score = (eval_one_epoch(model=prod_reg_model,
                                      **test_eval_params)['epoch_scores'][test_score_name]
@@ -80,7 +80,7 @@ def main(project_path, param_config, get_random_prediction=False,
         json.dump(test_res, f)
     logging.info('Test score is saved!')
 
-    if get_random_prediction:
+    if get_random_prediction_image:
         # Make a random prediction (boxes and scores) on a test image sample and save it
         img_license_pattern = TRAIN_EVAL_PARAMS['license_pattern_to_select_images']
         random_img = get_random_img_with_info(test_csv_path, imgs_path, img_license_pattern,
@@ -90,8 +90,8 @@ def main(project_path, param_config, get_random_prediction=False,
             test_img, test_img_info = random_img
             save_test_predict_path = save_output_path.joinpath(
                 'predict-{}'.format(test_img_info['Name']))
-            test_pred_res = predict(test_img, latest_reg_model, show_scores=True,
-                                    save_predict_path=save_test_predict_path)
+            test_pred_res = predict_image(test_img, latest_reg_model, show_scores=True,
+                                          save_predict_path=save_test_predict_path)
             logging.info('Test image with predictions is saved!')
             test_pred_res = {'test_predict_number': test_pred_res[0],
                              'test_predict_img': test_pred_res[1],
@@ -105,5 +105,5 @@ if __name__ == '__main__':
     project_path = Path.cwd()
     param_config = get_param_config_yaml(project_path)
     mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
-    _ = main(project_path, param_config, get_random_prediction=True,
+    _ = main(project_path, param_config, get_random_prediction_image=True,
              compare_with_production_model=True)
