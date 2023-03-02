@@ -35,4 +35,4 @@ jobs:
           python -m pip install --upgrade pip setuptools
           pip install -r requirements/test-requirements.txt
       - name: Run Tests
-        run: pytest -m "not integration"
+        run: pytest -m "not integration and not smoke"

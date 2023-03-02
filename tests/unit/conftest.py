@@ -13,12 +13,6 @@ from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
 
 
 @pytest.fixture(scope='package')
-def imgs_path():
-    imgs_path = Path('tests/data_samples/sample_imgs').absolute()
-    return imgs_path
-
-
-@pytest.fixture(scope='package')
 def img_info_df():
     fpath = Path('tests/data_samples/sample_img_info.csv').absolute()
     df = pd.read_csv(fpath)

@@ -1,7 +1,8 @@
 # Require for python 3.9.13
-# -r data-check-requirements.txt
+-r data-check-requirements.txt
+-r deployment-requirements.txt
 -r test-requirements.txt
-# -r train-requirements.txt
+-r train-requirements.txt
 bandit==1.7.4
 dvc==2.20.1
 flake8==6.0.0

@@ -6,6 +6,12 @@ import yaml
 
 
 @pytest.fixture(scope='session')
+def imgs_path():
+    imgs_path = Path('tests/data_samples/sample_imgs').absolute()
+    return imgs_path
+
+
+@pytest.fixture(scope='session')
 def bbox_path():
     fpath = Path('tests/data_samples/sample_bboxes.csv').absolute()
     return fpath
