@@ -54,8 +54,10 @@ model_training_inference_conf:
   save_model_output_dir: outputs
 
 mlflow_tracking_conf:
-  run_name: fine-tuning_with_optimized_parameters
   experiment_name: Fine-Tuning_Model
+  run_name: fine-tuning_with_optimized_parameters
+  mltracking_uri: !!str "sqlite:///mlruns/mlruns.db"
+  artifact_location: mlruns/artifacts
 
 hyperparameter_optimization:
   study_name: faster_rcnn_mob_hyper_opt_study

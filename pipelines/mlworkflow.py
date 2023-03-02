@@ -13,7 +13,7 @@ from src.utils import get_param_config_yaml
 
 PROJECT_PATH = Path.cwd()
 MLCONFIG = get_param_config_yaml(PROJECT_PATH)
-MLTRACKING_URI = 'sqlite:///mlruns/mlruns.db'
+MLTRACKING_URI = MLCONFIG['mlflow_tracking_conf']['mltracking_uri']
 
 
 @project(name='end_to_end_cv_mlops_project')

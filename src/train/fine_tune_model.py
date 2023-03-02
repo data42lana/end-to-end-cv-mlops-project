@@ -249,7 +249,8 @@ def main(project_path, param_config):
     else:
         ftm_exp_id = mlflow.create_experiment(
             mlflow_conf['experiment_name'],
-            artifact_location=project_path.joinpath('mlruns/artifacts').as_uri())
+            artifact_location=project_path.joinpath(
+                mlflow_conf['artifact_location']).as_uri())
 
     with mlflow.start_run(run_name=mlflow_conf['run_name'],
                           experiment_id=ftm_exp_id):
@@ -291,5 +292,5 @@ def main(project_path, param_config):
 if __name__ == '__main__':
     project_path = Path.cwd()
     param_config = get_param_config_yaml(project_path)
-    mlflow.set_tracking_uri('sqlite:///mlruns/mlruns.db')
+    mlflow.set_tracking_uri(param_config['mlflow_tracking_conf']['mltracking_uri'])
     main(project_path, param_config)
