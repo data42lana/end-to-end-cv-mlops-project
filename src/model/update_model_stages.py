@@ -68,6 +68,7 @@ def main(project_path, param_config, save_metric_plots=False):
         metric_plots += production_model_metric_history_plot(metric, client,
                                                              registered_model_name,
                                                              save_path=save_path)
+    logging.info("Metric plots of a production stage model are saved.")
     return production_run_id, metric_plots
 
 

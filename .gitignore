@@ -13,6 +13,7 @@ pyttmp/
 *.pt
 *.pth
 models/*
+# !models/*_demo.pt
 mlruns/*
 .metaflow/*
 metaflow_card_cache/

@@ -1,6 +1,6 @@
 """This module contains helper functions for model training and inference."""
 
-import logging
+import io
 import random
 from pathlib import Path
 
@@ -47,19 +47,24 @@ def collate_batch(batch):
 
 
 def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None,
-                         color='orange', width=2, imgsize_in_inches=None):
-    """Draw or save an image with bounding boxes from Tensors."""
+                         color='orange', box_width=2, imgsize_in_inches=None):
+    """Draw an image with bounding boxes from Tensors and save or show it."""
     if (img.dtype != torch.uint8):
         img = T.functional.convert_image_dtype(img, dtype=torch.uint8)
 
-    img_box = draw_bounding_boxes(img.detach(), boxes=bboxes, colors=color, width=width)
+    img_box = draw_bounding_boxes(img.detach(), boxes=bboxes,
+                                  colors=color, width=box_width)
     img = to_pil_image(img_box.detach())
+
+    # Set a fig parameters
     if imgsize_in_inches is None:
         imgsize_in_inches = tuple(map(lambda x: x / 100, img.size))
-    fig = plt.figure(figsize=imgsize_in_inches)
-    plt.imshow(img)
-    plt.axis('off')
-    ax = plt.gca()
+    fig = plt.figure(figsize=imgsize_in_inches, frameon=False)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.imshow(img)
+    ax.spines[['top', 'bottom', 'right', 'left']].set_visible(False)
+    ax.margins(0)
+    ax.axis('off')
 
     if scores is not None:
         for bb, sc in zip(bboxes, scores):
@@ -69,7 +74,8 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None,
                     bbox=dict(facecolor=color, alpha=0.5))
 
     if save_img_out_path:
-        Path(save_img_out_path).parent.mkdir(parents=True, exist_ok=True)
+        if not isinstance(save_img_out_path, io.BytesIO):
+            Path(save_img_out_path).parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(save_img_out_path)
         plt.close()
     else:
@@ -155,6 +161,5 @@ def production_model_metric_history_plot(metric_name, mlclient,
             save_path.mkdir(exist_ok=True)
             plt.savefig(save_path / f'{metric_name}.jpg')
             plt.close()
-            logging.info("Metric plots of a production stage model are saved.")
 
     return prod_metric_plots
