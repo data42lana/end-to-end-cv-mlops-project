@@ -40,10 +40,17 @@ def detect_objects_demo(byte_image, project_path):
     return result
 
 
-def main(project_path, api_backend=None):
-    """Build a web app with/without a connection to an API (backend)."""
+def disable():
+    """Use to disable a form submit button."""
+    st.session_state['disabled'] = True
+
+
+def main(project_path, api_backend_endpoint=None):
+    """Build a web app with a connection to a given API endpoint (backend),
+    or using a demo model.
+    """
     MODEL_BOX_PARAMS = get_box_params(project_path)
-    STATIC_IMG = {'name': 'detected_36485871561.jpg',
+    STATIC_IMG = {'name': 'detected_36485871561.png',
                   'author': 'Wildlife Terry',
                   'caption': 'Hungry Sparrows',
                   'link': 'https://www.flickr.com/photos/wistaston/36485871561',
@@ -78,9 +85,9 @@ def main(project_path, api_backend=None):
 
     if uploaded_image is not None:
         # Get model inference
-        if api_backend is not None:
+        if api_backend_endpoint is not None:
             detect_res = call_detection_api(uploaded_image.getvalue(),
-                                            api_backend + 'detection')
+                                            api_backend_endpoint)
         else:
             detect_res = detect_objects_demo(uploaded_image, project_path)
 
@@ -116,9 +123,11 @@ def main(project_path, api_backend=None):
             _ = st.number_input(
                 "How many house sparrows are actually in the photo?",
                 0, MODEL_BOX_PARAMS['box_detections_per_img'])
-            feedback = st.form_submit_button("Submit", disabled=(uploaded_image is None))
+            feedback = st.form_submit_button(
+                on_click=disable, disabled=st.session_state.get('disabled', False))
 
         if feedback:
+            st.session_state['disabled'] = False
             st.success("Thank you!", icon="✅")
             st.balloons()
 
@@ -126,5 +135,6 @@ def main(project_path, api_backend=None):
 if __name__ == '__main__':
     project_path = Path.cwd()
     # Backend
-    fastapi_endpoint = 'http://127.0.0.1:8000/'
-    main(project_path, fastapi_endpoint)
+    # fastapi_endpoint = 'http://127.0.0.1:8000/detection'
+    # Use a demo model
+    main(project_path)

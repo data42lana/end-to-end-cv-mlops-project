@@ -1,6 +1,5 @@
 # Require for python 3.9.13
 -r train-requirements.txt
-bentoml[all]==1.0.15
 fastapi[all]==0.92.0
 Pillow==9.4.0
 streamlit==1.18.1
