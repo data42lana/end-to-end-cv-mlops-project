@@ -221,10 +221,14 @@ class MLWorkFlow(FlowSpec):
         # Set a report title
         current.card.append(Markdown("# Model Training Result Report"))
 
-        # Add current test score and model uri
-        current.card.append(Markdown("### Test {0} score: {1}".format(
+        # Add a current test score
+        current.card.append(Markdown("### test {0} score: **{1}**".format(
             self.test_score[0], self.test_score[1])))
-        current.card.append(Markdown(f"MLflow Model URI: {self.mlflow_model_uri}"))
+
+        # Add model name and version
+        model_data = self.test_res['model_uri'].split('/')
+        current.card.append(Markdown("### model: {}".format(model_data[1])))
+        current.card.append(Markdown("### version: {}".format(model_data[2])))
 
         if 'production' in Flow(current.flow_name)[current.run_id].user_tags:
             # Add a Mlflow run id

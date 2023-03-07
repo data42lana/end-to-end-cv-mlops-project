@@ -39,13 +39,13 @@ stages:
       nfiles: 3
     outs:
     - path: data_checks/data_check_results/raw_bbox_duplicates_check_results.html
-      md5: 0fb64286bbf60b503fd800e8ec746c2c
+      md5: d1f3dab477625540a2718bdfcf692172
       size: 7669372
   raw_data_integrity_check:
     cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=raw
     deps:
     - path: data_checks/data_check_results/raw_bbox_duplicates_check_results.html
-      md5: 0fb64286bbf60b503fd800e8ec746c2c
+      md5: d1f3dab477625540a2718bdfcf692172
       size: 7669372
     - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-ckpt
       md5: 596f2589f7a8a6dc932ba1c5040d5e9a.dir
@@ -57,17 +57,17 @@ stages:
       nfiles: 3
     outs:
     - path: data_checks/data_check_results/raw_csv_file_check_results.json
-      md5: 7ae7b3562339543f14e9c868e23e68c4
-      size: 961
+      md5: 39b40dc35a30224e25edd85271b3cfab
+      size: 953
   train_test_data_split:
     cmd: python src/data/prepare_data.py
     deps:
     - path: data_checks/data_check_results/raw_bbox_duplicates_check_results.html
-      md5: 0fb64286bbf60b503fd800e8ec746c2c
+      md5: d1f3dab477625540a2718bdfcf692172
       size: 7669372
     - path: data_checks/data_check_results/raw_csv_file_check_results.json
-      md5: 7ae7b3562339543f14e9c868e23e68c4
-      size: 961
+      md5: 39b40dc35a30224e25edd85271b3cfab
+      size: 953
     - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-ckpt
       md5: 596f2589f7a8a6dc932ba1c5040d5e9a.dir
       size: 76359
@@ -92,10 +92,10 @@ stages:
       size: 42069
     outs:
     - path: data_checks/data_check_results/prepared_train_test_author_leakage_check_results.html
-      md5: d272e4ab2651dbddc5b4f1e9156df1cd
+      md5: 2569bbb0ed1d7214a08095b083db5533
       size: 7678280
     - path: data_checks/data_check_results/prepared_train_test_similarity_check_results.html
-      md5: 5df70865c018d5bc26d4ef12168249f9
+      md5: 412cb2225c704fec0262e8cb31bf625c
       size: 7781558
   hyperparam_optimization:
     cmd: python src/train/optimize_hyperparams.py
@@ -104,10 +104,10 @@ stages:
       md5: faeea0f526f31a901da513023a9e299c
       size: 42069
     - path: data_checks/data_check_results/prepared_train_test_author_leakage_check_results.html
-      md5: d272e4ab2651dbddc5b4f1e9156df1cd
+      md5: 2569bbb0ed1d7214a08095b083db5533
       size: 7678280
     - path: data_checks/data_check_results/prepared_train_test_similarity_check_results.html
-      md5: 5df70865c018d5bc26d4ef12168249f9
+      md5: 412cb2225c704fec0262e8cb31bf625c
       size: 7781558
     params:
       configs/params.yaml:
@@ -182,7 +182,7 @@ stages:
     outs:
     - path: configs/best_params.yaml
       md5: 0af5886aeaec7c06c6bcb4754678bccc
-      size: 212
+      size: 224
     - path: hyper_opt/faster_rcnn_mob_hyper_opt_study/plots
       md5: 21dd25b3d81d5a5f4b7ad3796bb38c81.dir
       size: 290688
@@ -195,7 +195,7 @@ stages:
     deps:
     - path: configs/best_params.yaml
       md5: 0af5886aeaec7c06c6bcb4754678bccc
-      size: 212
+      size: 224
     params:
       configs/best_params.yaml:
         f_beta: 0.82
@@ -213,8 +213,10 @@ stages:
       configs/params.yaml:
         image_dataset_conf.batch_size: 16
         mlflow_tracking_conf:
-          run_name: fine-tuning_with_optimized_parameters
           experiment_name: Fine-Tuning_Model
+          run_name: fine-tuning_with_optimized_parameters
+          mltracking_uri: sqlite:///mlruns/mlruns.db
+          artifact_location: mlruns/artifacts
         model_training_inference_conf.checkpoint:
         model_training_inference_conf.epochs: 15
         model_training_inference_conf.evaluation_beta: 2
@@ -239,9 +241,9 @@ stages:
       size: 76200759
       nfiles: 7
     - path: models
-      md5: 556fb3b0890b3d6d60f9d43d2126f106.dir
-      size: 76035171
-      nfiles: 1
+      md5: 69a1cc97ae611a506b8ead4715976727.dir
+      size: 152085740
+      nfiles: 2
     - path: outputs/val_outs
       md5: d9085d4dde0d27688adc047edd51234b.dir
       size: 150356
@@ -261,8 +263,8 @@ stages:
         model_training_inference_conf.license_pattern_to_select_images: (CC0 1.0)
     outs:
     - path: outputs/test_outs
-      md5: 06f34a240ab477e782755758520f57f1.dir
-      size: 59845
+      md5: a135aebff5133c9ea024e47cfab16fc5.dir
+      size: 59892
       nfiles: 2
   model_stage_update:
     cmd: python src/model/update_model_stages.py --only_if_test_score_is_best=True
@@ -271,8 +273,8 @@ stages:
       md5: e863a4d9e8dad81757f373e9808cb41e
       size: 159744
     - path: outputs/test_outs/test_score.json
-      md5: 0046e738babd52cc2e0d2403e5bf9bfd
-      size: 84
+      md5: e53214d733de38b6deb838d8cb9ba627
+      size: 131
     params:
       configs/params.yaml:
         model_training_inference_conf.metrics_to_plot:
@@ -280,6 +282,7 @@ stages:
         - train_epoch_loss
       outputs/test_outs/test_score.json:
         best: true
+        model_uri: models:/best_faster_rcnn_mob/3
         test_score_name: f_beta_2
         test_score_value: 0.780935751435571
     outs:
@@ -295,19 +298,19 @@ stages:
       size: 51715
       nfiles: 2
     - path: outputs/test_outs
-      md5: 06f34a240ab477e782755758520f57f1.dir
-      size: 59845
+      md5: a135aebff5133c9ea024e47cfab16fc5.dir
+      size: 59892
       nfiles: 2
     outs:
     - path: reports/model_report.md
-      md5: f787e46cdeff8a9445f5417f754f2314
-      size: 475
+      md5: f8d7c2a1f59fde86262636fadcc428f3
+      size: 508
   dag_saving:
     cmd: dvc dag --md > pipelines/dvc_dag.md
     deps:
     - path: reports/model_report.md
-      md5: f787e46cdeff8a9445f5417f754f2314
-      size: 475
+      md5: f8d7c2a1f59fde86262636fadcc428f3
+      size: 508
     outs:
     - path: pipelines/dvc_dag.md
       md5: 2ae260e1b56948befdb67fd7a57f6839

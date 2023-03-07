@@ -27,9 +27,13 @@ def main(project_path, param_config):
     test_score_path = project_path / test_output_dir / 'test_score.json'
     with open(test_score_path) as f:
         test_score = json.load(f)
-    report_content.append("### Test {0} score: {1}\n".format(
+    report_content.append("### test {0} score: **{1}**\n".format(
         test_score['test_score_name'], round(test_score['test_score_value'], 2)))
-    report_content.append("MLflow Model URI: {}".format(test_score['model_uri']))
+
+    # Add model name and version
+    model_data = test_score['model_uri'].split('/')
+    report_content.append("### model: {0}\n ### version: {1}\n".format(
+        model_data[1], model_data[2]))
 
     test_score_is_best = test_score.get('best', False)
 
