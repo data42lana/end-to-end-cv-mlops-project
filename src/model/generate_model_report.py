@@ -29,6 +29,7 @@ def main(project_path, param_config):
         test_score = json.load(f)
     report_content.append("### Test {0} score: {1}\n".format(
         test_score['test_score_name'], round(test_score['test_score_value'], 2)))
+    report_content.append("MLflow Model URI: {}".format(test_score['model_uri']))
 
     test_score_is_best = test_score.get('best', False)
 

@@ -40,8 +40,8 @@ def main(project_path, param_config, get_random_prediction_image=False,
     # Load the latest version of a model from the MLflow registry
     client = mlflow.MlflowClient()
     reg_model_name = param_config['object_detection_model']['registered_name']
-    latest_reg_model, _ = get_latest_registered_pytorch_model(client, reg_model_name,
-                                                              device=DEVICE)
+    latest_reg_model, model_uri = get_latest_registered_pytorch_model(
+        client, reg_model_name, device=DEVICE)
 
     # Evaluate the model on test data
     imgs_path, test_csv_path, bbox_csv_path = [
@@ -59,7 +59,9 @@ def main(project_path, param_config, get_random_prediction_image=False,
     # Get a value of the metric used to find the best model
     test_score_name = TRAIN_EVAL_PARAMS['metric_to_find_best']
     test_score = test_eval_res['epoch_scores'][test_score_name]
-    test_res = {'test_score_value': test_score, 'test_score_name': test_score_name}
+    test_res = {'test_score_value': test_score,
+                'test_score_name': test_score_name,
+                'model_uri': model_uri}
     if test_score_name == 'f_beta':
         test_res['test_score_name'] = 'f_beta_' + str(TRAIN_EVAL_PARAMS['evaluation_beta'])
 

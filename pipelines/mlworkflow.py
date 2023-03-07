@@ -183,6 +183,7 @@ class MLWorkFlow(FlowSpec):
                                                  get_random_prediction_image=True)
         self.test_score = [self.test_res['test_score_name'],
                            round(self.test_res['test_score_value'], 2)]
+        self.mlflow_model_uri = self.test_res['model_uri']
         self.next(self.model_stage_update)
 
     @retry(times=0)
@@ -220,13 +221,14 @@ class MLWorkFlow(FlowSpec):
         # Set a report title
         current.card.append(Markdown("# Model Training Result Report"))
 
-        # Add a current test score
+        # Add current test score and model uri
         current.card.append(Markdown("### Test {0} score: {1}".format(
             self.test_score[0], self.test_score[1])))
+        current.card.append(Markdown(f"MLflow Model URI: {self.mlflow_model_uri}"))
 
         if 'production' in Flow(current.flow_name)[current.run_id].user_tags:
             # Add a Mlflow run id
-            current.card.append(Markdown(f"Mlflow Run Id: {self.prod_run_id_in_mlflow}"))
+            current.card.append(Markdown(f"MLflow Run Id: {self.prod_run_id_in_mlflow}"))
 
             # Add training metric plots
             current.card.append(Markdown("## Metric History Plot(s):"))
