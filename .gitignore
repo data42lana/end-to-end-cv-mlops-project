@@ -5,7 +5,8 @@ __pycache__/
 env/
 info/
 data_check_results/
-reports/test_report
+reports/*
+!reports/model_report.md
 pyttmp/
 .coverage
 *.log
@@ -17,3 +18,4 @@ models/*
 mlruns/*
 .metaflow/*
 metaflow_card_cache/
+monitoring/*

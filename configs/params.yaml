@@ -92,3 +92,10 @@ hyperparameter_optimization:
       None: null
   save_best_parameters_path: configs/best_params.yaml
   save_study_dir: hyper_opt
+
+deployed_model_monitoring:
+  # Reference and current data records ~= half of total number of records
+  max_total_number_of_records_to_load: 1000
+  save_deployed_model_params_path: configs/current_deployed_model_params.yaml
+  save_monitoring_data_path: monitoring/data/deployed_model_performance.csv
+  save_monitoring_check_results_dir: monitoring

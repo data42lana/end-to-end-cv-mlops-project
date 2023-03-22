@@ -1,6 +1,7 @@
 # Require for python 3.9.13
 -r data-check-requirements.txt
 # -r deployment-requirements.txt
+-r monitoring-requirements.txt
 -r train-requirements.txt
 pytest==7.2.0
 pytest-cov==4.0.0

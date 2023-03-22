@@ -46,6 +46,14 @@ def collate_batch(batch):
     return tuple(zip(*batch))
 
 
+def get_number_of_csv_rows(csv_file_path, read_column=None):
+    """Return the number of rows in a CSV file."""
+    if read_column is not None:
+        read_column = [read_column]
+    df = pd.read_csv(csv_file_path, usecols=read_column)
+    return df.shape[0]
+
+
 def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None,
                          color='orange', box_width=2, imgsize_in_inches=None):
     """Draw an image with bounding boxes from Tensors and save or show it."""

@@ -1,0 +1,5 @@
+# Require for python 3.9.13
+evidently==0.2.6
+numpy==1.23.1
+pandas==1.4.3
+pyyaml

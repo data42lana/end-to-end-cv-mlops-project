@@ -162,6 +162,7 @@ def predict_image(img, model, show_scores=False, device=torch.device('cpu'),  # 
     if show_scores:
         scores = preds['scores']
 
-    res_img = draw_bboxes_on_image(img, preds['boxes'], scores, save_predict_path,
-                                   imgsize_in_inches=(8, 10))
+    img = T.ToTensor()(img).to(device)
+    res_img = draw_bboxes_on_image(img, preds['boxes'], scores,
+                                   save_predict_path, imgsize_in_inches=(8, 10))
     return num_bboxes, res_img

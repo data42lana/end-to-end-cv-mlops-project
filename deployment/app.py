@@ -40,11 +40,6 @@ def detect_objects_demo(byte_image, project_path):
     return result
 
 
-def disable():
-    """Use to disable a form submit button."""
-    st.session_state['disabled'] = True
-
-
 def main(project_path, api_backend_endpoint=None):
     """Build a web app with a connection to a given API endpoint (backend),
     or using a demo model.
@@ -116,20 +111,6 @@ def main(project_path, api_backend_endpoint=None):
                 icon="😕")
         else:
             st.success("{} house sparrow(s) was(were) detected".format(len(boxes)), icon="😃")
-
-        # Get feedback from users
-        st.write("Incorrect the result?")
-        with st.form(key='num_hs_feedback'):
-            _ = st.number_input(
-                "How many house sparrows are actually in the photo?",
-                0, MODEL_BOX_PARAMS['box_detections_per_img'])
-            feedback = st.form_submit_button(
-                on_click=disable, disabled=st.session_state.get('disabled', False))
-
-        if feedback:
-            st.session_state['disabled'] = False
-            st.success("Thank you!", icon="✅")
-            st.balloons()
 
 
 if __name__ == '__main__':

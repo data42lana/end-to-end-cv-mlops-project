@@ -1,6 +1,7 @@
 # Require for python 3.9.13
 -r data-check-requirements.txt
 -r deployment-requirements.txt
+-r monitoring-requirements.txt
 -r test-requirements.txt
 -r train-requirements.txt
 bandit==1.7.4
