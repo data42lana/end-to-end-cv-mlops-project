@@ -12,6 +12,8 @@ from PIL import Image
 from src.train.train_inference_fns import predict
 from src.utils import draw_bboxes_on_image, get_param_config_yaml
 
+st.set_page_config(page_title="HouseSparrowDetectionApp")
+
 FASTAPI_ENDPOINT = 'http://127.0.0.1:8000/detection'  # backend
 DEMO_MODEL_PATH = 'models/fine_tuned_model_demo.pt'  # for demo mode
 
@@ -58,7 +60,6 @@ def main(project_path, demo=False):
 
     # Add titles, description, and a static image
     add_to_title = "Demo" if demo else ""
-    st.set_page_config(page_title=f"HouseSparrowDetector{add_to_title}")
     st.title(f":orange[How many House Sparrows?] {add_to_title}")
     st.write("##### *Detect and count house sparrows in a photo*")
     st.write("![{0}](app/static/{1})".format(STATIC_IMG['caption'], STATIC_IMG['name']))
