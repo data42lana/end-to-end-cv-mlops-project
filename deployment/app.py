@@ -12,6 +12,9 @@ from PIL import Image
 from src.train.train_inference_fns import predict
 from src.utils import draw_bboxes_on_image, get_param_config_yaml
 
+FASTAPI_ENDPOINT = 'http://127.0.0.1:8000/detection'  # backend
+DEMO_MODEL_PATH = 'models/fine_tuned_model_demo.pt'  # for demo mode
+
 
 @st.cache_data
 def get_box_params(project_path):
@@ -33,16 +36,16 @@ def detect_objects_demo(byte_image, project_path):
     """Get a object detection model inference without an API (backend)."""
     img = Image.open(byte_image).convert('RGB')
     device = torch.device('cpu')
-    model = torch.load(project_path / 'models/fine_tuned_model_demo.pt',
+    model = torch.load(project_path / DEMO_MODEL_PATH,
                        map_location=device)
     result = predict(img, model)
     result = {k: v.tolist() for k, v in result.items()}
     return result
 
 
-def main(project_path, api_backend_endpoint=None):
+def main(project_path, demo=False):
     """Build a web app with a connection to a given API endpoint (backend),
-    or using a demo model.
+    or using a demo model if demo is set to True (demo mode).
     """
     MODEL_BOX_PARAMS = get_box_params(project_path)
     STATIC_IMG = {'name': 'detected_36485871561.png',
@@ -53,8 +56,10 @@ def main(project_path, api_backend_endpoint=None):
                   'source_link': 'https://flickr.com',
                   'license': 'CC0 1.0'}
 
-    # Add a title, description, and a static image
-    st.title(":orange[How many House Sparrows?]")
+    # Add titles, description, and a static image
+    add_to_title = "Demo" if demo else ""
+    st.set_page_config(page_title=f"HouseSparrowDetector{add_to_title}")
+    st.title(f":orange[How many House Sparrows?] {add_to_title}")
     st.write("##### *Detect and count house sparrows in a photo*")
     st.write("![{0}](app/static/{1})".format(STATIC_IMG['caption'], STATIC_IMG['name']))
     st.caption("Photo by [{0}]({1}) on [{2}]({3}). License: {4}. "
@@ -80,11 +85,11 @@ def main(project_path, api_backend_endpoint=None):
 
     if uploaded_image is not None:
         # Get model inference
-        if api_backend_endpoint is not None:
-            detect_res = call_detection_api(uploaded_image.getvalue(),
-                                            api_backend_endpoint)
-        else:
+        if demo:
             detect_res = detect_objects_demo(uploaded_image, project_path)
+        else:
+            detect_res = call_detection_api(uploaded_image.getvalue(),
+                                            FASTAPI_ENDPOINT)
 
         # Display original and with detections images
         col1, col2 = st.columns(2)
@@ -115,7 +120,6 @@ def main(project_path, api_backend_endpoint=None):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    # Backend
-    # fastapi_endpoint = 'http://127.0.0.1:8000/detection'
-    # Use a demo model
-    main(project_path)
+    # Use the demo model if demo is set to True (demo mode)
+    # or the fastapi backend otherwise
+    main(project_path, demo=True)

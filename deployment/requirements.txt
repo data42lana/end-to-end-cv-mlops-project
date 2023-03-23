@@ -1,0 +1,8 @@
+# For the app demo in the Streamlit Community Cloud
+matplotlib==3.5.3
+Pillow==9.4.0
+pyyaml
+requests==2.28.2
+streamlit==1.18.1
+torch==1.13.1
+torchvision==0.14.1
