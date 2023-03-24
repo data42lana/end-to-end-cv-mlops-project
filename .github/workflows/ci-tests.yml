@@ -8,7 +8,7 @@ on:
     branches:
       - main
   workflow_call:
-  workflow_dispatch:
+  # workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,9 +33,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools
-          pip install -r requirements/test-requirements.txt \
-            -r requirements/data-check-requirements.txt \
-            -r requirements/train-requirements.txt \
-            -r requirements/monitoring-requirements.txt
+          pip install -r requirements/cicd-requirements.txt
       - name: Run Tests
-        run: pytest -m "not integration and not smoke"
+        run: pytest --ignore=tests/integration/ --ignore=tests/webbackend/

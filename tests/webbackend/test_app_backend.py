@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from deployment.api import app, DEFAULT_PATHS  # isort: split
 
-pytestmark = [pytest.mark.smoke]
+pytestmark = pytest.mark.web
 
 
 class TestFastAPIBackend:
