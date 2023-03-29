@@ -177,7 +177,7 @@ class MLWorkFlow(FlowSpec):
         """Run a model inference on a test dataset."""
         # Get a current test score
         import mlflow
-        from src.model.model_test_inference import main as run_model_test_inference
+        from src.train.model_test_inference import main as run_model_test_inference
         mlflow.set_tracking_uri(self.mltracking_uri)
         self.test_res = run_model_test_inference(PROJECT_PATH, MLCONFIG,
                                                  get_random_prediction_image=True)

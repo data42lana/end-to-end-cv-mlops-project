@@ -11,7 +11,7 @@ from src.data.update_raw_data import main as update_raw_data
 from src.data.prepare_data import main as prepare_data
 from src.train.optimize_hyperparams import main as optimize_hyperparams
 from src.train.fine_tune_model import main as fine_tune_model
-from src.model.model_test_inference import main as model_test_inference
+from src.train.model_test_inference import main as model_test_inference
 from src.model.update_model_stages import main as update_model_stages
 from src.model.generate_model_report import main as generate_model_report
 
