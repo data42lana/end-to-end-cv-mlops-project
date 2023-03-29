@@ -10,9 +10,47 @@ from src.utils import draw_bboxes_on_image
 
 
 @torch.inference_mode()
-def precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):
-    """Calculate the batch precision, recall, and f_beta scores
-    based on IoU thresholds.
+def object_detection_precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):
+    """Calculate precision, recall, and F-beta scores for batches
+    of the ground truth and object detection results based on an IoU threshold
+    (only 'labels' and 'boxes' from the batches are taken into account).
+
+    During calculation, the boxes are relabeled to find true positives
+    and false positives based on a given box IoU threshold.
+
+    Parameters
+    ----------
+    gts: tuple or list
+        The ground truth of label and box values.
+    preds: tuple or list
+        Predicted label and box values.
+    iou_thresh: float, optional
+        minimum IoU between the ground truth bounding boxes and predicted
+        bounding boxes to consider them as positive (default 0.5).
+    beta: int, optional
+        A beta value to determine the weight of the recall in the F-beta score
+        (default 1).
+
+    Return
+    ------
+        A dictionary containing precision, recall, and F-beta scores.
+
+    Raise
+    -----
+    ValueError
+        When beta or iou_thresh is less than 0.
+
+    Examples
+    --------
+    >>> ground_truth = {'boxes': torch.tensor([[1.0, 1.0, 4.0, 4.0],
+    ...                                        [4.0, 1.0, 7.0, 4.0]]),
+    ...                 'labels': torch.tensor([1, 1])}
+    >>> precision = {'boxes': torch.tensor([[1.0, 2.0, 4.0, 5.0]]),
+    ...              'labels': torch.tensor([1])}
+    >>> results = object_detection_precision_recall_fbeta_scores(
+    ...    gts=(ground_truth, ground_truth), preds=(prediction, prediction))
+    >>> print(results)
+    {'precision': 1, 'recall': 0.5, 'f_beta': 0.6666666666666666}
     """
     if (beta or iou_thresh) < 0:
         raise ValueError("beta and iou_thresh must be >=0")
@@ -28,8 +66,8 @@ def precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, beta=1):
             gt_pred_box_iou = box_iou(gt['boxes'], pred['boxes'])
             max_ious = torch.max(gt_pred_box_iou, dim=1)
 
-            # Mark box classification results as true and false positive base on
-            # a given IoU threshold
+            # Relabel the boxes as true positives (1) and false positives (0)
+            # based on a given IoU threshold
             correct_pred_labels = torch.zeros_like(pred['labels'])
             correct_pred_labels[max_ious.indices[max_ious.values >= iou_thresh]] = 1
         else:
@@ -116,7 +154,7 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1,
         results += outputs
 
         # Compute a model batch statistics
-        batch_model_scores = precision_recall_fbeta_scores(
+        batch_model_scores = object_detection_precision_recall_fbeta_scores(
             targets, outputs, iou_thresh=iou_thresh, beta=beta)
 
         # Accumulate statistics for computing the average values per epoch

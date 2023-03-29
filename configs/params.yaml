@@ -31,7 +31,7 @@ object_detection_model:
 
 model_training_inference_conf:
   device_cuda: true
-  # maximization metric:
+  # maximization metric (precision, recall, or f_beta):
   metric_to_find_best: &BM f_beta
   initial_metric_value: 0.0
   evaluation_iou_threshold: 0.4

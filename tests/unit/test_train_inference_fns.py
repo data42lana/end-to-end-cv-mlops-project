@@ -3,18 +3,18 @@ import pytest
 import torch
 
 # isort: off
-from src.train.train_inference_fns import (precision_recall_fbeta_scores, train_one_epoch,
-                                           eval_one_epoch, predict, predict_image)
+from src.train.train_inference_fns import (object_detection_precision_recall_fbeta_scores,
+                                           train_one_epoch, eval_one_epoch, predict,
+                                           predict_image)
 from src.train.fine_tune_model import run_train
 
 
-def test_precision_recall_fbeta_scores():
+def test_object_detection_precision_recall_fbeta_scores():
     x1, y1, x2, y2 = 1.0, 1.0, 4.0, 4.0
     gt = {'boxes': torch.tensor([[x1, y1, x2, y2],
                                  [x1 + 3, y1, x2 + 3, y2]]), 'labels': torch.tensor([1, 1])}
-    pred = {'boxes': torch.tensor([[x1, y1 + 1, x2, y2 + 1]]), 'labels': torch.tensor([1]),
-            'scores': torch.tensor([1])}
-    res = precision_recall_fbeta_scores((gt, gt), (pred, pred))
+    pred = {'boxes': torch.tensor([[x1, y1 + 1, x2, y2 + 1]]), 'labels': torch.tensor([1])}
+    res = object_detection_precision_recall_fbeta_scores((gt, gt), (pred, pred))
     assert res['precision'] == 1
     assert res['recall'] == 0.5
     assert round(res['f_beta'], 2) == 0.67
