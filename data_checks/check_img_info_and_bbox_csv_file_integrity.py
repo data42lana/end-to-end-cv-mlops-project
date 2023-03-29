@@ -37,9 +37,14 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
     other: pd.Series | scalar value
         An object to compare.
     comparison_sign: {'==', '<='}
-        Must be one of '==', '<='. Otherwise raises ValueError.
+        Must be one of '==', '<='
     passed_message: str
         A message that describes a passage of the check.
+
+    Raise
+    -----
+    ValueError
+        When comparison_sign is not equal to '==' or '<='.
     """
     comp_series_result = 0
 

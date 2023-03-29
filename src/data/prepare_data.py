@@ -41,7 +41,7 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
         df2 columns with averages to be renamed.
 
     Return
-    -------
+    ------
         A new expanded pd.DataFrame object.
     """
     rename_columns = {df2_image_name_column: df1_image_name_column}

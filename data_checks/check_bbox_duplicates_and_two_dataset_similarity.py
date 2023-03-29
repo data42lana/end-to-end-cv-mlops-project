@@ -43,6 +43,11 @@ def check_two_datasets_similarity(df1, df2, check_type='train-test',
                                   check_bbox_data=False):
     """Check similarity of training and test datasets (pd.DataFrames)
     if check_type='train-test' or new and old ones if check_type='new-old'.
+
+    Raise
+    -----
+    ValueError
+        When check_type is not equal to 'train-test' or 'new-old'.
     """
     if check_bbox_data:
         index_name = None
@@ -70,7 +75,7 @@ def check_two_datasets_similarity(df1, df2, check_type='train-test',
     elif check_type == 'new-old':
         check_suite_name = 'New ' + check_suite_name
     else:
-        raise ValueError("check_type must be equal 'train-test' or 'new-old'!")
+        raise ValueError("check_type must be equal to 'train-test' or 'new-old'!")
 
     check_suite_result = check_two_datasets(ds1, ds2, check_suite_name, checks=check_suite)
 
