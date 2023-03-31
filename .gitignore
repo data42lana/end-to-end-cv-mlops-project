@@ -16,6 +16,7 @@ pyttmp/
 models/*
 # !models/*_demo.pt
 mlruns/*
+hyper_opt/*
 .metaflow/*
 metaflow_card_cache/
 monitoring/*

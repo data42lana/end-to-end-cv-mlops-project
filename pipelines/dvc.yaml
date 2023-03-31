@@ -63,6 +63,7 @@ stages:
       - data_checks/data_check_results/raw_csv_file_check_results.json
     outs:
       - ${data_path.prepared}
+      - ${model_training_inference_conf.save_model_output_dir}/plots/eda
     desc: 'Split raw data into training and test sets'
 
   train_test_similarity_check:
@@ -152,7 +153,7 @@ stages:
       - configs/params.yaml:
         - model_training_inference_conf.metrics_to_plot
     outs:
-      - ${model_training_inference_conf.save_model_output_dir}/plots
+      - ${model_training_inference_conf.save_model_output_dir}/plots/metrics
     desc: 'Update model version stages to "Production" or "Archived" in a Mlflow registry'
 
   model_report_generation:

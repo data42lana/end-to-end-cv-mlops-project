@@ -135,11 +135,18 @@ class MLWorkFlow(FlowSpec):
             raise ValueError("Raw Data Integrity Check is failed!")
         self.next(self.train_test_data_split)
 
+    @card(type='blank')
     @step
     def train_test_data_split(self):
         """Split raw data into training and test sets."""
         from src.data.prepare_data import main as split_data_into_train_test
-        split_data_into_train_test(PROJECT_PATH, MLCONFIG)
+        self.eda_plots = split_data_into_train_test(PROJECT_PATH, MLCONFIG)
+        # Set a EDA report title
+        current.card.append(Markdown("# EDA Report"))
+        # Add training eda plots
+        current.card.append(Markdown("## Train Dataset Plot(s):"))
+        for plot in self.eda_plots:
+            current.card.append(Image.from_matplotlib(plot))
         self.next(self.train_test_similarity_check)
 
     @step

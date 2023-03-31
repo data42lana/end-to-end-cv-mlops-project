@@ -26,7 +26,7 @@ def object_detection_precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, b
         Predicted label and box values.
     iou_thresh: float, optional
         minimum IoU between the ground truth bounding boxes and predicted
-        bounding boxes to consider them as positive (default 0.5).
+        bounding boxes to consider them as true positive (default 0.5).
     beta: int, optional
         A beta value to determine the weight of the recall in the F-beta score
         (default 1).

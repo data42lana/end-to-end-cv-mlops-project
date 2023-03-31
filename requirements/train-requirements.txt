@@ -2,12 +2,13 @@
 albumentations==1.2.1
 kaleido==0.2.1
 matplotlib==3.5.3
-mlflow==1.30.0
+mlflow>=1.30.0,<=2.2.2
 numpy==1.23.1
 opencv-python==4.7.0.68
 optuna==3.0.3
 pandas==1.4.3
 pyyaml
 scikit-learn==1.1.2
+seaborn==0.12.2
 torch==1.13.1
 torchvision==0.14.1

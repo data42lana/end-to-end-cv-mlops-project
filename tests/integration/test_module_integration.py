@@ -35,7 +35,7 @@ def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
                                       tmp_path.joinpath('tmlruns').as_uri())
 
     # Act
-    prepare_data(tmp_path, example_config)
+    _ = prepare_data(tmp_path, example_config, save_eda_plots=True)
     update_raw_data(tmp_path, example_config)
     optimize_hyperparams(tmp_path, example_config)
     fine_tune_model(tmp_path, example_config)
@@ -56,6 +56,7 @@ def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
     mlst_version = max([m.version for m in model_reg_info])
 
     assert prepared_test_df.equals(val_df)
+    assert len([ch for ch in (tmp_path / 'res/plots/eda').iterdir()]) == 4
     assert updated_train_df.equals(train_val_df.sort_values('Name', ignore_index=True))
     assert (tmp_path / 'res/hyper_opt_studies.db').exists()
     assert len([ch for ch in (tmp_path / 'res/tfrcnn_study/plots').iterdir()]) == 7
@@ -64,5 +65,5 @@ def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
     assert client.get_metric_history(test_res_run, 'f_beta')
     assert [ch for ch in (tmp_path / 'res/test_outs').iterdir()]
     assert client.get_model_version('best_tfrcnn', mlst_version).current_stage == 'Production'
-    assert len([ch for ch in (tmp_path / 'res/plots').iterdir()]) == 2
+    assert len([ch for ch in (tmp_path / 'res/plots/metrics').iterdir()]) == 2
     assert (tmp_path / 'reports/model_report.md').exists()

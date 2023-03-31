@@ -9,7 +9,7 @@ from pathlib import Path
 
 import mlflow
 
-from src.utils import get_param_config_yaml, production_model_metric_history_plot
+from src.utils import draw_production_model_metric_history_plots, get_param_config_yaml
 
 logging.basicConfig(level=logging.INFO, filename='pipe.log',
                     format="%(asctime)s -- [%(levelname)s]: %(message)s")
@@ -65,9 +65,9 @@ def main(project_path, param_config, save_metric_plots=False):
     metric_plots = []
 
     for metric in mltraining_conf['metrics_to_plot']:
-        metric_plots += production_model_metric_history_plot(metric, client,
-                                                             registered_model_name,
-                                                             save_path=save_path)
+        metric_plots += draw_production_model_metric_history_plots(metric, client,
+                                                                   registered_model_name,
+                                                                   save_path=save_path)
     logging.info("Metric plots of a production stage model are saved.")
     return production_run_id, metric_plots
 
