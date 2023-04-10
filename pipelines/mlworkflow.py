@@ -138,7 +138,9 @@ class MLWorkFlow(FlowSpec):
     @card(type='blank')
     @step
     def train_test_data_split(self):
-        """Split raw data into training and test sets."""
+        """Split raw data into training and test sets and generate a EDA report
+        of the training data using card components.
+        """
         from src.data.prepare_data import main as split_data_into_train_test
         self.eda_plots = split_data_into_train_test(PROJECT_PATH, MLCONFIG)
         # Set a EDA report title

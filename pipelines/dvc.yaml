@@ -63,7 +63,8 @@ stages:
       - data_checks/data_check_results/raw_csv_file_check_results.json
     outs:
       - ${data_path.prepared}
-      - ${model_training_inference_conf.save_model_output_dir}/plots/eda
+      - ${model_training_inference_conf.save_model_output_dir}/plots/eda:
+          cache: false
     desc: 'Split raw data into training and test sets'
 
   train_test_similarity_check:
@@ -139,7 +140,8 @@ stages:
       - configs/params.yaml:
         - model_training_inference_conf.license_pattern_to_select_images
     outs:
-      - ${model_training_inference_conf.save_model_output_dir}/test_outs
+      - ${model_training_inference_conf.save_model_output_dir}/test_outs:
+          cache: false
     desc: 'Run a model inference on a test dataset'
 
   model_stage_update:
@@ -153,7 +155,8 @@ stages:
       - configs/params.yaml:
         - model_training_inference_conf.metrics_to_plot
     outs:
-      - ${model_training_inference_conf.save_model_output_dir}/plots/metrics
+      - ${model_training_inference_conf.save_model_output_dir}/plots/metrics:
+          cache: false
     desc: 'Update model version stages to "Production" or "Archived" in a Mlflow registry'
 
   model_report_generation:
@@ -161,7 +164,7 @@ stages:
     wdir: ..
     deps:
       - ${model_training_inference_conf.save_model_output_dir}/test_outs
-      - ${model_training_inference_conf.save_model_output_dir}/plots
+      - ${model_training_inference_conf.save_model_output_dir}/plots/metrics
     outs:
       - reports/model_report.md:
           cache: false

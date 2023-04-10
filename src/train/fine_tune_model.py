@@ -204,7 +204,7 @@ def main(project_path, param_config):
     train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path, batch_size,
                                           train_test_split_data=True, transform_train_imgs=True)
 
-    # Get a modified model
+    # Load a modified model
     model_params = param_config['object_detection_model']['load_parameters']
     num_classes = param_config['object_detection_model']['number_classes']
     faster_rcnn_mob_model = faster_rcnn_mob_model_for_n_classes(num_classes, **model_params)

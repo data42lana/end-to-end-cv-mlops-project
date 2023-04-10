@@ -13,7 +13,7 @@ def faster_rcnn_mob_model_for_n_classes(num_classes, print_head=False, **load_mo
     More information about this model and its parameters can be found at the link:
     https://github.com/pytorch/vision/blob/main/torchvision/models/detection/faster_rcnn.py
     """
-    # Load a Faster R-CNN model pre-trained on COCO
+    # Load a Faster R-CNN model pre-trained on COCO V1 dataset
     faster_rcnn_mob = fasterrcnn_mobilenet_v3_large_fpn(weights='COCO_V1', **load_model_params)
 
     if print_head:

@@ -32,7 +32,7 @@ def draw_bboxes_on_image(img, bboxes, scores=None, save_img_out_path=None,
                                   colors=color, width=box_width)
     img = to_pil_image(img_box.detach())
 
-    # Set a fig parameters
+    # Set figure parameters
     if imgsize_in_inches is None:
         imgsize_in_inches = tuple(map(lambda x: x / 100, img.size))
     fig = plt.figure(figsize=imgsize_in_inches, frameon=False)

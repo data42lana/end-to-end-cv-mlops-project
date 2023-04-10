@@ -151,7 +151,7 @@ def main(project_path, param_config):
     train_dl, val_dl = create_dataloaders(imgs_path, train_csv_path, bbox_csv_path,
                                           batch_size, train_test_split_data=True)
 
-    # Create model
+    # Load a model
     frcnn_mob_model = faster_rcnn_mob_model_for_n_classes(num_classes, **model_params)
     frcnn_mob_model.to(device)
 
