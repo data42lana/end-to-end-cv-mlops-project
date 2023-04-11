@@ -11,7 +11,7 @@ from src.data.update_raw_data import main as update_raw_data
 from src.data.prepare_data import main as prepare_data
 from src.train.optimize_hyperparams import main as optimize_hyperparams
 from src.train.fine_tune_model import main as fine_tune_model
-from src.train.model_test_inference import main as model_test_inference
+from src.train.model_test_performance import main as model_test_performance
 from src.model.update_model_stages import main as update_model_stages
 from src.model.generate_model_report import main as generate_model_report
 
@@ -39,7 +39,7 @@ def test_src_package_pipeline(example_config, val_df, train_val_df, tmp_path):
     update_raw_data(tmp_path, example_config)
     optimize_hyperparams(tmp_path, example_config)
     fine_tune_model(tmp_path, example_config)
-    _ = model_test_inference(tmp_path, example_config, get_random_prediction_image=True)
+    _ = model_test_performance(tmp_path, example_config, get_random_prediction_image=True)
     _ = update_model_stages(tmp_path, example_config, save_metric_plots=True)
     generate_model_report(tmp_path, example_config)
 

@@ -1,4 +1,4 @@
-"""This module evaluates and makes prediction of the latest version
+"""This module evaluates performance and makes prediction of the latest version
 of a registered model on test data.
 """
 

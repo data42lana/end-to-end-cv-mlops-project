@@ -131,7 +131,7 @@ stages:
     desc: 'Fine-tune a model on a specific dataset'
 
   model_inference_on_test_data:
-    cmd: python src/train/model_test_inference.py
+    cmd: python src/train/model_test_performance.py
     wdir: ..
     deps:
       - mlruns

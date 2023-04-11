@@ -186,10 +186,10 @@ class MLWorkFlow(FlowSpec):
         """Run a model inference on a test dataset."""
         # Get a current test score
         import mlflow
-        from src.train.model_test_inference import main as run_model_test_inference
+        from src.train.model_test_performance import main as run_model_performance_test
         mlflow.set_tracking_uri(self.mltracking_uri)
-        self.test_res = run_model_test_inference(PROJECT_PATH, MLCONFIG,
-                                                 get_random_prediction_image=True)
+        self.test_res = run_model_performance_test(PROJECT_PATH, MLCONFIG,
+                                                   get_random_prediction_image=True)
         self.test_score = [self.test_res['test_score_name'],
                            round(self.test_res['test_score_value'], 2)]
         self.mlflow_model_uri = self.test_res['model_uri']
