@@ -5,7 +5,8 @@ import torch
 import torchvision.transforms as T
 
 from src.utils import (collate_batch, draw_and_save_seaborn_plot, draw_bboxes_on_image,
-                       draw_production_model_metric_history_plots, get_device,
+                       draw_production_model_metric_history_plots,
+                       get_current_stage_of_registered_model_version, get_device,
                        get_latest_registered_pytorch_model, get_number_of_csv_rows,
                        get_param_config_yaml, get_random_img_with_info,
                        save_model_state, stratified_group_train_test_split)
@@ -57,6 +58,17 @@ def test_draw_production_model_metric_history_plots_is_saved(model_registry, tmp
     assert len([ch for ch in (tmp_path / 'plots/metrics').iterdir()]) == 1
 
 
+def test_get_current_stage_of_registered_model_version(model_registry):
+    client, reg_model_name, run_id, _ = model_registry
+    client.create_registered_model(reg_model_name)
+    for _ in range(3):
+        _ = client.create_model_version(reg_model_name, '', run_id=run_id, await_creation_for=5)
+    client.transition_model_version_stage(reg_model_name, version='2', stage='Production')
+    current_version_stage = get_current_stage_of_registered_model_version(
+        client, reg_model_name, 2)
+    assert current_version_stage == 'Production'
+
+
 def test_get_device():
     device_param = False
     device = get_device(device_param)
@@ -65,7 +77,6 @@ def test_get_device():
 
 def test_get_latest_registered_pytorch_model(model_registry, frcnn_model):
     client, reg_model_name, run_id, exp_id = model_registry
-    # exp = client.get_experiment(exp_id)
     with mlflow.start_run(run_id, exp_id):
         for _ in range(2):
             mlflow.pytorch.log_model(frcnn_model, reg_model_name,

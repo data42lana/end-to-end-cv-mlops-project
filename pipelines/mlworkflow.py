@@ -1,6 +1,7 @@
 """This module creates a workflow for the machine learning project."""
 # Note: Metaflow does not run on Windows!
 
+import os
 # import sys
 from pathlib import Path
 # sys.path.append(str(Path.cwd()))
@@ -13,7 +14,12 @@ from src.utils import get_param_config_yaml
 
 PROJECT_PATH = Path.cwd()
 MLCONFIG = get_param_config_yaml(PROJECT_PATH)
-MLTRACKING_URI = MLCONFIG['mlflow_tracking_conf']['mltracking_uri']
+MLTRACKING_URI = os.environ.get('MLFLOW_TRACKING_URI',
+                                MLCONFIG['mlflow_tracking_conf']['mltracking_uri'])
+
+# Additional options
+SAVE_METRIC_PLOTS_TO_FILES = True
+COMPARE_WITH_PRODUCTION_MODEL = True
 
 
 @project(name='end_to_end_cv_mlops_project')
@@ -188,8 +194,9 @@ class MLWorkFlow(FlowSpec):
         import mlflow
         from src.train.model_test_performance import main as run_model_performance_test
         mlflow.set_tracking_uri(self.mltracking_uri)
-        self.test_res = run_model_performance_test(PROJECT_PATH, MLCONFIG,
-                                                   get_random_prediction_image=True)
+        self.test_res = run_model_performance_test(
+            PROJECT_PATH, MLCONFIG, get_random_prediction_image=True,
+            compare_with_production_model=COMPARE_WITH_PRODUCTION_MODEL)
         self.test_score = [self.test_res['test_score_name'],
                            round(self.test_res['test_score_value'], 2)]
         self.mlflow_model_uri = self.test_res['model_uri']
@@ -213,8 +220,9 @@ class MLWorkFlow(FlowSpec):
         # Compare the current and production test scores
         if (self.test_score[1] > prod_test_score) or current.is_production:
             mlflow.set_tracking_uri(self.mltracking_uri)
-            self.prod_run_id_in_mlflow, self.prod_metric_plots = update_model_version_stages(
-                PROJECT_PATH, MLCONFIG)
+            res = update_model_version_stages(PROJECT_PATH, MLCONFIG,
+                                              SAVE_METRIC_PLOTS_TO_FILES)
+            self.prod_run_id_in_mlflow, self.prod_model_id_in_mlflow, self.prod_metric_plots = res  # noqa: B950
 
             # Reassign 'production' tags
             for prod_run in prod_runs:
@@ -227,49 +235,84 @@ class MLWorkFlow(FlowSpec):
     @step
     def end(self):
         """Generate a report using card components."""
+        import mlflow
+        from src.utils import (get_current_stage_of_registered_model_version,
+                               get_number_of_csv_rows)
+
+        # Get training and test dataset sizes
+        data_paths = MLCONFIG['image_data_paths']
+        self.train_dataset_size, self.test_dataset_size = [
+            get_number_of_csv_rows(data_paths[csv_file])
+            for csv_file in ['train_csv_file', 'test_csv_file']]
+
+        # Get the current stage of the model version
+        mlflow.set_tracking_uri(self.mltracking_uri)
+        client = mlflow.MlflowClient()
+        _, model_name, model_version = self.test_res['model_uri'].split('/')
+        self.current_model_stage = get_current_stage_of_registered_model_version(
+            client, model_name, int(model_version))
+
         # Set a report title
-        current.card.append(Markdown("# Model Training Result Report"))
+        current.card.append(Markdown("# Model Training WorkFlow Result Report"))
 
-        # Add a current test score
-        current.card.append(Markdown("### test {0} score: **{1}**".format(
-            self.test_score[0], self.test_score[1])))
+        # Add model information
+        current.card.append(Markdown("## Model Information"))
+        model_info = {"Registered Name": f"**{model_name}**",
+                      "Version": f"**{model_version}**",
+                      "Stage": f"**{self.current_model_stage}**"}
+        for sname, sval in model_info.items():
+            current.card.append(Markdown(f"*{sname}:* **{sval}**"))
 
-        # Add model name and version
-        model_data = self.test_res['model_uri'].split('/')
-        current.card.append(Markdown("### model: {}".format(model_data[1])))
-        current.card.append(Markdown("### version: {}".format(model_data[2])))
+        # Add model performance on test data
+        current.card.append(Markdown("### Performance on Test Data"))
+        model_test_perform = {
+            self.test_score[0].capitalize(): "**{}**".format(self.test_score[1]),
+            "Test Dataset Size": self.test_dataset_size}
+        for sname, sval in model_test_perform.items():
+            current.card.append(Markdown(f"*{sname}:* {sval}"))
 
+        # Add an image with test prediction result
+        current.card.append(Markdown("*Example:*"))
+        current.card.append(Markdown(
+            "The Number of House Sparrows on the Image: {}".format(
+                self.test_res['test_predict_number'])))
+        current.card.append(Image.from_matplotlib(self.test_res['test_predict_img']))
+
+        # Create a link to the image
+        photo_author = self.test_res['test_img_info']['Author']
+        photo_source = self.test_res['test_img_info']['Source']
+        photo_source_link = 'https://{0}.com'.format(photo_source.lower())
+        photo_number = self.test_res['test_img_info']['Name'].split('_', maxsplit=1)[0]
+        photo_license = self.test_res['test_img_info']['License'].split(')')[0].split('(')[1]  # noqa: B950
+        current.card.append(Markdown(
+            "Photo by {0} on [{1}]({2}). No {3}. License: {4} "
+            "*The photo modified: boxes and scores drawn*.".format(
+                photo_author, photo_source, photo_source_link,
+                photo_number, photo_license)))
+
+        # Expand the report for a production model
         if 'production' in Flow(current.flow_name)[current.run_id].user_tags:
-            # Add a Mlflow run id
-            current.card.append(Markdown(f"MLflow Run Id: {self.prod_run_id_in_mlflow}"))
+            self.load_params = MLCONFIG['object_detection_model']['load_parameters']
+            self.train_backbone_layers = self.load_params.get('trainable_backbone_layers', 3)
+            self.max_number_detections = self.load_params.get('box_detections_per_img', 100)
 
-            # Add training metric plots
-            current.card.append(Markdown("## Metric History Plot(s):"))
+            # Add model training details
+            current.card.append(Markdown("## Model Training Details"))
+            model_train_details = {
+                "MLflow Run Id": self.prod_run_id_in_mlflow,
+                "Training Dataset Size": self.train_dataset_size,
+                "Number of Trained Backbone Layers": self.train_backbone_layers,
+                "Maximum Number of House Sparrows (that can be detected in one image)": self.max_number_detections}  # noqa: B950
+            for sname, sval in model_train_details.items():
+                current.card.append(Markdown(f"*{sname}:* {sval}"))
+
+            # Add training metric history plots
+            current.card.append(Markdown("### Metric History Plot(s):"))
             for plot in self.prod_metric_plots:
                 current.card.append(Image.from_matplotlib(plot))
 
-            # Add a test prediction result
-            current.card.append(Markdown("## Model Test Prediction(s):"))
-            current.card.append(Markdown(
-                "The Number of House Sparrows on the Image: {}".format(
-                    self.test_res['test_predict_number'])))
-            current.card.append(Image.from_matplotlib(self.test_res['test_predict_img']))
-
-            # Create a link to the image
-            photo_author = self.test_res['test_img_info']['Author']
-            photo_source = self.test_res['test_img_info']['Source']
-            photo_source_link = 'https://{0}.com'.format(photo_source.lower())
-            photo_number = self.test_res['test_img_info']['Name'].split('_', maxsplit=1)[0]
-            photo_license = self.test_res['test_img_info']['License'].split(')')[0].split('(')[1]  # noqa: B950
-            current.card.append(Markdown(
-                "Photo by {0} on [{1}]({2}). No {3}. License: {4}"
-                "*The photo modified: boxes and scores drawn*.".format(
-                    photo_author, photo_source, photo_source_link,
-                    photo_number, photo_license)))
-
 
 if __name__ == '__main__':
-    import os
     if 'USERNAME' not in os.environ:
         os.environ['USERNAME'] = 'user1'
     MLWorkFlow()

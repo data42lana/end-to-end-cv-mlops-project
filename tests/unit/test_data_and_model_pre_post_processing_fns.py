@@ -8,6 +8,7 @@ from src.data.update_raw_data import update_dir_or_csv_files
 from src.data.prepare_data import expand_img_df_with_average_values_from_another_img_df
 from src.model.object_detection_model import faster_rcnn_mob_model_for_n_classes
 from src.model.update_model_stages import update_registered_model_version_stages
+from src.model.generate_model_report import fill_in_report_subsection
 
 
 class TestUpdateData:
@@ -61,3 +62,9 @@ def test_update_registered_model_version_stages(model_registry):
     assert client.get_model_version(reg_model_name, '2').current_stage == 'Archived'
     assert client.get_model_version(reg_model_name, '3').current_stage == 'Production'
     assert len(client.get_latest_versions(reg_model_name, stages=['Production'])) == 1
+
+
+def test_fill_in_report_subsection():
+    resulting_subsection = fill_in_report_subsection('## Test Subsection', {'Test': 'Content'})
+    expected_subsection = ['\n## Test Subsection\n', '*Test:* Content\n\n']
+    assert resulting_subsection == expected_subsection

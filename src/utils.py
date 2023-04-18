@@ -105,15 +105,41 @@ def draw_production_model_metric_history_plots(metric_name, mlclient, registered
             metric_name += '_{}'.format(prod_run_params.get('eval_beta', ''))
 
         metric_step_values = collate_batch([(mh.step, mh.value) for mh in metric_history])
+        save_file_path = save_path / f'plots/metrics/{metric_name}.jpg' if save_path else None
         fig = draw_and_save_seaborn_plot(
             x=metric_step_values[0], y=metric_step_values[1],
             figsize=(10, 6), x_label="epochs", y_label=metric_name,
             title=f"{metric_name.capitalize()} Plot",
-            save_file_path=save_path / f'plots/metrics/{metric_name}.jpg',
+            save_file_path=save_file_path,
             color='blue' if 'loss' in metric_name else 'orange')
         prod_metric_plots.append(fig)
 
     return prod_metric_plots
+
+
+def get_current_stage_of_registered_model_version(mlclient, registered_model_name,
+                                                  registered_model_version):
+    """Return the current stage of a specified version of a registered model
+    if the version exists.
+
+    Raise
+    -----
+    ValueError
+        If the invalid version of the model is specified.
+    """
+    model_versions = mlclient.search_model_versions(f"name='{registered_model_name}'")
+
+    current_version_stage = 0
+    for mv in model_versions:
+        print(mv)
+        if mv.version == registered_model_version:
+            current_version_stage = mv.current_stage
+            break
+
+    if current_version_stage == 0:
+        raise ValueError("Invalid model version!")
+
+    return current_version_stage
 
 
 def get_device(use_cuda_config_param):

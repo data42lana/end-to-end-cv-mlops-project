@@ -40,23 +40,26 @@ def update_registered_model_version_stages(mlclient, registered_model_name):
 
     # View updated model version stages
     prod_run_id = 0
+    prod_model_id = 0
     for m in mlclient.get_latest_versions(registered_model_name):
         logging.info("Updated model version stages: ")
         logging.info(f"{m.name}: version: {m.version}, current stage: {m.current_stage}")
 
         if m.current_stage == 'Production':
             prod_run_id = m.run_id
+            prod_model_id = 'models:/{0}/{1}'.format(m.name, m.version)
 
-    return prod_run_id
+    return prod_run_id, prod_model_id
 
 
 def main(project_path, param_config, save_metric_plots=False):
-    """Update version stages for a registered model, return a run id,
+    """Update version stages for a registered model, return run and model ids,
     and create and return metric plots for a model with 'Production' stage.
     """
     registered_model_name = param_config['object_detection_model']['registered_name']
     client = mlflow.MlflowClient()
-    production_run_id = update_registered_model_version_stages(client, registered_model_name)
+    production_run_id, production_model_id = update_registered_model_version_stages(
+        client, registered_model_name)
     logging.info("Stages are updated.")
 
     mltraining_conf = param_config['model_training_inference_conf']
@@ -69,7 +72,7 @@ def main(project_path, param_config, save_metric_plots=False):
                                                                    registered_model_name,
                                                                    save_path=save_path)
     logging.info("Metric plots of a production stage model are saved.")
-    return production_run_id, metric_plots
+    return production_run_id, production_model_id, metric_plots
 
 
 if __name__ == '__main__':
