@@ -28,7 +28,14 @@ BBOX_FORMATS = {'coco': 'xywh',
 
 
 def get_image_transforms(box_format):
-    """Return an Albumentation object."""
+    """Return a transform function that will perform image augmentation.
+
+    Image transformations with always_apply=True are applied with 100% probability
+    even if their parent containers are not applied. Refer to
+    https://albumentations.ai/docs/getting_started/setting_probabilities/
+    for more information how calculated actual probability of other transformations
+    and containers in the augmentation pipeline.
+    """
     aug = A.Compose([
                     A.SmallestMaxSize(800, always_apply=True),
                     A.LongestMaxSize(1333, always_apply=True),

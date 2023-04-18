@@ -14,9 +14,9 @@ pyttmp/
 *.pt
 *.pth
 models/*
-# !models/*_demo.pt
 mlruns/*
 hyper_opt/*
 .metaflow/*
 metaflow_card_cache/
 monitoring/*
+!monitoring/current_deployed_model.yaml

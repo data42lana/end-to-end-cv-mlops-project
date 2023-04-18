@@ -56,6 +56,7 @@ model_training_inference_conf:
 mlflow_tracking_conf:
   experiment_name: Fine-Tuning_Model
   run_name: fine-tuning_with_optimized_parameters
+  # Default MLFlow tracking URI:
   mltracking_uri: !!str "sqlite:///mlruns/mlruns.db"
   artifact_location: mlruns/artifacts
 
@@ -96,6 +97,6 @@ hyperparameter_optimization:
 deployed_model_monitoring:
   # Reference and current data records ~= half of total number of records
   max_total_number_of_records_to_load: 1000
-  save_deployed_model_params_path: configs/current_deployed_model_params.yaml
+  save_deployed_model_info_path: monitoring/current_deployed_model.yaml
   save_monitoring_data_path: monitoring/data/deployed_model_performance.csv
   save_monitoring_check_results_dir: monitoring

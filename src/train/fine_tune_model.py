@@ -28,7 +28,7 @@ torch.cuda.manual_seed_all(SEED)
 
 
 def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
-              optimizer_parameters, save_best_model_path=None, lr_scheduler_name=None,
+              optimizer_parameters, save_best_model_weights_path=None, lr_scheduler_name=None,
               lr_scheduler_parameters=None, device=torch.device('cpu'),  # noqa: B008
               metric_to_find_best_model=None, init_metric_value=0.0,
               eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', save_best_ckpt=False,
@@ -51,8 +51,9 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
         An optimizer name from torch.optim.
     optimizer_parameters: dict
         Relevant parameters for the optimizer.
-    save_best_model_path: Path, optional
-        A path to a directory to save the best model or its checkpoint (default None).
+    save_best_model_weights_path: Path, optional
+        A path to save the best model weights (state directory)
+        or its checkpoint (default None).
     lr_scheduler_name: str, optional
         A learning rate scheduler name from torch.optim.lr_scheduler (default None).
     lr_scheduler_parameters: dict, optional
@@ -151,9 +152,10 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
                                  metric_to_find_best_model + '_score': best_epoch_score}
                     filename += '_ckpt'
 
-                if save_best_model_path is not None:
-                    save_model_state(model, save_best_model_path / f'{filename}.pt', ckpt_dict)
-                    logging.info("Model is saved. --- The best {} score: {}".format(
+                if save_best_model_weights_path is not None:
+                    save_model_state(model, save_best_model_weights_path / f'{filename}.pt',
+                                     ckpt_dict)
+                    logging.info("Model weights are saved. --- The best {} score: {}".format(
                         metric_to_find_best_model, best_epoch_score))
 
                 with torch.no_grad():
@@ -235,8 +237,8 @@ def main(project_path, param_config):
         checkpoint_path = project_path / save_dir / TRAIN_EVAL_PARAMS['checkpoint']
         checkpoint = torch.load(checkpoint_path) if checkpoint_path.exists() else None
 
-    # Set paths to save the best model and its outputs
-    save_best_model_path = project_path / save_dir if save_dir else None
+    # Set paths to save the best model weights and its outputs
+    save_best_model_weights_path = project_path / save_dir if save_dir else None
     save_output_path = (project_path / TRAIN_EVAL_PARAMS['save_model_output_dir']
                         if TRAIN_EVAL_PARAMS['save_model_output_dir'] else None)
 
@@ -261,7 +263,7 @@ def main(project_path, param_config):
 
         # Run model training cycles
         _ = run_train(train_dl, val_dl, faster_rcnn_mob_model,
-                      save_best_model_path=save_best_model_path,
+                      save_best_model_weights_path=save_best_model_weights_path,
                       metric_to_find_best_model=TRAIN_EVAL_PARAMS['metric_to_find_best'],
                       init_metric_value=init_metric_value,
                       log_metrics=TRAIN_EVAL_PARAMS['log_metrics'],

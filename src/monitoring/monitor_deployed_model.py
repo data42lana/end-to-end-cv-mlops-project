@@ -115,9 +115,9 @@ def main(project_path, param_config):
     skip_rows = (lambda x: x in range(0, total_nrows - check_nrows)
                  if total_nrows > check_nrows else None)
 
-    # Get current deployed model parameters
+    # Get the current deployed model name and version
     current_deployed_model_params = get_param_config_yaml(
-        project_path, MONITORING_CONFIG['save_deployed_model_params_path'])
+        project_path, MONITORING_CONFIG['save_deployed_model_info_path'])
     current_model_selection_params = {
         'reg_model_name': current_deployed_model_params['registered_model_name'],
         'reg_model_version': current_deployed_model_params['registered_model_version']}

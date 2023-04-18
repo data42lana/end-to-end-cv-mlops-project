@@ -74,7 +74,7 @@ def set_model_monitoring_configs():
 
     monitoring_params = params['deployed_model_monitoring']
     DEFAULT_PATHS['path_to_save_pred_result'] = monitoring_params['save_monitoring_data_path']
-    DEFAULT_PATHS['path_to_save_deployed_model_params'] = monitoring_params['save_deployed_model_params_path']  # noqa: B950
+    DEFAULT_PATHS['path_to_save_deployed_model_info'] = monitoring_params['save_deployed_model_info_path']  # noqa: B950
 
 
 @app.on_event('startup')
@@ -89,13 +89,13 @@ def init_model():
 
 
 @app.on_event('startup')
-def save_deployed_model_params():
-    """Save the deployed model name and version."""
-    save_deployed_model_params_path = (
-        DEFAULT_PATHS['project_path'] / DEFAULT_PATHS['path_to_save_deployed_model_params'])
-    save_deployed_model_params_path.parent.mkdir(exist_ok=True, parents=True)
+def save_deployed_model_name_version():
+    """Save a deployed model name and version."""
+    save_deployed_model_info_path = (
+        DEFAULT_PATHS['project_path'] / DEFAULT_PATHS['path_to_save_deployed_model_info'])
+    save_deployed_model_info_path.parent.mkdir(exist_ok=True, parents=True)
 
-    with open(save_deployed_model_params_path, 'w') as f:
+    with open(save_deployed_model_info_path, 'w') as f:
         yaml.safe_dump({'registered_model_name': MODEL_PARAMS['reg_model_name'],
                         'registered_model_version': MODEL_PARAMS['reg_model_version']}, f)
 
