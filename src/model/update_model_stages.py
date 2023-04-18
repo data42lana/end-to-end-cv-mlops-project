@@ -5,6 +5,7 @@ save metric plots for a production stage model.
 import argparse
 import json
 import logging
+import os
 from pathlib import Path
 
 import mlflow
@@ -78,7 +79,8 @@ def main(project_path, param_config, save_metric_plots=False):
 if __name__ == '__main__':
     project_path = Path.cwd()
     param_config = get_param_config_yaml(project_path)
-    mlflow.set_tracking_uri(param_config['mlflow_tracking_conf']['mltracking_uri'])
+    mlflow.set_tracking_uri(os.environ.get('MLFLOW_TRACKING_URI',
+                            param_config['mlflow_tracking_conf']['mltracking_uri']))
 
     run_parser = argparse.ArgumentParser(
         description='Specify a condition to run this module.',

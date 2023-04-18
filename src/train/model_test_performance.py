@@ -4,6 +4,7 @@ of a registered model on test data.
 
 import json
 import logging
+import os
 import random
 from pathlib import Path
 
@@ -106,6 +107,7 @@ def main(project_path, param_config, get_random_prediction_image=False,
 if __name__ == '__main__':
     project_path = Path.cwd()
     param_config = get_param_config_yaml(project_path)
-    mlflow.set_tracking_uri(param_config['mlflow_tracking_conf']['mltracking_uri'])
+    mlflow.set_tracking_uri(os.environ.get('MLFLOW_TRACKING_URI',
+                            param_config['mlflow_tracking_conf']['mltracking_uri']))
     _ = main(project_path, param_config, get_random_prediction_image=True,
              compare_with_production_model=True)

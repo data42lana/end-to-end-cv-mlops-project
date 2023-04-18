@@ -56,7 +56,8 @@ model_training_inference_conf:
 mlflow_tracking_conf:
   experiment_name: Fine-Tuning_Model
   run_name: fine-tuning_with_optimized_parameters
-  # Default MLFlow tracking URI:
+  # Default MLflow tracking URI
+  # (it can be set using the MLFLOW_TRACKING_URI environment variable):
   mltracking_uri: !!str "sqlite:///mlruns/mlruns.db"
   artifact_location: mlruns/artifacts
 
