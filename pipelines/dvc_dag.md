@@ -4,7 +4,7 @@ flowchart TD
 	node2["pipelines\dvc.yaml:dag_saving"]
 	node3["pipelines\dvc.yaml:hyperparam_optimization"]
 	node4["pipelines\dvc.yaml:model_fine_tuning"]
-	node5["pipelines\dvc.yaml:model_inference_on_test_data"]
+	node5["pipelines\dvc.yaml:model_performance_on_test_data"]
 	node6["pipelines\dvc.yaml:model_report_generation"]
 	node7["pipelines\dvc.yaml:model_stage_update"]
 	node8["pipelines\dvc.yaml:raw_data_bbox_duplication_check"]

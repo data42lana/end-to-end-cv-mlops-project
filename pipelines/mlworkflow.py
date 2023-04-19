@@ -188,13 +188,12 @@ class MLWorkFlow(FlowSpec):
         self.next(self.model_inference_on_test_data)
 
     @step
-    def model_inference_on_test_data(self):
-        """Run a model inference on a test dataset."""
-        # Get a current test score
+    def model_performance_on_test_data(self):
+        """Get model performance on a test dataset."""
         import mlflow
-        from src.train.model_test_performance import main as run_model_performance_test
+        from src.train.model_test_performance import main as run_model_test_performance
         mlflow.set_tracking_uri(self.mltracking_uri)
-        self.test_res = run_model_performance_test(
+        self.test_res = run_model_test_performance(
             PROJECT_PATH, MLCONFIG, get_random_prediction_image=True,
             compare_with_production_model=COMPARE_WITH_PRODUCTION_MODEL)
         self.test_score = [self.test_res['test_score_name'],

@@ -1,6 +1,6 @@
 # ML pipeline configurations for the project
 
-# Note: Raw data added to cache outside the pipeline.
+# Note: Raw data is added to cache outside the pipeline.
 
 vars:
   - ../configs/params.yaml
@@ -130,7 +130,7 @@ stages:
       - ${model_training_inference_conf.save_model_output_dir}/val_outs
     desc: 'Fine-tune a model on a specific dataset'
 
-  model_inference_on_test_data:
+  model_performance_on_test_data:
     cmd: python src/train/model_test_performance.py
     wdir: ..
     deps:
@@ -142,7 +142,7 @@ stages:
     outs:
       - ${model_training_inference_conf.save_model_output_dir}/test_outs:
           cache: false
-    desc: 'Run a model inference on a test dataset'
+    desc: 'Get model performance on a test dataset'
 
   model_stage_update:
     cmd: python src/model/update_model_stages.py --only_if_test_score_is_best=True
