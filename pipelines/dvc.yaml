@@ -1,4 +1,4 @@
-# ML pipeline configurations for the project
+# ML pipeline configurations for this project
 
 # Note: Raw data is added to cache outside the pipeline.
 
@@ -171,7 +171,7 @@ stages:
     desc: 'Generate a report with model training results'
 
   dag_saving:
-    cmd: dvc dag --md > pipelines/dvc_dag.md
+    cmd: dvc dag --md --full > pipelines/dvc_dag.md
     wdir: ..
     deps:
       - reports/model_report.md

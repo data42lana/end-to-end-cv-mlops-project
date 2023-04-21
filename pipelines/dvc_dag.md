@@ -30,4 +30,14 @@ flowchart TD
 	node11-->node5
 	node11-->node12
 	node12-->node3
+	node13["pipelines\new_data_pipeline\dvc.yaml:new_data_expectation_check"]
+	node14["pipelines\new_data_pipeline\dvc.yaml:new_data_integrity_check"]
+	node15["pipelines\new_data_pipeline\dvc.yaml:new_data_similarity_check"]
+	node16["pipelines\new_data_pipeline\dvc.yaml:updating_raw_data"]
+	node13-->node14
+	node13-->node15
+	node13-->node16
+	node14-->node15
+	node14-->node16
+	node15-->node16
 ```

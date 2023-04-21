@@ -81,6 +81,10 @@ stages:
       md5: 21c0899c28a2af7c39e9eeb220676bb2.dir
       size: 59978
       nfiles: 2
+    - path: outputs/plots/eda
+      md5: ed70b950fc763f06b4e4418c5d45ad49.dir
+      size: 180001
+      nfiles: 4
   train_test_similarity_check:
     cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=prepared
     deps:
@@ -241,9 +245,9 @@ stages:
       size: 76200759
       nfiles: 7
     - path: models
-      md5: 69a1cc97ae611a506b8ead4715976727.dir
-      size: 152085740
-      nfiles: 2
+      md5: 556fb3b0890b3d6d60f9d43d2126f106.dir
+      size: 76035171
+      nfiles: 1
     - path: outputs/val_outs
       md5: d9085d4dde0d27688adc047edd51234b.dir
       size: 150356
@@ -273,8 +277,8 @@ stages:
       md5: e863a4d9e8dad81757f373e9808cb41e
       size: 159744
     - path: outputs/test_outs/test_score.json
-      md5: e53214d733de38b6deb838d8cb9ba627
-      size: 131
+      md5: 0dc11f1ce97db64ea2cf6ac51c561a57
+      size: 132
     params:
       configs/params.yaml:
         model_training_inference_conf.metrics_to_plot:
@@ -286,32 +290,50 @@ stages:
         test_score_name: f_beta_2
         test_score_value: 0.780935751435571
     outs:
-    - path: outputs/plots
+    - path: outputs/plots/metrics
       md5: de923b37c0c24f5420f2c9e7185a4521.dir
       size: 51715
       nfiles: 2
   model_report_generation:
     cmd: python src/model/generate_model_report.py
     deps:
-    - path: outputs/plots
+    - path: outputs/plots/metrics
       md5: de923b37c0c24f5420f2c9e7185a4521.dir
       size: 51715
       nfiles: 2
     - path: outputs/test_outs
-      md5: a135aebff5133c9ea024e47cfab16fc5.dir
-      size: 59892
+      md5: 60e6c496796251c74a61537b819d1e3b.dir
+      size: 59893
       nfiles: 2
     outs:
     - path: reports/model_report.md
-      md5: f8d7c2a1f59fde86262636fadcc428f3
-      size: 508
+      md5: 8a69caca91ffb560abc1ff13d711a35c
+      size: 816
   dag_saving:
-    cmd: dvc dag --md > pipelines/dvc_dag.md
+    cmd: dvc dag --md --full > pipelines/dvc_dag.md
     deps:
     - path: reports/model_report.md
-      md5: f8d7c2a1f59fde86262636fadcc428f3
-      size: 508
+      md5: 8a69caca91ffb560abc1ff13d711a35c
+      size: 816
     outs:
     - path: pipelines/dvc_dag.md
-      md5: 2ae260e1b56948befdb67fd7a57f6839
-      size: 946
+      md5: 897fedcc44bd04c12a319810c6d98c83
+      size: 1348
+  model_performance_on_test_data:
+    cmd: python src/train/model_test_performance.py
+    deps:
+    - path: data/prepared/test.csv
+      md5: f71126c7a03bc91c56581b5030785e9f
+      size: 17909
+    - path: mlruns
+      md5: ac77969317118d421474e70860c48ab0.dir
+      size: 76200759
+      nfiles: 7
+    params:
+      configs/params.yaml:
+        model_training_inference_conf.license_pattern_to_select_images: (CC0 1.0)
+    outs:
+    - path: outputs/test_outs
+      md5: 60e6c496796251c74a61537b819d1e3b.dir
+      size: 59893
+      nfiles: 2

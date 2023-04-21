@@ -1,0 +1,82 @@
+schema: '2.0'
+stages:
+  new_data_expectation_check:
+    cmd: python great_expectations/uncommitted/run_new_image_info_and_bbox_ckpt.py
+    deps:
+    - path: data/new
+      md5: 656024b70bc0a23cf606ebc434eddccf.dir
+      size: 2710967
+      nfiles: 29
+    outs:
+    - path: great_expectations/uncommitted/data_docs/local_site/validations/image_bboxes_ge_suite/run-new-ckpt
+      md5: a491cf07b12bab5490f148ed10cf0e2f.dir
+      size: 63307
+      nfiles: 1
+    - path: great_expectations/uncommitted/data_docs/local_site/validations/image_info_ge_suite/run-new-ckpt
+      md5: fe11a29cb702b64658e0dd6be20e02c0.dir
+      size: 53715
+      nfiles: 1
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+      md5: 82a0b456846416fd62ed3bc9e4958bdf.dir
+      size: 25453
+      nfiles: 1
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      md5: b6edaaf6e8911543acf1730f24564e9d.dir
+      size: 14787
+      nfiles: 1
+  new_data_integrity_check:
+    cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=new
+    deps:
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+      md5: 82a0b456846416fd62ed3bc9e4958bdf.dir
+      size: 25453
+      nfiles: 1
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      md5: b6edaaf6e8911543acf1730f24564e9d.dir
+      size: 14787
+      nfiles: 1
+    outs:
+    - path: data_checks/data_check_results/new_csv_file_check_results.json
+      md5: 39b40dc35a30224e25edd85271b3cfab
+      size: 953
+  new_data_similarity_check:
+    cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=new
+    deps:
+    - path: data_checks/data_check_results/new_csv_file_check_results.json
+      md5: 39b40dc35a30224e25edd85271b3cfab
+      size: 953
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+      md5: 82a0b456846416fd62ed3bc9e4958bdf.dir
+      size: 25453
+      nfiles: 1
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      md5: b6edaaf6e8911543acf1730f24564e9d.dir
+      size: 14787
+      nfiles: 1
+    outs:
+    - path: data_checks/data_check_results/new_old_bbox_check_results.html
+      md5: 5086add8ffc455122459fa1b7bde1983
+      size: 7780577
+    - path: data_checks/data_check_results/new_old_info_check_results.html
+      md5: 1a9a3f2a89a908beb5c605b3c5fb008c
+      size: 7705277
+  updating_raw_data:
+    cmd: python src/data/update_raw_data.py
+    deps:
+    - path: data_checks/data_check_results/new_csv_file_check_results.json
+      md5: 39b40dc35a30224e25edd85271b3cfab
+      size: 953
+    - path: data_checks/data_check_results/new_old_bbox_check_results.html
+      md5: 5086add8ffc455122459fa1b7bde1983
+      size: 7780577
+    - path: data_checks/data_check_results/new_old_info_check_results.html
+      md5: 1a9a3f2a89a908beb5c605b3c5fb008c
+      size: 7705277
+    - path: great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
+      md5: 82a0b456846416fd62ed3bc9e4958bdf.dir
+      size: 25453
+      nfiles: 1
+    - path: great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
+      md5: b6edaaf6e8911543acf1730f24564e9d.dir
+      size: 14787
+      nfiles: 1

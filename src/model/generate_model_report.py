@@ -95,7 +95,8 @@ def main(project_path, param_config):
     if current_model_stage == 'Production':
         # Add model training details
         train_size = get_number_of_csv_rows(
-            param_config['image_data_paths']['train_csv_file'], 'Name')
+            project_path.joinpath(param_config['image_data_paths']['train_csv_file']),
+            read_column='Name')
         load_params = param_config['object_detection_model']['load_parameters']
         train_backbone_layers = load_params.get('trainable_backbone_layers', 3)
         max_number_detections = load_params.get('box_detections_per_img', 100)

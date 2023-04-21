@@ -104,6 +104,7 @@ def main(project_path, param_config, save_eda_plots=False):
     train_df = train_test_dfs[0]
     # sns.set_theme(style='whitegrid')
     eda_plots = []
+    save_path = None
 
     if save_eda_plots:
         save_path = (project_path.joinpath(

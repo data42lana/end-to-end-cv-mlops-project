@@ -18,6 +18,7 @@ MLTRACKING_URI = os.environ.get('MLFLOW_TRACKING_URI',
                                 MLCONFIG['mlflow_tracking_conf']['mltracking_uri'])
 
 # Additional options
+SAVE_EDA_PLOTS_TO_FILES = True
 SAVE_METRIC_PLOTS_TO_FILES = True
 COMPARE_WITH_PRODUCTION_MODEL = True
 
@@ -39,7 +40,8 @@ class MLWorkFlow(FlowSpec):
         for data_path in ['image_data_paths', 'new_image_data_paths']:
             data_path_exists = np.all(
                 [PROJECT_PATH.joinpath(MLCONFIG[data_path][dpath]).exists()
-                 for dpath in MLCONFIG[data_path]])
+                 for dpath in MLCONFIG[data_path]
+                 if dpath not in ['train_csv_file', 'test_csv_file']])
             data_is_available.append(data_path_exists)
         self.raw_data_is_available, self.new_data_is_available = data_is_available
         if not self.raw_data_is_available:
@@ -148,7 +150,8 @@ class MLWorkFlow(FlowSpec):
         of the training data using card components.
         """
         from src.data.prepare_data import main as split_data_into_train_test
-        self.eda_plots = split_data_into_train_test(PROJECT_PATH, MLCONFIG)
+        self.eda_plots = split_data_into_train_test(PROJECT_PATH, MLCONFIG,
+                                                    save_eda_plots=SAVE_EDA_PLOTS_TO_FILES)
         # Set a EDA report title
         current.card.append(Markdown("# EDA Report"))
         # Add training eda plots
@@ -185,7 +188,7 @@ class MLWorkFlow(FlowSpec):
         from src.train.fine_tune_model import main as fine_tune_model
         mlflow.set_tracking_uri(self.mltracking_uri)
         fine_tune_model(PROJECT_PATH, MLCONFIG)
-        self.next(self.model_inference_on_test_data)
+        self.next(self.model_performance_on_test_data)
 
     @step
     def model_performance_on_test_data(self):
@@ -270,24 +273,25 @@ class MLWorkFlow(FlowSpec):
         for sname, sval in model_test_perform.items():
             current.card.append(Markdown(f"*{sname}:* {sval}"))
 
-        # Add an image with test prediction result
-        current.card.append(Markdown("*Example:*"))
-        current.card.append(Markdown(
-            "The Number of House Sparrows on the Image: {}".format(
-                self.test_res['test_predict_number'])))
-        current.card.append(Image.from_matplotlib(self.test_res['test_predict_img']))
+        if 'test_img_info' in self.test_res:
+            # Add an image with test prediction result
+            current.card.append(Markdown("*Example:*"))
+            current.card.append(Markdown(
+                "The Number of House Sparrows on the Image: {}".format(
+                    self.test_res['test_predict_number'])))
+            current.card.append(Image.from_matplotlib(self.test_res['test_predict_img']))
 
-        # Create a link to the image
-        photo_author = self.test_res['test_img_info']['Author']
-        photo_source = self.test_res['test_img_info']['Source']
-        photo_source_link = 'https://{0}.com'.format(photo_source.lower())
-        photo_number = self.test_res['test_img_info']['Name'].split('_', maxsplit=1)[0]
-        photo_license = self.test_res['test_img_info']['License'].split(')')[0].split('(')[1]  # noqa: B950
-        current.card.append(Markdown(
-            "Photo by {0} on [{1}]({2}). No {3}. License: {4} "
-            "*The photo modified: boxes and scores drawn*.".format(
-                photo_author, photo_source, photo_source_link,
-                photo_number, photo_license)))
+            # Create a link to the image
+            photo_author = self.test_res['test_img_info']['Author']
+            photo_source = self.test_res['test_img_info']['Source']
+            photo_source_link = 'https://{0}.com'.format(photo_source.lower())
+            photo_number = self.test_res['test_img_info']['Name'].split('_', maxsplit=1)[0]
+            photo_license = self.test_res['test_img_info']['License'].split(')')[0].split('(')[1]  # noqa: B950
+            current.card.append(Markdown(
+                "Photo by {0} on [{1}]({2}). No {3}. License: {4} "
+                "*The photo modified: boxes and scores drawn*.".format(
+                    photo_author, photo_source, photo_source_link,
+                    photo_number, photo_license)))
 
         # Expand the report for a production model
         if 'production' in Flow(current.flow_name)[current.run_id].user_tags:

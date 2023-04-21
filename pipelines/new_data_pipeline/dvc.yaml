@@ -7,7 +7,7 @@ vars:
 stages:
   new_data_expectation_check:
     cmd: python great_expectations/uncommitted/run_new_image_info_and_bbox_ckpt.py
-    wdir: ...
+    wdir: ../..
     deps:
       - ${data_path.new}
     outs:
@@ -27,7 +27,7 @@ stages:
 
   new_data_integrity_check:
     cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=new
-    wdir: ...
+    wdir: ../..
     deps:
       - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
       - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
@@ -38,7 +38,7 @@ stages:
 
   new_data_similarity_check:
     cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=new
-    wdir: ...
+    wdir: ../..
     deps:
       - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
       - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt
@@ -52,7 +52,7 @@ stages:
 
   updating_raw_data:
     cmd: python src/data/update_raw_data.py
-    wdir: ...
+    wdir: ../..
     deps:
       - great_expectations/uncommitted/validations/image_info_ge_suite/run-new-ckpt
       - great_expectations/uncommitted/validations/image_bboxes_ge_suite/run-new-ckpt

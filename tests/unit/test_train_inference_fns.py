@@ -61,7 +61,7 @@ class TestRunTrain:
 
     def test_run_train_save_ckpt_and_random_output(self, dataloader, frcnn_model, tmp_path):
         _ = run_train(dataloader, dataloader, frcnn_model, 2, 'SGD', {'lr': 0.001},
-                      save_best_model_path=tmp_path, metric_to_find_best_model='f_beta',
+                      save_best_model_weights_path=tmp_path, metric_to_find_best_model='f_beta',
                       model_name='frcnn', save_best_ckpt=True,
                       save_random_best_model_output_path=tmp_path)
         assert (tmp_path / 'frcnn_best_f_beta_1_weights_ckpt.pt').exists()

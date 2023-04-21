@@ -68,9 +68,9 @@ def main(project_path, param_config, get_random_prediction_image=False,
 
     # Compare the model with the latest version of a production model
     if compare_with_production_model:
-        prod_reg_model, _ = get_latest_registered_pytorch_model(
+        prod_reg_model = get_latest_registered_pytorch_model(
             client, reg_model_name, stages=['Production'], device=DEVICE)
-        prod_score = (eval_one_epoch(model=prod_reg_model,
+        prod_score = (eval_one_epoch(model=prod_reg_model[0],
                                      **test_eval_params)['epoch_scores'][test_score_name]
                       if prod_reg_model else 0)
         test_res['best'] = test_score > prod_score
