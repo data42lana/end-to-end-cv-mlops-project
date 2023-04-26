@@ -4,7 +4,7 @@ __pycache__/
 .pytest_cache/
 env/
 info/
-data_check_results/
+data_checks/data_check_results/
 reports/*
 !reports/model_report.md
 pyttmp/
@@ -13,10 +13,10 @@ pyttmp/
 *.db
 *.pt
 *.pth
-models/*
-mlruns/*
-hyper_opt/*
-.metaflow/*
+models/
+mlruns/
+hyper_opt/
+.metaflow/
 metaflow_card_cache/
-monitoring/*
-!monitoring/current_deployed_model.yaml
+monitoring/data/
+monitoring/deployed_model_check_results/

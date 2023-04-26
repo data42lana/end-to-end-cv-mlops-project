@@ -96,7 +96,8 @@ hyperparameter_optimization:
   save_study_dir: hyper_opt
 
 deployed_model_monitoring:
-  # Reference and current data records ~= half of total number of records
+  # Each of reference and current data records
+  # ~= half of total number of records
   max_total_number_of_records_to_load: 1000
   save_deployed_model_info_path: monitoring/current_deployed_model.yaml
   save_monitoring_data_path: monitoring/data/deployed_model_performance.csv

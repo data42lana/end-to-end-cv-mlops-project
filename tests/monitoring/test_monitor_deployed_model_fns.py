@@ -1,7 +1,8 @@
 # isort: off
-from src.monitoring.monitor_deployed_model import (get_selected_monitoring_data,
-                                                   detect_deployed_model_decay_by_scores,
-                                                   generate_deployed_model_report)
+from monitoring.monitor_deployed_model import (get_selected_monitoring_data,
+                                               detect_deployed_model_decay_by_scores,
+                                               generate_deployed_model_report)
+from monitoring.mon_utils import get_monitoring_param_config_yaml, get_number_of_csv_rows
 
 
 def test_get_selected_monitoring_data(monitoring_data_path):
@@ -44,3 +45,13 @@ def test_generate_deployed_model_report(monitoring_data_df, tmp_path):
                                    column_mapping=None, color_scheme=None,
                                    save_report_path=report_path)
     assert (report_path).exists()
+
+
+def test_get_monitoring_param_config_yaml(config_yaml_file, tmp_path):
+    yaml_config = get_monitoring_param_config_yaml(tmp_path, config_yaml_file)
+    assert yaml_config['image_data_paths']['images'] == 'datas/images'
+
+
+def test_get_number_of_csv_rows(train_csv_path):
+    nrows = get_number_of_csv_rows(train_csv_path, read_column='Number_HSparrows')
+    assert nrows == 3

@@ -16,7 +16,8 @@ from evidently.test_suite import TestSuite
 from evidently.tests import (TestColumnDrift, TestColumnValueMean,
                              TestColumnValueMedian, TestShareOfOutRangeValues)
 
-from src.utils import get_number_of_csv_rows, get_param_config_yaml
+from monitoring.mon_utils import (get_monitoring_param_config_yaml,
+                                  get_number_of_csv_rows)
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.basicConfig(level=logging.INFO, filename='app.log',
@@ -116,7 +117,7 @@ def main(project_path, param_config):
                  if total_nrows > check_nrows else None)
 
     # Get the current deployed model name and version
-    current_deployed_model_params = get_param_config_yaml(
+    current_deployed_model_params = get_monitoring_param_config_yaml(
         project_path, MONITORING_CONFIG['save_deployed_model_info_path'])
     current_model_selection_params = {
         'reg_model_name': current_deployed_model_params['registered_model_name'],
@@ -183,5 +184,5 @@ def main(project_path, param_config):
 
 if __name__ == '__main__':
     project_path = Path.cwd()
-    param_config = get_param_config_yaml(project_path)
+    param_config = get_monitoring_param_config_yaml(project_path)
     main(project_path, param_config)
