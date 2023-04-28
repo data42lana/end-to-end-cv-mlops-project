@@ -126,4 +126,4 @@ if __name__ == '__main__':
     # Use reload=True for development only
     # Documentations served at /docs and /redoc
     uvicorn.run('api:app', host='127.0.0.1', port=8000,
-                reload=True, reload_dirs=['deployment'])
+                reload=False, reload_dirs=['deployment'])

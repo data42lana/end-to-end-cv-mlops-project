@@ -35,4 +35,4 @@ jobs:
           python -m pip install --upgrade pip setuptools
           pip install -r requirements/cicd-requirements.txt
       - name: Run Tests
-        run: pytest --ignore=tests/integration/ --ignore=tests/webbackend/
+        run: pytest --ignore=tests/integration/ --ignore=tests/webapi/
