@@ -1,0 +1,6 @@
+# Require for python 3.9.13
+-r data-check-requirements.txt
+-r train-requirements.txt
+dvc==2.20.1
+# Uncomment for macOS and Linux:
+# metaflow==2.7.20

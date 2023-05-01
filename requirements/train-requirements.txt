@@ -1,14 +1,9 @@
 # Require for python 3.9.13
+-r eda-requirements.txt
 albumentations==1.2.1
 kaleido==0.2.1
-matplotlib==3.5.3
 mlflow==2.2.2
-numpy==1.23.1
-opencv-python==4.7.0.68
 optuna==3.1.0
-pandas==1.4.3
 pyyaml
-scikit-learn==1.1.2
-seaborn==0.12.2
 torch==1.13.1
 torchvision==0.14.1
