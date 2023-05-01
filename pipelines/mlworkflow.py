@@ -50,7 +50,7 @@ class MLWorkFlow(FlowSpec):
 
     @step
     def new_data_expectation_check(self):
-        """Check new data against defined expectations."""
+        """Check new data against predefined expectations."""
         from great_expectations.checkpoint.types.checkpoint_result import (
             CheckpointResult)
         from great_expectations.data_context import DataContext
@@ -107,7 +107,7 @@ class MLWorkFlow(FlowSpec):
 
     @step
     def raw_data_expectation_check(self):
-        """Check raw data against defined expectations."""
+        """Check raw data against predefined expectations."""
         from great_expectations.checkpoint.types.checkpoint_result import (
             CheckpointResult)
         from great_expectations.data_context import DataContext

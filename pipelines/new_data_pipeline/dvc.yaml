@@ -23,7 +23,7 @@ stages:
       - great_expectations/uncommitted/data_docs/local_site/validations/image_bboxes_ge_suite/run-new-ckpt:
           cache: false
           persist: true
-    desc: 'Check new data against defined expectations'
+    desc: 'Check new data against predefined expectations'
 
   new_data_integrity_check:
     cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=new

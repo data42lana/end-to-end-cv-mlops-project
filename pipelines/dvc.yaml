@@ -28,7 +28,7 @@ stages:
       - great_expectations/uncommitted/data_docs/local_site/validations/image_bboxes_ge_suite/run-ckpt:
           cache: false
           persist: true
-    desc: 'Check raw data against defined expectations'
+    desc: 'Check raw data against predefined expectations'
 
   raw_data_bbox_duplication_check:
     cmd: python data_checks/check_bbox_duplicates_and_two_dataset_similarity.py --check_data_type=raw
