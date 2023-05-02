@@ -17,9 +17,7 @@
 |
 |-- .metaflow/*
 |
-|-- .streamlit
-|   |-- config.toml
-|   \-- secrets.toml
+|-- .streamlit/config.toml
 |
 |-- configs
 |   |-- {best_params.yaml}   <== configs/params.yaml: hyperparameter_optimization.save_best_parameters_path
@@ -60,8 +58,11 @@
 |
 |-- deployment
 |   |-- demo
+|   |   |-- .streamlit/config.toml
+|   |   |-- static/detected_36485871561.png
 |   |   |-- app_demo.py
-|   |   |-- fine_tuned_faster_rcnn_mob_demo.pt
+|   |   |-- fine_tuned_faster_rcnn_mob_large_demo.pt
+|   |   |-- README.md
 |   |   \-- requirements.txt
 |   |
 |   |-- static/detected_36485871561.png

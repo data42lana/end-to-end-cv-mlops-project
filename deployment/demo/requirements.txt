@@ -1,0 +1,7 @@
+# Require for the app demo (python 3.9.13)
+matplotlib==3.5.3
+Pillow==9.4.0
+# Pre-installed on Hugging Face:
+# streamlit==1.18.1
+torch==1.13.1
+torchvision==0.14.1

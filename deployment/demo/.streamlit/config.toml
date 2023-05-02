@@ -1,0 +1,17 @@
+[client]
+showErrorDetails=false
+
+[runner]
+magicEnabled=false
+
+[server]
+runOnSave=true
+enableStaticServing=true
+
+[browser]
+gatherUsageStats=false
+
+[theme]
+base="light"
+primaryColor="#d95a00"
+secondaryBackgroundColor="e6fdd9"
