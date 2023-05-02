@@ -82,7 +82,7 @@ The bias of the model was not checked.
 The maximum possible number of detected house sparrows in one image is set by the `box_detections_per_img` parameter and cannot be greater than its value.
 
 ### How to Use the Model
-Go to [Live Demo]() of the application and upload a photo. After a short time, the result will be displayed.
+Run the API server and then the web application. Or go to [Web APP Demo](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo), if available. Upload a photo to it. After a short time, the result will be displayed.
 
 ### License
 The model may have a different licenses, depending on a dataset used for training. See [TorchVision LICENSE](https://github.com/pytorch/vision/blob/main/LICENSE) and [Pre-trained Model License](https://github.com/pytorch/vision#pre-trained-model-license) for license information of the pre-trained model.

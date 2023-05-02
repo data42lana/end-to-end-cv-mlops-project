@@ -21,7 +21,9 @@ The goal of creating this project is to learn how to implement end-to-end MLOps 
 > More information about the dataset and model used can be found in `docs/dataset-card.md` and `docs/model-card.md`, respectively.
 
 ## App Demo
-You can try out the web application from this project on [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/***).
+You can try out the web application from this project on [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo).
+
+If the demo is not available or not displayed, then it can be seen as a static image in `docs/app-image.pdf`.
 
 ## Installation
 The source code was developed on Windows, and all python modules, with the exception of those in the `deployment` folder, are also tested on Linux (in *Google Colab*).
