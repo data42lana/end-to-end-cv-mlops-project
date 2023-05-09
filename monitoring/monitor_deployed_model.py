@@ -20,7 +20,7 @@ from monitoring.mon_utils import (get_monitoring_param_config_yaml,
                                   get_number_of_csv_rows)
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-logging.basicConfig(level=logging.INFO, filename='app.log',
+logging.basicConfig(level=logging.INFO, filename='mon.log',
                     format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
 
