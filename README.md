@@ -6,24 +6,21 @@
 
 <p align="center">
   <a href="#about">About</a> •
-  <a href="#app-demo">App Demo</a> •
   <a href="#installation">Installation</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#how-to-use">How To Use</a> •
+  <a href="#app-demo">App Demo</a> •
   <a href="#how-to-test">How To Test</a>
 </p>
 
 ## About
 The goal of creating this project is to learn how to implement end-to-end MLOps in practice. As a result, a machine learning pipeline was built that fine-tunes a pre-trained model, and a web application for detecting house sparrows in a photo that interacts with the model via an API. This repository contains the source code of the pipeline, including the source code of the web app and the API, and some of its run results, which are needed to reproduce the pipeline and demonstrate its work. The following diagram shows more clearly how MLOps is implemented in the project:
 
-![Project MLOps Diagram](./docs/project_mlops_diagram.svg)
+![Project MLOps Diagram](./docs/project-mlops-diagram.svg)
+
+Its extended version can be viewed in `docs/project-mlops-diagram-extended.svg`.
 
 > More information about the dataset and model used can be found in `docs/dataset-card.md` and `docs/model-card.md`, respectively.
-
-## App Demo
-You can try out the web application from this project on [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo).
-
-If the demo is not available or not displayed, then it can be seen as a static image in `docs/app-image.pdf`.
 
 ## Installation
 The source code was developed on Windows, and all python modules, with the exception of those in the `deployment` folder, are also tested on Linux (in *Google Colab*).
@@ -55,36 +52,36 @@ or only those needed for a specific MLOps task (see table below).
         <td>Data Checking</td>
         <td>data-check-requirements.txt</td>
         <td>data_checks, great_expectations, data, configs/params.yaml</td>
-        <td>data_checks/data_check_results, great_expectations/uncommitted</td>
+        <td>data_checks/data_check_results, great_expectations/uncommitted, pipe.log</td>
       </tr>
       <tr>
         <td>Model Training</td>
         <td>train-requirements.txt</td>
         <td>src, data, configs</td>
-        <td>hyper_opt, configs/best_params.yaml, mlruns, models, outputs, reports/model_report.md</td>
+        <td>hyper_opt, configs/best_params.yaml, mlruns, models, outputs, reports/model_report.md, pipe.log</td>
       </tr>
       <tr>
         <td>Pipeline/Workflow</td>
         <td>pipe-requirements.txt</td>
         <td>pipelines, data_checks, great_expectations, src, data, configs</td>
-        <td>.metaflow, pipelines/dvc.lock, data_checks/data_check_results, great_expectations, hyper_opt, configs/best_params.yaml, mlruns, models, outputs, reports/model_report.md</td>
+        <td>.dvc, pipelines (/dvc.lock & /dvc_dag.md) or .metaflow, data_checks/data_check_results, great_expectations, hyper_opt, configs/best_params.yaml, mlruns, models, outputs, reports/model_report.md, pipe.log</td>
       </tr>
       <tr>
         <td>Model Deployment / API & App</td>
         <td>deployment-requirements.txt</td>
-        <td>deployment (except /demo), src/train/train_inference_fns.py, src/utils.py, mlruns, configs/params.yaml</td>
+        <td>deployment (except /demo), src/train/train_inference_fns.py, src/utils.py, mlruns, configs/params.yaml, .streamlit</td>
         <td>monitoring/current_deployed_model.yaml, monitoring/data</td>
       </tr>
       <tr>
         <td>Model Monitoring</td>
         <td>monitoring-requirements.txt</td>
         <td>monitoring, data, configs/params.yaml</td>
-        <td>monitoring/deployed_model_check_results, reports/deployed_model_performance_report.html</td>
+        <td>monitoring/deployed_model_check_results, reports/deployed_model_performance_report.html, mon.log</td>
       </tr>
       <tr>
-        <td>CI/CD</td>
-        <td>cicd-requirements.txt</td>
-        <td>.github, tests (except /webapi and /integration), pytest.ini, data_checks, src</td>
+        <td>Continuous Integration (CI)</td>
+        <td>ci-requirements.txt</td>
+        <td>.github, tests (except /webapi), pytest.ini, data_checks, src</td>
         <td>-</td>
       </tr>
       <tr>
@@ -156,6 +153,13 @@ Below are the CLI commands for MLOps components, which are executed manually in 
     ```
 As a result of executing the commands, the project directory will have a structure similar to that presented in the `docs/project-directory-structure.md` file.
 
+Notebooks in this repo, except `EDA.ipynb`, contain trial runs of the data checks and initial experiments to build the model training pipeline.
+
+## App Demo
+You can try out the web application from this project on [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo).
+
+If the demo is not available or not displayed, then it can be seen as a static image in `docs/app-image.pdf`.
+
 ## How To Test
 If pytest and its required plugins are not installed, run from the command line:
 ```bash
@@ -179,4 +183,4 @@ $ pytest tests/webapi/
 > $ pytest -m "not slow" tests/
 > ```
 
-> **Warning** Sometimes the integration test fails. This is due to the stochastic nature of machine learning algorithms. Try rerun the test.
+> **Warning** Sometimes the `integration` tests fail. This is due to the stochastic nature of machine learning algorithms. Try rerun the test.

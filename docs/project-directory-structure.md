@@ -75,7 +75,8 @@
 |   |-- dataset-card.md
 |   |-- model-card.md
 |   |-- project-directory-structure.md
-|   \-- project-mlops-diagram.svg
+|   |-- project-mlops-diagram.svg
+|   \-- project-mlops-diagram-extended.svg
 |
 |-- great_expectations/*
 |
@@ -157,7 +158,7 @@
 |   \-- {test_report.xml}     <== pytest.ini: --junit-xml (addopts)
 |
 |-- requirements
-|   |-- cicd-requirements.txt
+|   |-- ci-requirements.txt
 |   |-- data-check-requirements.txt
 |   |-- deployment-requirements.txt
 |   |-- dev-requirements.txt
@@ -238,7 +239,7 @@
 |-- .pre-commit-config.yaml
 |-- .yamlignore
 |-- .yamllint
-|-- app.log
+|-- mon.log
 |-- pipe.log
 |-- pytest.ini
 \-- README.md
