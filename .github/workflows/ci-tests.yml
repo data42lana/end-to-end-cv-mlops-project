@@ -8,7 +8,7 @@ on:
     branches:
       - main
   workflow_call:
-  # workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,7 +16,7 @@ permissions:
 jobs:
   test:
     name: Test on ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -33,6 +33,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools
-          pip install -r requirements/cicd-requirements.txt
+          pip install -r requirements/ci-requirements.txt
       - name: Run Tests
-        run: pytest --ignore=tests/integration/ --ignore=tests/webapi/
+        run: pytest --ignore=tests/webapi/
