@@ -1,4 +1,4 @@
-"""This module contains a class and functions to create an image dataloader
+"""This module contains a class and functions to create an image data loader
 with(out) transformations.
 """
 
@@ -28,12 +28,12 @@ BBOX_FORMATS = {'coco': 'xywh',
 
 
 def get_image_transforms(box_format):
-    """Return a transform function that will perform image augmentation.
+    """Return the transform function that will perform image augmentation.
 
     Image transformations with always_apply=True are applied with 100% probability
     even if their parent containers are not applied. Refer to
     https://albumentations.ai/docs/getting_started/setting_probabilities/
-    for more information how calculated actual probability of other transformations
+    for more information on how calculated actual probability of other transformations
     and containers in the augmentation pipeline.
     """
     aug = A.Compose([
@@ -54,7 +54,7 @@ def get_image_transforms(box_format):
 
 
 class ImageBBoxDataset(Dataset):
-    """A Dataset from CSV to detect objects in images."""
+    """A Dataset for object detection tasks."""
 
     def __init__(self, csv_file_path, img_dir_path, bbox_path,
                  img_transforms=None, bbox_transform=None):
@@ -95,11 +95,11 @@ class ImageBBoxDataset(Dataset):
 def create_dataloaders(img_dir_path, csv_file_path, bboxes_path, batch_size,
                        box_format_before_transform='coco', train_test_split_data=False,
                        transform_train_imgs=False):
-    """Return a dataloader or two if train_test_split_data=True with applying
-    a box transformation to pascal_voc ('xyxy') format and training image transformation
-    if necessary.
+    """Return one DataLoader object (or two if train_test_split_data=True) with applying
+    a box transformation to pascal_voc ('xyxy') format and training image
+    transformations if necessary.
     """
-    # Set dataset parameters
+    # Set ImageBBoxDataset parameters
     img_transforms = (get_image_transforms(box_format_before_transform)
                       if transform_train_imgs else None)
     bbox_transform = None
@@ -116,7 +116,7 @@ def create_dataloaders(img_dir_path, csv_file_path, bboxes_path, batch_size,
                  'collate_fn': collate_batch}
 
     if train_test_split_data:
-        # Create datasets
+        # Create ImageBBoxDataset objects
         train_dataset, val_dataset = [
             ImageBBoxDataset(csv_file_path,
                              img_transforms=img_tr,
@@ -127,7 +127,7 @@ def create_dataloaders(img_dir_path, csv_file_path, bboxes_path, batch_size,
                                                                train_dataset.img_df['Number_HSparrows'],
                                                                train_dataset.img_df['Author'],
                                                                SEED)
-        # Create dataloaders
+        # Create DataLoader objects
         train_dataloader = DataLoader(Subset(train_dataset, train_ids), shuffle=True,
                                       **dl_params)
         val_dataloader = DataLoader(Subset(val_dataset, val_ids), **dl_params)

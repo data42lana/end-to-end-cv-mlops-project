@@ -1,16 +1,17 @@
-"""This module creates a workflow for the machine learning project."""
+"""This module creates a workflow for this computer vision project."""
 # Note: Metaflow does not run on Windows!
 
 import os
-# import sys
+import sys
 from pathlib import Path
-# sys.path.append(str(Path.cwd()))
 
 from metaflow import (Flow, FlowSpec, Parameter, card, catch, current, project, retry,
                       step, timeout)
 from metaflow.cards import Image, Markdown
 
 from src.utils import get_param_config_yaml
+
+sys.path.append(str(Path.cwd()))
 
 PROJECT_PATH = Path.cwd()
 MLCONFIG = get_param_config_yaml(PROJECT_PATH)
@@ -25,7 +26,7 @@ COMPARE_WITH_PRODUCTION_MODEL = True
 
 @project(name='end_to_end_cv_mlops_project')
 class MLWorkFlow(FlowSpec):
-    """A flow containing steps of working with data, optimizing
+    """The flow containing steps of working with data, optimizing
     hyperparameters, training a model, and preparing it for production.
     """
 
@@ -34,7 +35,7 @@ class MLWorkFlow(FlowSpec):
     @retry(times=1, minutes_between_retries=5)
     @step
     def start(self):
-        """Check if raw and new data is available."""
+        """Check if raw and new data are available."""
         import numpy as np
         data_is_available = []
         for data_path in ['image_data_paths', 'new_image_data_paths']:
@@ -45,7 +46,7 @@ class MLWorkFlow(FlowSpec):
             data_is_available.append(data_path_exists)
         self.raw_data_is_available, self.new_data_is_available = data_is_available
         if not self.raw_data_is_available:
-            raise ValueError("Raw data is not available!")
+            raise ValueError("Raw data are not available!")
         self.next(self.new_data_expectation_check)
 
     @step
@@ -62,9 +63,9 @@ class MLWorkFlow(FlowSpec):
                 batch_request=None,
                 run_name=None)
             if not result['success']:
-                raise ValueError("New Data Expectation Check is failed!")
+                raise ValueError("New Data Expectation Check failed!")
         else:
-            print("New Data Expectation Check is skipped: New data is not available!")
+            print("New Data Expectation Check is skipped: new data are not available!")
         self.next(self.new_data_integrity_check)
 
     @step
@@ -76,9 +77,9 @@ class MLWorkFlow(FlowSpec):
             check_passed = check_csv_integrity(PROJECT_PATH, MLCONFIG, 'new',
                                                PROJECT_PATH / 'data_checks')
             if not check_passed:
-                raise ValueError("New Data Integrity Check is failed!")
+                raise ValueError("New Data Integrity Check failed!")
         else:
-            print("New Data Integrity Check is skipped: New data is not available!")
+            print("New Data Integrity Check is skipped: new data are not available!")
         self.next(self.new_data_similarity_check)
 
     @step
@@ -90,19 +91,19 @@ class MLWorkFlow(FlowSpec):
             check_passed = check_two_dataset_similarity(PROJECT_PATH, MLCONFIG, 'new',
                                                         PROJECT_PATH / 'data_checks')
             if not check_passed:
-                raise ValueError("New Data Similarity Check is failed!")
+                raise ValueError("New Data Similarity Check failed!")
         else:
-            print("New Data Similarity Check is skipped: New data is not available!")
+            print("New Data Similarity Check is skipped: new data are not available!")
         self.next(self.adding_new_data_to_raw)
 
     @step
     def adding_new_data_to_raw(self):
-        """Add new images to raw ones and update raw csv files."""
+        """Add new images to raw ones and update raw CSV files."""
         from src.data.update_raw_data import main as update_raw_data
         if self.new_data_is_available:
             update_raw_data(PROJECT_PATH, MLCONFIG)
         else:
-            print("Adding New Data to Raw is skipped: New data is not available!")
+            print("Adding New Data to Raw is skipped: new data are not available!")
         self.next(self.raw_data_expectation_check)
 
     @step
@@ -118,18 +119,18 @@ class MLWorkFlow(FlowSpec):
             batch_request=None,
             run_name=None)
         if not result['success']:
-            raise ValueError("Raw Data Expectation Check is failed!")
+            raise ValueError("Raw Data Expectation Check failed!")
         self.next(self.raw_data_bbox_duplication_check)
 
     @step
     def raw_data_bbox_duplication_check(self):
-        """Check raw data for bbox duplicates."""
+        """Check raw data for duplicate bounding boxes."""
         from data_checks.check_bbox_duplicates_and_two_dataset_similarity import (
             main as check_bbox_csv_duplication)
         check_passed = check_bbox_csv_duplication(PROJECT_PATH, MLCONFIG, 'raw',
                                                   PROJECT_PATH / 'data_checks')
         if not check_passed:
-            raise ValueError("Raw Data Duplication Check is failed!")
+            raise ValueError("Raw Data Duplication Check failed!")
         self.next(self.raw_data_integrity_check)
 
     @step
@@ -140,7 +141,7 @@ class MLWorkFlow(FlowSpec):
         check_passed = check_csv_integrity(PROJECT_PATH, MLCONFIG, 'raw',
                                            PROJECT_PATH / 'data_checks')
         if not check_passed:
-            raise ValueError("Raw Data Integrity Check is failed!")
+            raise ValueError("Raw Data Integrity Check failed!")
         self.next(self.train_test_data_split)
 
     @card(type='blank')
@@ -168,7 +169,7 @@ class MLWorkFlow(FlowSpec):
         check_passed = check_two_dataset_similarity(PROJECT_PATH, MLCONFIG, 'prepared',
                                                     PROJECT_PATH / 'data_checks')
         if not check_passed:
-            raise ValueError("Train Test Similarity Check is failed!")
+            raise ValueError("Train Test Similarity Check failed!")
         self.next(self.hyperparam_optimization)
 
     @retry(times=0)
@@ -183,7 +184,7 @@ class MLWorkFlow(FlowSpec):
     @timeout(hours=1)
     @step
     def model_fine_tuning(self):
-        """Fine-tune a model on a specific dataset."""
+        """Fine-tune a model on the specific dataset."""
         import mlflow
         from src.train.fine_tune_model import main as fine_tune_model
         mlflow.set_tracking_uri(self.mltracking_uri)
@@ -274,7 +275,7 @@ class MLWorkFlow(FlowSpec):
             current.card.append(Markdown(f"*{sname}:* {sval}"))
 
         if 'test_img_info' in self.test_res:
-            # Add an image with test prediction result
+            # Add a random image with its test prediction result
             current.card.append(Markdown("*Example:*"))
             current.card.append(Markdown(
                 "The Number of House Sparrows on the Image: {}".format(

@@ -24,11 +24,11 @@ def update_dir_or_csv_files(source, destination):
 
 def main(project_path, param_config):
     """Update raw data with new ones."""
-    # Get raw and new image data paths from configurations
+    # Get raw and new image data paths from the configurations
     img_data_paths = param_config['image_data_paths']
     new_img_data_paths = param_config['new_image_data_paths']
 
-    # Check if new data exists
+    # Check if new data exist
     new_data_exist = np.all([project_path.joinpath(new_img_data_paths[fpath]).exists()
                              for fpath in new_img_data_paths])
 
@@ -40,7 +40,7 @@ def main(project_path, param_config):
                                         for fpath in [img_data_paths, new_img_data_paths]]
             update_dir_or_csv_files(new_data_path, data_path)
 
-        logging.info("Raw data is updated.")
+        logging.info("Raw data are updated.")
 
 
 if __name__ == '__main__':

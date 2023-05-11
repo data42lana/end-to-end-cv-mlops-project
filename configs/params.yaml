@@ -1,4 +1,4 @@
-# Configurations for the machine learning project (for src/*.py modules)
+# Configurations of this computer vision project (for *.py modules)
 
 image_data_paths:
   images: data/raw/images
@@ -31,13 +31,13 @@ object_detection_model:
 
 model_training_inference_conf:
   device_cuda: true
-  # maximization metric (precision, recall, or f_beta):
+  # any metric of precision, recall, or f_beta:
   metric_to_find_best: &BM f_beta
   initial_metric_value: 0.0
   evaluation_iou_threshold: 0.4
   evaluation_beta: 2
-  # Default optimizer and lr_sheduler for model training
-  # if there are no saved best parameters
+  # A default optimizer and lr_sheduler for model training
+  # if the best parameters are not saved
   optimizer:
     name: SGD
     parameters: {lr: 0.001}
@@ -56,16 +56,16 @@ model_training_inference_conf:
 mlflow_tracking_conf:
   experiment_name: Fine-Tuning_Model
   run_name: fine-tuning_with_optimized_parameters
-  # Default MLflow tracking URI
+  # A default MLflow tracking URI
   # (it can be set using the MLFLOW_TRACKING_URI environment variable):
   mltracking_uri: !!str "sqlite:///mlruns/mlruns.db"
   artifact_location: mlruns/artifacts
 
 hyperparameter_optimization:
   study_name: faster_rcnn_mob_hyper_opt_study
-  # maximization metric:
+  # a metric to maximize:
   metric: *BM
-  # sampler and pruner and their parameters can contain null values
+  # a sampler, a pruner, or their parameters can contain null values
   sampler:
     name: TPESampler
     parameters: null
@@ -97,7 +97,7 @@ hyperparameter_optimization:
 
 deployed_model_monitoring:
   # Each of reference and current data records
-  # ~= half of total number of records
+  # ~= half of the total number of records
   max_total_number_of_records_to_load: 1000
   save_deployed_model_info_path: monitoring/current_deployed_model.yaml
   save_monitoring_data_path: monitoring/data/deployed_model_performance.csv

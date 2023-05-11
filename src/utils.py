@@ -18,7 +18,7 @@ from torchvision.utils import draw_bounding_boxes
 
 
 def collate_batch(batch):
-    """Collate batches in a Dataloader."""
+    """Collate batches in a DataLoader."""
     return tuple(zip(*batch))
 
 
@@ -90,7 +90,7 @@ def draw_and_save_seaborn_plot(seaborn_plot_func=sns.lineplot, *, data=None, x=N
 
 def draw_production_model_metric_history_plots(metric_name, mlclient, registered_model_name,
                                                save_path=None):
-    """Draw metric plots for a production stage models and save them
+    """Draw metric plots for production stage models and save them
     if save_path is specified.
     """
     production_model_info = mlclient.get_latest_versions(registered_model_name,
@@ -119,13 +119,13 @@ def draw_production_model_metric_history_plots(metric_name, mlclient, registered
 
 def get_current_stage_of_registered_model_version(mlclient, registered_model_name,
                                                   registered_model_version):
-    """Return the current stage of a specified version of a registered model
-    if the version exists.
+    """Return the current stage of given registered model version
+    if that version exists.
 
     Raise
     -----
     ValueError
-        If the invalid version of the model is specified.
+        If an invalid model version is specified.
     """
     model_versions = mlclient.search_model_versions(f"name='{registered_model_name}'")
 
@@ -152,8 +152,8 @@ def get_device(use_cuda_config_param):
 
 def get_latest_registered_pytorch_model(mlclient, registered_model_name, stages=None,
                                         device=torch.device('cpu')):  # noqa: B008
-    """Return the latest version of a PyTorch model among registered ones
-    with one of given stages if the model exists.
+    """Return the latest version of PyTorch model among registered ones
+    with one of given stages if that model exists.
     """
     model_registry_info = mlclient.get_latest_versions(registered_model_name, stages)
     model_versions = [m.version for m in model_registry_info]
@@ -176,7 +176,7 @@ def get_number_of_csv_rows(csv_file_path, read_column=None):
 
 
 def get_param_config_yaml(project_path, param_config_file_path='configs/params.yaml'):
-    """Get configurations from params.yaml or other yaml files."""
+    """Get configurations from the params.yaml or another .yaml file."""
     config_path = project_path / param_config_file_path
     with open(config_path) as conf:
         param_config = yaml.safe_load(conf)
@@ -185,8 +185,8 @@ def get_param_config_yaml(project_path, param_config_file_path='configs/params.y
 
 def get_random_img_with_info(csv_file_path, img_dir_path, license_pattern='',
                              random_seed=None):
-    """Return a image loaded from a CSV file and selected based on a license pattern
-    and return it and its source and author.
+    """Return a random image from selected images based on a license pattern
+    along with its source and author.
     """
     if isinstance(random_seed, int):
         random.seed(random_seed)

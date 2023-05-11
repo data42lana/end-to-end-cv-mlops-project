@@ -1,4 +1,4 @@
-# Data pipeline configurations for the project with new data
+# The data pipeline configurations for this project with new data
 
 vars:
   - data_path:
@@ -59,4 +59,4 @@ stages:
       - data_checks/data_check_results/new_csv_file_check_results.json
       - data_checks/data_check_results/new_old_info_check_results.html
       - data_checks/data_check_results/new_old_bbox_check_results.html
-    desc: 'Add new images to raw ones and update raw csv files'
+    desc: 'Add new images to raw ones and update raw CSV files'

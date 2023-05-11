@@ -6,7 +6,7 @@ import yaml
 
 def get_monitoring_param_config_yaml(project_path,
                                      monitoring_config_file_path='configs/params.yaml'):
-    """Get monitoring configurations from params.yaml or other yaml files."""
+    """Get monitoring configurations from the params.yaml or another .yaml file."""
     config_path = project_path / monitoring_config_file_path
     with open(config_path) as conf:
         monitoring_param_config = yaml.safe_load(conf)

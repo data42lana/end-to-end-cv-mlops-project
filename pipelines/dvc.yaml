@@ -1,6 +1,6 @@
-# ML pipeline configurations for this project
+# The ML pipeline configurations for this project
 
-# Note: Raw data is added to cache outside the pipeline.
+# Note: Raw data must be added to the cache outside the pipeline.
 
 vars:
   - ../configs/params.yaml
@@ -39,7 +39,7 @@ stages:
     outs:
       - data_checks/data_check_results/raw_bbox_duplicates_check_results.html:
           cache: false
-    desc: 'Check raw data for bbox duplicates'
+    desc: 'Check raw data for duplicate bounding boxes'
 
   raw_data_integrity_check:
     cmd: python data_checks/check_img_info_and_bbox_csv_file_integrity.py --check_data_type=raw
@@ -128,7 +128,7 @@ stages:
       - ${object_detection_model.save_dir}:
           persist: true
       - ${model_training_inference_conf.save_model_output_dir}/val_outs
-    desc: 'Fine-tune a model on a specific dataset'
+    desc: 'Fine-tune a model on the specific dataset'
 
   model_performance_on_test_data:
     cmd: python src/train/model_test_performance.py

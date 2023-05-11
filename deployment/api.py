@@ -25,7 +25,7 @@ origins = [
 
 
 class DetectionResult(BaseModel):
-    """Output response for a detection request."""
+    """An output response to a detection request."""
 
     boxes: List[List[float]]
     scores: List[float]
@@ -33,7 +33,7 @@ class DetectionResult(BaseModel):
 
 
 app = FastAPI(title="HouseSparrowDetectionAPI",
-              description="The API helps to detect house sparrows in a image.",
+              description="The API helps to detect house sparrows in a photo.",
               version="1.0.0")
 
 # Set Cross-Domain permissions
@@ -44,7 +44,7 @@ app.add_middleware(CORSMiddleware,
 
 
 def track_predict_result(image, prediction_result, filepath):
-    """Log image size and model prediction result."""
+    """Log image (photo) size and a model prediction result."""
     tracked_data = {'labels': prediction_result['labels'],
                     'bbox_score': prediction_result['scores']}
     tracked_data.update({f'bbox_{k}': v for k, v in zip(['x1', 'y1', 'x2', 'y2'],
@@ -66,7 +66,7 @@ def track_predict_result(image, prediction_result, filepath):
 
 @app.on_event('startup')
 def set_model_monitoring_configs():
-    """Get configs for model prediction and monitoring."""
+    """Get the configs for model prediction and monitoring."""
     params = get_param_config_yaml(DEFAULT_PATHS['project_path'])
     MODEL_PARAMS['reg_model_name'] = params['object_detection_model']['registered_name']
     MODEL_PARAMS['device'] = get_device(params['model_training_inference_conf']['device_cuda'])
@@ -105,7 +105,7 @@ def get_root():
     """Return a welcome message."""
     return {'message':
             "Welcome to the House Sparrow Detection API! "
-            "The API documentation served at /docs and /redoc."}
+            "See API documentation at /docs and /redoc."}
 
 
 @app.post('/detection', response_model=DetectionResult)
@@ -124,6 +124,6 @@ if __name__ == '__main__':
     import uvicorn
 
     # Use reload=True for development only
-    # Documentations served at /docs and /redoc
+    # See API documentation at /docs and /redoc
     uvicorn.run('api:app', host='127.0.0.1', port=8000,
                 reload=False, reload_dirs=['deployment'])

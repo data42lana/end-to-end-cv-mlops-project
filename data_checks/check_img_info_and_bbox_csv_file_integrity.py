@@ -1,4 +1,4 @@
-"""This module checks integrity of image and bounding boxes information in CSV files."""
+"""This module checks the integrity of images and bounding boxes in CSV files."""
 
 import json
 import logging
@@ -10,7 +10,7 @@ from data_checks.dch_utils import get_data_path_config_yaml, get_data_type_arg_p
 
 
 def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
-    """Return a dictionary of the validation status with a list
+    """Return a dictionary consisting of validation status and a list
     of non-matching elements or the number of duplicates, if any.
     """
     l1 = sorted(l1)
@@ -27,19 +27,19 @@ def check_that_two_sorted_lists_are_equal(l1, l2, passed_message=''):
 
 def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
                                                passed_message=''):
-    """Return a dictionary of the validation status with
-    with incorrect values, if any.
+    """Return a dictionary consisting of validation status
+    and incorrect values, if any.
 
     Parameters
     ----------
     s1: pd.Series
-        An object to be compared.
+        Object to be compared.
     other: pd.Series | scalar value
-        An object to compare.
+        Object to compare.
     comparison_sign: {'==', '<='}
         Must be one of '==', '<='
     passed_message: str
-        A message that describes a passage of the check.
+        The message that describes a passage of the check.
 
     Raise
     -----
@@ -62,11 +62,11 @@ def check_that_series_is_less_than_or_equal_to(s1, other, comparison_sign,
 
 
 def main(project_path, data_path_config, check_data_type, data_check_dir):
-    """Check CSV files and match them with images."""
+    """Check CSV files and match them with an image set."""
     logging.basicConfig(level=logging.INFO, filename='pipe.log',
                         format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
-    # Get image data paths from configurations
+    # Get image data paths from the configurations
     img_data_paths = (data_path_config['image_data_paths'] if check_data_type == 'raw'
                       else data_path_config['new_image_data_paths'])
 
@@ -77,10 +77,11 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         pd.read_csv(project_path / img_data_paths[csv_file]) for csv_file in ['info_csv_file',
                                                                               'bboxes_csv_file']]
 
-    # Create a dict of validation results for summary report
+    # Create a dict of validation results for a summary report
     validation_results = {}
 
-    # Check whether names of available images are identical to names in csv files
+    # Check whether names of the available images are identical to names
+    # in the CSV files
     for img_name_list, csv_data_file in zip([img_info_df.Name.to_list(),
                                              img_bbox_df.image_name.unique()],
                                             ['info_csv_file', 'bbox_csv_file']):
@@ -130,7 +131,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
                        ] = check_that_series_is_less_than_or_equal_to(
         number_hsparrows, number_bboxes, '==', passed_message="The numbers match.")
 
-    # Save validation results to a file
+    # Save the validation results to a file
     fname = f'{check_data_type}_csv_file_check_results.json'
     file_save_path = project_path / data_check_dir / f'data_check_results/{fname}'
     file_save_path.parent.mkdir(parents=True, exist_ok=True)
@@ -138,7 +139,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         json.dump(validation_results, f)
     logging.info("Data integrity check results are saved.")
 
-    # Find total check status
+    # Find out total check status
     total_check_passed_condition = True
     for val_res in validation_results.values():
         if list(val_res)[0] != 'PASSED':
@@ -162,4 +163,4 @@ if __name__ == '__main__':
                 f"Checking for the integrity of the {img_data_type} CSV files failed.")
 
     else:
-        raise ValueError(f"{img_data_type} data cannot be checked: choose 'raw' or 'new'.")
+        raise ValueError(f"The {img_data_type} data cannot be checked: choose 'raw' or 'new'.")

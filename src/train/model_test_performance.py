@@ -1,5 +1,5 @@
-"""This module evaluates performance and makes prediction of the latest version
-of a registered model on test data.
+"""This module evaluates performance and makes a prediction of the latest version
+of registered model on test data.
 """
 
 import json
@@ -30,7 +30,7 @@ torch.cuda.manual_seed_all(SEED)
 
 def main(project_path, param_config, get_random_prediction_image=False,
          compare_with_production_model=False):
-    """Evaluate the latest version of a registered model on test data, and
+    """Evaluate the latest version of registered model on test data,
     compare with a production model if compare_with_production_model is True,
     and save and return the evaluation result.
     """
@@ -38,7 +38,7 @@ def main(project_path, param_config, get_random_prediction_image=False,
     TRAIN_EVAL_PARAMS = param_config['model_training_inference_conf']
     DEVICE = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
-    # Load the latest version of a model from the MLflow registry
+    # Load the latest version of model from the MLflow registry
     client = mlflow.MlflowClient()
     reg_model_name = param_config['object_detection_model']['registered_name']
     latest_reg_model, model_uri = get_latest_registered_pytorch_model(
@@ -66,7 +66,7 @@ def main(project_path, param_config, get_random_prediction_image=False,
     if test_score_name == 'f_beta':
         test_res['test_score_name'] = 'f_beta_' + str(TRAIN_EVAL_PARAMS['evaluation_beta'])
 
-    # Compare the model with the latest version of a production model
+    # Compare the model with the latest version of production model
     if compare_with_production_model:
         prod_reg_model = get_latest_registered_pytorch_model(
             client, reg_model_name, stages=['Production'], device=DEVICE)
@@ -75,7 +75,7 @@ def main(project_path, param_config, get_random_prediction_image=False,
                       if prod_reg_model else 0)
         test_res['best'] = test_score > prod_score
 
-    # Save the test score in a json file
+    # Save the test score in a .json file
     save_output_path = project_path.joinpath(
         TRAIN_EVAL_PARAMS['save_model_output_dir'], 'test_outs')
     save_output_path.mkdir(exist_ok=True, parents=True)

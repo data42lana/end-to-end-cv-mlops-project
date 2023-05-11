@@ -1,5 +1,5 @@
-"""This module updates registered model version stages in MLflow and
-save metric plots for a production stage model.
+"""This module updates registered model version stages in a MLflow registry
+and saves metric plots for a production stage model.
 """
 
 import argparse
@@ -17,10 +17,10 @@ logging.basicConfig(level=logging.INFO, filename='pipe.log',
 
 
 def update_registered_model_version_stages(mlclient, registered_model_name):
-    """Set a stage to 'Production' for the latest version of a model, and 'Archived'
-    if the current stage is 'Production' but the version is not the latest.
+    """Change the stage from 'None' to 'Production' for the latest model version
+    and from 'Production' to 'Archived' if such a version exists but is not the latest.
     """
-    # Get information about a registered model
+    # Get information about the registered model
     model_registry_info = mlclient.get_latest_versions(registered_model_name)
     model_latest_version = max([m.version for m in model_registry_info])
 
@@ -72,7 +72,7 @@ def main(project_path, param_config, save_metric_plots=False):
         metric_plots += draw_production_model_metric_history_plots(metric, client,
                                                                    registered_model_name,
                                                                    save_path=save_path)
-    logging.info("Metric plots of a production stage model are saved.")
+    logging.info("Metric plots of production stage model are saved.")
     return production_run_id, production_model_id, metric_plots
 
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         add_help=False)
     run_parser.add_argument(
         '--only_if_test_score_is_best', type=bool,
-        default=False, help='whether to run this module only if a test score is the best')
+        default=False, help='whether to run this module only if the test score is the best')
 
     if run_parser.parse_args().only_if_test_score_is_best:
         test_score_path = project_path.joinpath(
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         if test_score_is_best:
             _ = main(project_path, param_config, save_metric_plots=True)
         else:
-            logging.info("Stages update did not run: a test score is not the best!")
+            logging.info("Stage update did not run: the test score is not the best!")
 
     else:
         _ = main(project_path, param_config)

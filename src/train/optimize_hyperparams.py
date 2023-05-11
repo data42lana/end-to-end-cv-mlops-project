@@ -26,7 +26,7 @@ torch.cuda.manual_seed_all(SEED)
 
 
 class Objective:
-    """The class to be used for a hyperparameter optimization."""
+    """The class to be used for hyperparameter optimization."""
 
     def __init__(self, train_dl, val_dl, model, hyper_opt_params_conf,
                  eval_iou_thresh=0.5, eval_beta=1, device=torch.device('cpu')):  # noqa: B008
@@ -44,7 +44,7 @@ class Objective:
                           'int': trial.suggest_int,
                           'float': trial.suggest_float}
 
-        # Get hyperparameters from configurations
+        # Get hyperparameters from the configurations
         hyperparams = self.hyper_opt_params_conf['hyperparameters']
 
         # Construct a training optimizer and a lr_scheduler
@@ -67,7 +67,7 @@ class Objective:
         else:
             lr_scheduler = None
 
-        # Train the model
+        # Train a model
         for epoch in range(1, self.hyper_opt_params_conf['epochs'] + 1):
             _ = train_one_epoch(self.train_dl, self.model, optimizer, self.device)
 
@@ -87,7 +87,7 @@ class Objective:
 
 
 def save_best_hyper_params(study, hyper_opt_params_conf, save_path):
-    """Save the best parameters found during a hyperparameter optimization."""
+    """Save the best parameters found during hyperparameter optimization."""
     save_path.parent.mkdir(exist_ok=True)
     hp_conf = hyper_opt_params_conf['hyperparameters']
     best_params = {hyper_opt_params_conf['metric']: round(study.best_value, 2)}
@@ -128,7 +128,7 @@ def save_study_plots(study, study_name, save_path):
 
 def main(project_path, param_config):
     """Run an optimization study."""
-    # Get configurations for a hyperparameter optimization
+    # Get configurations for hyperparameter optimization
     img_data_paths = param_config['image_data_paths']
     batch_size = param_config['image_dataset_conf']['batch_size']
     model_params = param_config['object_detection_model']['load_parameters']
@@ -143,7 +143,7 @@ def main(project_path, param_config):
     hyper_opt_path = project_path / HYPER_OPT_PARAMS['save_study_dir']
     hyper_opt_path.mkdir(exist_ok=True)
 
-    # Get dataloaders
+    # Get DataLoader objects
     imgs_path, train_csv_path, bbox_csv_path = [
         project_path / fpath for fpath in [img_data_paths['images'],
                                            img_data_paths['train_csv_file'],
@@ -167,7 +167,7 @@ def main(project_path, param_config):
         sampler_pruner.append(getattr(osp, sp['name'])(**sp_params)
                               if sp['name'] is not None else None)
 
-    # Run a optimization session
+    # Run an optimization session
     study = optuna.create_study(direction='maximize', sampler=sampler_pruner[0],
                                 pruner=sampler_pruner[1], storage=study_storage,
                                 study_name=HYPER_OPT_PARAMS['study_name'],

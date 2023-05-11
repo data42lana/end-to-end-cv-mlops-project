@@ -29,13 +29,10 @@ object_detection_model:
 
 model_training_inference_conf:
   device_cuda: false
-  # maximization metric:
   metric_to_find_best: &BM f_beta
   initial_metric_value: 0.5
   evaluation_iou_threshold: 0.5
   evaluation_beta: 1
-  # Default optimizer and lr_sheduler for model training
-  # if there are no saved best parameters
   optimizer:
     name: SGD
     parameters: {lr: 0.001}
@@ -57,9 +54,7 @@ mlflow_tracking_conf:
 
 hyperparameter_optimization:
   study_name: tfrcnn_study
-  # maximization metric:
   metric: *BM
-  # sampler and pruner and their parameters can contain null values
   sampler:
     name: RandomSampler
     parameters: {seed: 0}
@@ -70,8 +65,6 @@ hyperparameter_optimization:
   n_trials: 3
   timeout: 180
   hyperparameters:
-    # At least one optimizer must be defined with
-    # at least one optimization parameter (and a scheduler)
     optimizers:
       SGD:
         lr: [{low: 0.001, high: 0.01, log: true}, float]

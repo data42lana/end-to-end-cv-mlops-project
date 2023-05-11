@@ -18,13 +18,13 @@ def check_two_datasets(ds1, ds2, suite_name, checks):
     Parameters
     ----------
     ds1: Dataset
-        A Dataset object.
+        Dataset object.
     ds2: Dataset
-        A Dataset object.
+        Dataset object.
     checks: list
-        A list containing check objects for creating a custom suite.
+        The list containing check objects for creating a custom suite.
     suite_name: str
-        A name for the created custom suite.
+        Name for a created custom suite.
     """
     custom_suite = Suite(suite_name, *checks)
     custom_suite_result = custom_suite.run(ds1, ds2)
@@ -100,7 +100,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
     logging.basicConfig(level=logging.INFO, filename='pipe.log',
                         format="%(asctime)s -- [%(levelname)s]: %(message)s")
 
-    # Get image data paths from configurations
+    # Get image data paths from the configurations
     img_data_paths = data_path_config['image_data_paths']
 
     # Track total check status
@@ -117,7 +117,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_results.append(data_duplicates_check_result)
         checks_passed.append(data_duplicates_check_result.passed_conditions())
         fnames.append(f'{check_data_type}_bbox_duplicates')
-        log_msgs.append("Results of checking for bbox duplicates are saved.")
+        log_msgs.append("Results of checking bounding boxes for duplicates are saved.")
 
     elif check_data_type == 'prepared':
         train_path, test_path = [
@@ -131,7 +131,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_results.append(train_test_check_result)
         checks_passed.append(train_test_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_train_test_similarity')
-        log_msgs.append("Train Test validation results are saved.")
+        log_msgs.append("Train Test Validation results are saved.")
 
         # Train Test Author Group Leakage
         author_group_leakage_check_result = check_train_test_author_group_leakage(
@@ -155,7 +155,7 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_results.append(new_info_ds_check_result)
         checks_passed.append(new_info_ds_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_old_info')
-        log_msgs.append("New info similarity check results are saved.")
+        log_msgs.append("New Info Similarity check results are saved.")
 
         # New Bbox Dataset Check
         bbox_path, new_bbox_path = [
@@ -169,11 +169,11 @@ def main(project_path, data_path_config, check_data_type, data_check_dir):
         check_results.append(new_bbox_ds_check_result)
         checks_passed.append(new_bbox_ds_check_result.passed(fail_if_check_not_run=True))
         fnames.append(f'{check_data_type}_old_bbox')
-        log_msgs.append("New bbox similarity check results are saved.")
+        log_msgs.append("New Bounding Box Similarity check results are saved.")
     else:
         raise ValueError("check_data_type must be one of 'raw', 'prepared', or 'new'!")
 
-    # Save check results
+    # Save the check results
     for check_result, fname, log_msg in zip(check_results, fnames, log_msgs):
         fname += '_check_results.html'
         fpath = data_check_dir / 'data_check_results' / fname
@@ -202,4 +202,4 @@ if __name__ == '__main__':
 
     else:
         raise ValueError(
-            f"{img_data_type} data cannot be checked: choose 'raw', 'prepared', or 'new'.")
+            f"The {img_data_type} data cannot be checked: choose 'raw', 'prepared', or 'new'.")

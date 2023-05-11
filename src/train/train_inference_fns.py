@@ -25,10 +25,10 @@ def object_detection_precision_recall_fbeta_scores(gts, preds, iou_thresh=0.5, b
     preds: tuple or list
         Predicted label and box values.
     iou_thresh: float, optional
-        minimum IoU between the ground truth bounding boxes and predicted
+        Minimum IoU between the ground truth bounding boxes and predicted
         bounding boxes to consider them as true positive (default 0.5).
     beta: int, optional
-        A beta value to determine the weight of the recall in the F-beta score
+        Beta value to determine the weight of the recall in the F-beta score
         (default 1).
 
     Return
@@ -96,14 +96,14 @@ def train_one_epoch(dataloader, model, optimizer, device=torch.device('cpu')):  
     accum_model_loss = 0
     num_batches = len(dataloader)
 
-    # Set a model to the training mode
+    # Set a model in training mode
     model.train()
 
     for images, targets in dataloader:
         images = [img.to(device) for img in images]
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-        # Compute a model batch losses
+        # Compute model batch losses
         batch_dict_losses = model(images, targets)
         batch_model_loss = sum([loss for loss in batch_dict_losses.values()])
 
@@ -142,7 +142,7 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1,
     results = []
     num_batches = len(dataloader)
 
-    # Set a model to the evaluation mode
+    # Set a model in evaluation mode
     model.eval()
 
     for images, targets in dataloader:
@@ -153,7 +153,7 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1,
         outputs = model(images)
         results += outputs
 
-        # Compute a model batch statistics
+        # Compute model batch statistics
         batch_model_scores = object_detection_precision_recall_fbeta_scores(
             targets, outputs, iou_thresh=iou_thresh, beta=beta)
 
@@ -179,7 +179,7 @@ def eval_one_epoch(dataloader, model, iou_thresh=0.5, beta=1,
 
 @torch.inference_mode()
 def predict(img, model, device=torch.device('cpu')):  # noqa: B008
-    """Return a prediction result containing scores, boxes, and labels."""
+    """Return the prediction result containing scores, boxes, and labels."""
     img = T.ToTensor()(img).to(device)
     model.to(device)
     model.eval()
@@ -190,8 +190,8 @@ def predict(img, model, device=torch.device('cpu')):  # noqa: B008
 @torch.inference_mode()
 def predict_image(img, model, show_scores=False, device=torch.device('cpu'),  # noqa: B008
                   save_predict_path=None):
-    """Draw an image with bounding boxes (and scores) and return it, and
-    a number of object detection targets on it.
+    """Draw an image with bounding boxes (and scores) and return it with
+    the number of object detection targets on it.
     """
     preds = predict(img, model, device)
     num_bboxes = len(preds['boxes'])

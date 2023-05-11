@@ -1,4 +1,4 @@
-"""This module implements fine-tuning of an object detection model."""
+"""This module implements fine-tuning of object detection model."""
 
 import gc
 import logging
@@ -35,55 +35,57 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
               eval_iou_thresh=0.5, eval_beta=1, model_name='best_model', save_best_ckpt=False,
               checkpoint=None, log_metrics=False, register_best_log_model=False,
               reg_model_name='best_model', save_random_best_model_output_path=None):
-    """Run a new training and evaluation cycle of a model for a fixed number of epochs
-    or continue if checkpoint is passed, while saving the best model (or checkpoint).
+    """Run a new model training and evaluation cycle for the fixed number of epochs
+    or continue if a checkpoint is set, while saving the best model weights
+    (or a checkpoint).
 
     Parameters
     ----------
-    train_dataloader: Dataloader
-        Images, labels and boxes for a training step.
-    val_dataloader: Dataloader
-        Images, labels and boxes for an evaluation step.
+    train_dataloader: DataLoader
+        Images, labels, and boxes for a training step.
+    val_dataloader: DataLoader
+        Images, labels, and boxes for an evaluation step.
     model: nn.Module
-        An object detection model.
+        Object detection model.
     epochs: int
-        Number of training epochs.
+        The number of training epochs.
     optimizer_name: str
-        An optimizer name from torch.optim.
+        Optimizer name from torch.optim.
     optimizer_parameters: dict
         Relevant parameters for the optimizer.
     save_best_model_weights_path: Path, optional
-        A path to save the best model weights (state directory)
-        or its checkpoint (default None).
+        Path to save the best model weights (state directory)
+        or checkpoint (default None).
     lr_scheduler_name: str, optional
-        A learning rate scheduler name from torch.optim.lr_scheduler (default None).
+        Learning rate scheduler name from torch.optim.lr_scheduler (default None).
     lr_scheduler_parameters: dict, optional
         Relevant parameters for the learning rate scheduler (default None).
     device: torch.device('cpu'|'cuda')
-        A type of a device used (default torch.device('cpu')).
+        Type of device used (default torch.device('cpu')).
     metric_to_find_best_model: str, optional
-        A corresponding model score is tracked to find the best model (default None).
+        Metric name to track its values to find the best model (default None).
     init_metric_value: float
-        An initial metric value to find the best model (default 0.0).
+        Initial metric value to find the best model (default 0.0).
     eval_iou_thresh: float
-        An iou threshold to determine correct predict boxes (default 0.5).
+        IOU threshold to determine correct predicted boxes (default 0.5).
     eval_beta: int
-        A beta value for f_beta score (default 1).
+        Beta value for f_beta score (default 1).
     model_name: str
-        A part of a filename to save (default 'best_model').
+        Part of file name to save the best model weights or checkpoint
+        (default 'best_model').
     save_best_ckpt: bool
-        Whether to save the best model (default) or its checkpoint (default False).
+        Whether to save the best model weights (default) or checkpoint (default False).
     checkpoint: dict, optional
-        A checkpoint to continue training (default None).
+        Checkpoint to continue training (default None).
     log_metrics: bool
         Whether to log metrics into MLflow (default False).
     register_best_log_model: bool
         Whether to log and register the best model into MLflow (default False).
     reg_model_name: str
-        A model registration name (default 'best_model').
+        Model registration name (default 'best_model').
     save_random_best_model_output_path: Path, optional
-        A path to a directory to save a random image with drawn
-        the best model prediction boxes and scores on it (default None).
+        Path to a directory to save a random image with
+        the best model prediction boxes and scores drawn on it (default None).
 
     Return
     ------
@@ -193,12 +195,12 @@ def run_train(train_dataloader, val_dataloader, model, epochs, optimizer_name,
 
 
 def main(project_path, param_config):
-    """Perform fine-tuning of an object detection model."""
+    """Perform fine-tuning of object detection model."""
     img_data_paths = param_config['image_data_paths']
     TRAIN_EVAL_PARAMS = param_config['model_training_inference_conf']
     device = get_device(TRAIN_EVAL_PARAMS['device_cuda'])
 
-    # Get dataloaders
+    # Get DataLoader objects
     imgs_path, train_csv_path, bbox_csv_path = [
         project_path / fpath for fpath in [img_data_paths['images'],
                                            img_data_paths['train_csv_file'],
@@ -238,12 +240,12 @@ def main(project_path, param_config):
         checkpoint_path = project_path / save_dir / TRAIN_EVAL_PARAMS['checkpoint']
         checkpoint = torch.load(checkpoint_path) if checkpoint_path.exists() else None
 
-    # Set paths to save the best model weights and its outputs
+    # Set paths to save the best model weights and outputs
     save_best_model_weights_path = project_path / save_dir if save_dir else None
     save_output_path = (project_path / TRAIN_EVAL_PARAMS['save_model_output_dir']
                         if TRAIN_EVAL_PARAMS['save_model_output_dir'] else None)
 
-    # Train the model (fine-tuning) and log metrics and parameters into MLflow
+    # Train the model (fine-tune) and log metrics and parameters into MLflow
     mlflow_conf = param_config['mlflow_tracking_conf']
     ftm_exp = mlflow.get_experiment_by_name(mlflow_conf['experiment_name'])
 

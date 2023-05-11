@@ -1,5 +1,5 @@
-"""This module checks the performance of a deployed ML model
-and generates a report to debug the model quality decay.
+"""This module checks the performance of deployed ML model and generates a report
+to debug the model quality decay.
 """
 
 import logging
@@ -26,19 +26,19 @@ logging.basicConfig(level=logging.INFO, filename='mon.log',
 
 def get_selected_monitoring_data(monitoring_data_path, model_name_and_version_parameters,
                                  usecols=None, skiprows=None):
-    """Return a pd.Dataframe containing monitoring data for the specified model only.
+    """Return the pd.Dataframe containing monitoring data for the specified model only.
 
     Parameters
     ----------
     monitoring_data_path: Path
-        A path to data of deployed models for monitoring their performance.
+        Path to data of deployed models for monitoring their performance.
     model_name_and_version_parameters: dict
-        Columns containing model name and version and their corresponding value
-        to select monitoring data.
+        The columns containing model parameters (name and version) to select data
+        for monitoring.
     usecols: list, optional
-        Columns for the pd.read_csv function parameter of the same name (default None).
+        Columns for the same parameters of the pd.read_csv function (default None).
     skiprows: list, optional
-        Rows for the pd.read_csv function parameter of the same name (default None).
+        Rows for the same parameters of the pd.read_csv function (default None).
     """
     monitoring_data_df = pd.read_csv(
         monitoring_data_path, usecols=usecols, skiprows=skiprows)
@@ -74,7 +74,7 @@ def generate_deployed_model_report(reference_monitoring_data_df,
                                    current_monitoring_data_df,
                                    column_mapping=None, color_scheme=None,
                                    save_report_path=None):
-    """Generate a report containing performance data of a deployed model
+    """Generate the report containing performance of deployed model
     and save it if save_report_path is specified.
     """
     report = Report(metrics=[DataQualityPreset(),
@@ -92,8 +92,8 @@ def generate_deployed_model_report(reference_monitoring_data_df,
 
 
 def main(project_path, param_config):
-    """Check the performance of a deployed ML model and generates a report
-    if the decay of the model is detected.
+    """Check performance of deployed ML model and generate a report
+    if the model decay is detected.
     """
     MONITORING_CONFIG = param_config['deployed_model_monitoring']
     monitoring_data_path = (
@@ -129,15 +129,15 @@ def main(project_path, param_config):
         usecols=[LABEL_COLUMN, SCORE_COLUMN] + MODEL_COLUMNS,
         skiprows=skip_rows)
 
-    # Check if there are records for the model
+    # Check if there are records for the current deployed model
     if current_deployed_model_score_df.shape[0] == 0:
-        raise ValueError(f"Monitoring data is empty: {current_model_selection_params}")
+        raise ValueError(f"The monitoring dataset is empty: {current_model_selection_params}")
 
-    # Check if the model works correctly
+    # Check if the current deployed model works correctly
     elif np.any(current_deployed_model_score_df[LABEL_COLUMN] != 1):
         raise ValueError("Labels can only have the value 1!")
 
-    # Check if the model is decaying
+    # Check if the current deployed model is decaying
     reference_score_df, current_score_df = np.array_split(
         current_deployed_model_score_df, 2, axis=0)
     check_result_path = project_path.joinpath(
@@ -157,7 +157,7 @@ def main(project_path, param_config):
             monitoring_data_path, current_model_selection_params,
             skiprows=skip_rows)
 
-        # Get reference data to reporting
+        # Get reference data for reporting
         img_data_paths = param_config['image_data_paths']
         train_img_names = (pd.read_csv(img_data_paths['train_csv_file'], usecols=['Name'])
                              .squeeze().to_list())
@@ -165,7 +165,7 @@ def main(project_path, param_config):
         reference_data_df = img_bbox_df.loc[img_bbox_df.image_name.isin(train_img_names),
                                             BBOX_SIZE_COLUMNS + IMAGE_SIZE_COLUMNS]
 
-        # Get current data to reporting
+        # Get the current data for reporting
         _, current_data_df = np.array_split(current_deployed_model_data_df, 2, axis=0)
         current_data_df['bbox_width'] = current_data_df['bbox_x1'] + current_data_df['bbox_x2']
         current_data_df['bbox_height'] = current_data_df['bbox_y1'] + current_data_df['bbox_y2']
@@ -174,7 +174,7 @@ def main(project_path, param_config):
         column_mapping = ColumnMapping()
         column_mapping.numerical_features = BBOX_SIZE_COLUMNS + IMAGE_SIZE_COLUMNS
 
-        # Generate a report to debug the model quality decay
+        # Generate the report to debug the model quality decay
         save_report_path = 'reports/deployed_model_performance_report.html'
         _ = generate_deployed_model_report(
             reference_data_df, current_data_df[BBOX_SIZE_COLUMNS + IMAGE_SIZE_COLUMNS],

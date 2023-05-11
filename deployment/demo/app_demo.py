@@ -20,7 +20,7 @@ MIN_BOX_SCORE_THRESHOLD = 0.5
 @st.cache_resource(ttl=3600, max_entries=20)
 @torch.inference_mode()
 def detect_objects_demo(byte_image, project_path):
-    """Get a object detection model inference."""
+    """Get an object detection model inference."""
     device = torch.device('cpu')
     img = T.ToTensor()(Image.open(byte_image).convert('RGB')).to(device)
     model = torch.load(project_path / DEMO_MODEL,
@@ -33,8 +33,8 @@ def detect_objects_demo(byte_image, project_path):
 
 def draw_bboxes_on_image_and_save_it_in_memory(img, bboxes, buffered_io_object_to_save_img,
                                                scores=None, box_color='orange'):
-    """Draw an image with bounding boxes from Tensors
-    and save the result in memory.
+    """Draw an image with bounding boxes from Tensors and save the result
+    in memory.
     """
     if (img.dtype != torch.uint8):
         img = T.functional.convert_image_dtype(img, dtype=torch.uint8)
@@ -74,7 +74,7 @@ def main(project_path):
                   'source_link': 'https://flickr.com',
                   'license': 'CC0 1.0'}
 
-    # Add a title, description, and a static image
+    # Add a title, a description, and a static image
     st.title(":orange[How many House Sparrows?] Demo")
     st.write("##### *Detect and count house sparrows in a photo*")
     st.write("![{0}](app/static/{1})".format(STATIC_IMG['caption'], STATIC_IMG['name']))
@@ -95,15 +95,15 @@ def main(project_path):
         min_sc_thresh = MIN_BOX_SCORE_THRESHOLD
         bbox_sc_thresh = st.sidebar.slider(
             "Min Box Score", min_sc_thresh, 1.0, min_sc_thresh,
-            help="Show only boxes with a score greater than a given threshold")
+            help="Show only boxes with scores greater than the selected threshold")
         show_scores = st.checkbox("Show Scores")
         bbox_color = st.sidebar.color_picker("Box Color", "#FFA500")
 
     if uploaded_image is not None:
-        # Get model inference
+        # Get a model inference
         detect_res = detect_objects_demo(uploaded_image, project_path)
 
-        # Display original and with detections images
+        # Display an original image and the image with detection results
         col1, col2 = st.columns(2)
         with col1:
             st.write("#### Original")

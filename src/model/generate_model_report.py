@@ -1,4 +1,4 @@
-"""This module generates a report as a Markdown file containing
+"""This module generates the report as a Markdown file containing
 a model training pipeline result.
 """
 
@@ -25,9 +25,9 @@ def fill_in_report_subsection(subsection_title, subsection_content_dict):
 
 
 def main(project_path, param_config):
-    """Generate a report as .md files based on the latest training pipeline outputs
-    and containing a test score, an image with predictions,
-    and model training details with metric plots, if a model is in production.
+    """Generate the report as a .md file based on the latest training pipeline outputs
+    and containing a test score, a random image with predictions,
+    and training details with metric plots of model if it is in production.
     """
     # Get the latest training pipeline result from an output dir
     output_dir = param_config['model_training_inference_conf']['save_model_output_dir']
@@ -66,7 +66,7 @@ def main(project_path, param_config):
     report_content += fill_in_report_subsection("### Performance on Test Data",
                                                 model_test_perform)
 
-    # Add an image with test prediction result to "Example" subsection
+    # Add a random image with its test prediction result to the "Example" subsection
     img_pred_example_subsection_content = []
     for fpath in (project_path / test_output_dir).iterdir():
         fname = fpath.parts[-1]
@@ -76,7 +76,7 @@ def main(project_path, param_config):
             img_pred_example_subsection_content.append(
                 "![Image Test Predict](../{0}/{1})".format(test_output_dir, fname))
 
-            # Create a link to the origin image source
+            # Create a link to the original image source
             test_img_info = test_df[test_df.Name == origin_img_name].squeeze().to_dict()
             photo_author = test_img_info['Author']
             photo_source = test_img_info['Source']

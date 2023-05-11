@@ -1,5 +1,5 @@
 """This module creates training and test datasets from raw data
-and save EDA plots for them.
+and saves EDA plots for them.
 """
 
 import logging
@@ -24,23 +24,23 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
                                                           df1_image_name_column,
                                                           df2_image_name_column,
                                                           df2_columns_to_rename_in_new_df):
-    """Expand a DataFrame with selected images with columns from another DataFrame
+    """Expand a pd.DataFrame with selected images with columns from another pd.DataFrame
     with averages calculated for each group of these images.
 
     Parameters
     ----------
     df1: pd.DataFrame
-        A pd.DataFrame object to expand.
+        pd.DataFrame object to expand.
     df2: pd.DataFrame
-        A pd.DataFrame object to calculate averages.
+        pd.DataFrame object to calculate averages.
     selected_images: list
-        Images for which average values from df2 will be calculated.
+        The images for which average values from df2 will be calculated.
     df2_columns_to_calculate_averages: list
         df2 columns to calculate average values.
     df1_image_name_column: str
-        A df1 column with image names to merge.
+        df1 column with image names to merge.
     df2_image_name_column: str
-        A df2 column with image names to merge.
+        df2 column with image names to merge.
     df2_columns_to_rename_in_new_df: list
         df2 columns with averages to be renamed.
 
@@ -67,10 +67,10 @@ def expand_img_df_with_average_values_from_another_img_df(df1, df2,
 
 
 def main(project_path, param_config, save_eda_plots=False):
-    """Split data into training and test sets, save them to files,
+    """Split data into training and test sets, save them to CSV files,
     and create and return EDA plots for them.
     """
-    # Get image data paths from configurations
+    # Get image data paths from the configurations
     img_data_paths = param_config['image_data_paths']
 
     # Split data into training and test sets
@@ -98,7 +98,7 @@ def main(project_path, param_config, save_eda_plots=False):
             'Name', 'image_name', cols_to_calculate_avg[:2])
         train_test_dfs.append(expanded_df)
         expanded_df.to_csv(fpath, index=False)
-        logging.info("Train and test csv files are saved.")
+        logging.info("Train and test CSV files are saved.")
 
     # Create and save EDA plots for training data
     train_df = train_test_dfs[0]
