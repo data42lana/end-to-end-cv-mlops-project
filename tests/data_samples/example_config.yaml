@@ -1,4 +1,4 @@
-# Configurations for an integration test
+# The configurations for an integration test
 
 image_data_paths:
   images: datas/sample_imgs

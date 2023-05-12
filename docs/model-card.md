@@ -2,10 +2,10 @@
 This model card provides general information about a model used in this project, its architecture, inputs and outputs, how it was trained, evaluated, etc.
 ## Model Description
 ### Model Summary
-The model detects house sparrows in photos and is a fine-tuned pre-trained [TorchVision's (PyTorch) implementation](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn.html#torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn) of a high resolution [Faster R-CNN](https://arxiv.org/abs/1506.01497) model with a [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [FPN](https://arxiv.org/abs/1612.03144v2) backbone modified to predict 2 classes (house sparrows and background).
+The model detects house sparrows in photos and is a fine-tuned pre-trained [TorchVision's (PyTorch) implementation](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn.html#torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn) of the high resolution [Faster R-CNN](https://arxiv.org/abs/1506.01497) model with the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [FPN](https://arxiv.org/abs/1612.03144v2) backbone modified to predict two classes (house sparrows and the background).
 
 ### Model Details
-A model head was modified for 2 output classes, including background. The model has two different inputs and outputs depending on a mode it is in: training (in the training mode) and inference (in the evaluation mode). *Details about the inputs and outputs for this section was taken from [`torchvision.models.detection.fasterrcnn_resnet50_fpn`](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_resnet50_fpn.html#torchvision.models.detection.fasterrcnn_resnet50_fpn).*
+A model head was modified for two output classes, including the background. The model has two different inputs and outputs depending on a mode it is in: training (in the training mode) and inference (in the evaluation mode). *Details about the inputs and outputs for this section were taken from [`torchvision.models.detection.fasterrcnn_resnet50_fpn`](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_resnet50_fpn.html#torchvision.models.detection.fasterrcnn_resnet50_fpn).*
 
 **Type:** Convolutional Neural Network
 
@@ -20,44 +20,44 @@ The RPN and/or box parameters and their values used to load the model can be fou
 - *Training:*
     - a list of images as torch.Tensor objects with float data type, each of shape [C, H, W] and in range [0.0, 1.0]
     - a list of targets, each of which is a dictionary of:
-        - *boxes* as a torch.Tensor object of shape [N, 4] and float data type: the ground-truth bounding box coordinates in Pascal VOC ([x1, y1, x2, y2]) format
+        - *boxes* as a torch.Tensor object of shape [N, 4] and float data type: the ground-truth bounding box coordinates in the Pascal VOC ([x1, y1, x2, y2]) format
         - *labels* as a torch.Tensor object of the shape [N] and int64 data type: a class label for each ground-truth box.
-    Where C, H, W are the number of image channels, height, and width, respectively, and N is the number of boxes.
+    Where C, H, and W are the number of image channels, height, and width, respectively, and N is the number of boxes.
 - *Inference:* only the list of the image tensors.
 The input images can have different sizes.
 
 **Output:**
-- *Training:* a dictionary of tensors, containing classification and regression losses for both the RPN and the R-CNN (`loss_classifier`, `loss_box_reg`, `loss_objectness`, `loss_rpn_box_reg`).
+- *Training:* a dictionary of tensors containing classification and regression losses for both the RPN and the R-CNN (`loss_classifier`, `loss_box_reg`, `loss_objectness`, `loss_rpn_box_reg`).
 - *Inference:* a list of predictions for each input image as a dictionary of:
-   - *boxes* as a torch.Tensor object of shape [N, 4] and float data type: predicted bounding box coordinates in Pascal VOC ([x1, y1, x2, y2]) format
+   - *boxes* as a torch.Tensor object of shape [N, 4] and float data type: predicted bounding box coordinates in the Pascal VOC ([x1, y1, x2, y2]) format
    - *labels* as a torch.Tensor object of the shape [N] and int64 data type: predicted labels for each detection
    - *scores* as a torch.Tensor object of shape [N] and float data type: confidence scores of each detection.
    Where N is the number of the detections.
 
 ## Model Training & Evaluation
 ### Data
-**Dataset Details:** Dataset consists of house sparrow photos and their annotation results. The number of house sparrows and their sizes, as well as the sizes of the photos themselves, are various. See [the Dataset Card](./dataset-card.md) for more details about the dataset.
+**Dataset Details:** The dataset consists of house sparrow photos and their annotation results. The number of house sparrows and their sizes, as well as the sizes of the photos themselves, are various. See [the Dataset Card](./dataset-card.md) for more details about the dataset.
 
 **Preprocessing:**
-- *Training:* Augmenting the training dataset with scaling the minimum and maximum sides of the images to certain sizes, flipping them horizontally and vertically, changing their brightness, contrast, and saturation, adding rain effects, and blurring the images. See [`get_image_transforms`](../src/data/image_dataloader.py) function for more details on types of image transformations used and their probability of being applied. Converting bounding box data to Pascal VOC format ([x1, y1, x2, y2]). Scaling the input images to [0.0, 1.0] and converting them, like the boxes and their labels, into torch.Tensor objects.
+- *Training:* Augmenting the training dataset by scaling the minimum and maximum sides of the images to certain sizes, flipping them horizontally and vertically, changing their brightness, contrast, and saturation, adding rain effects, and blurring the images. See the [`get_image_transforms`](../src/data/image_dataloader.py) function for more details on the types of image transformations used and their probability of being applied. Converting bounding box data to the Pascal VOC format ([x1, y1, x2, y2]). Scaling the input images to [0.0, 1.0] and converting them, like the boxes and their labels, into torch.Tensor objects.
 - *Evaluation/Test:* The same as in the training process, but without the use of image transformation (augmentation).
 
 ### Metrics
-The performance of the model in this project can be evaluated using precision, recall, F-beta scores calculated for each batch. Only those bounding boxes that had intersection-over-union (IoU) with the ground truth boxes greater than or equal to a IoU threshold were considered correctly detected. Model versions with a value of the metric less than or equal to a threshold were not saved and/or registered.
+The performance of the model in this project can be evaluated using precision, recall, F-beta scores calculated for each batch. Only those bounding boxes that had intersection-over-union (IoU) with the ground truth boxes greater than or equal to a IoU threshold were considered correctly detected. Model versions with a value of the metric less than or equal to its initial value were not saved and/or registered.
 
-See [`object_detection_precision_recall_fbeta_scores`](../src/train/train_inference_fns.py) function for how the metrics are calculated and [these files](#more-information) to find out what metric and thresholds were used.
+See the [`object_detection_precision_recall_fbeta_scores`](../src/train/train_inference_fns.py) function for how the metrics are calculated and [these files](#more-information) to find out what metric and thresholds were used.
 
 ### Training Details
-The pre-trained model with the last 1-6 trainable backbone layer(s) is fine-tuned during training on the collected data. Details of training of the pre-trained model itself (`torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn`) can be found in [the training script](https://github.com/pytorch/vision/tree/e35793a1a4000db1f9f99673437c514e24e65451/references/detection#faster-r-cnn-mobilenetv3-large-fpn).
+The pre-trained model with the last 1-6 trainable backbone layer(s) is fine-tuned during training on the collected data. Training details of the pre-trained model itself (`torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn`) can be found in [the training script](https://github.com/pytorch/vision/tree/e35793a1a4000db1f9f99673437c514e24e65451/references/detection#faster-r-cnn-mobilenetv3-large-fpn).
 
 **Type:** fine-tuning
 
 **Parameters:**
-Part of training parameters are selected/tuned by hyperparameter optimization if this stage is used in the training process. The parameters and their values, with which the model was trained, are displayed in [these files](#more-information).
+A part of training parameters is selected/tuned by hyperparameter optimization if this stage is used in the training process. These and other training parameters can be viewed in [these files](#more-information).
 
 **Algorithm:** The general algorithm for training the model for this project is as follows:
 1. Optionally, optimize hyperparameters to search for training parameters that maximize the metric.
-2. Train and evaluate the model with default parameters, or the best parameters, if found, for more epochs.
+2. Train and evaluate the model with default parameters or the best parameters, if found, for more epochs.
 3. Register the model and/or save its weights (state dictionary) or checkpoint with the maximum metric value.
 4. If necessary, restart the training process from a checkpoint or repeat the algorithm again.
 
@@ -82,10 +82,10 @@ The bias of the model was not checked.
 The maximum possible number of detected house sparrows in one image is set by the `box_detections_per_img` parameter and cannot be greater than its value.
 
 ### How to Use the Model
-Run the API server and then the web application. Or go to [Web APP Demo](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo), if available. Upload a photo to it. After a short time, the result will be displayed.
+Run the API server and then the web application provided in this project. Or go to [Web APP Demo](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo), if available. Upload a photo to it. After a short time, the result will be displayed.
 
 ### License
-The model may have a different licenses, depending on a dataset used for training. See [TorchVision LICENSE](https://github.com/pytorch/vision/blob/main/LICENSE) and [Pre-trained Model License](https://github.com/pytorch/vision#pre-trained-model-license) for license information of the pre-trained model.
+The model may have different licenses depending on the dataset used for training. See [TorchVision LICENSE](https://github.com/pytorch/vision/blob/main/LICENSE) and [Pre-trained Model License](https://github.com/pytorch/vision#pre-trained-model-license) for license information of the pre-trained model.
 
 ## More Information
 1. Follow the links in this Model Card for more information.

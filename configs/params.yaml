@@ -1,4 +1,4 @@
-# Configurations of this computer vision project (for *.py modules)
+# The configurations of this computer vision project (for *.py modules)
 
 image_data_paths:
   images: data/raw/images
