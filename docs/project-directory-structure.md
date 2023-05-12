@@ -59,7 +59,6 @@
 |-- deployment
 |   |-- demo
 |   |   |-- .streamlit/config.toml
-|   |   |-- static/detected_36485871561.png
 |   |   |-- app_demo.py
 |   |   |-- fine_tuned_faster_rcnn_mob_large_demo.pt
 |   |   |-- README.md
