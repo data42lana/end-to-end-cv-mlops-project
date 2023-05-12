@@ -66,22 +66,9 @@ def draw_bboxes_on_image_and_save_it_in_memory(img, bboxes, buffered_io_object_t
 
 def main(project_path):
     """Build a web app demo using a demo model."""
-    STATIC_IMG = {'name': 'detected_36485871561.png',
-                  'author': 'Wildlife Terry',
-                  'caption': 'Hungry Sparrows',
-                  'link': 'https://www.flickr.com/photos/wistaston/36485871561',
-                  'source': 'Flickr',
-                  'source_link': 'https://flickr.com',
-                  'license': 'CC0 1.0'}
-
-    # Add a title, a description, and a static image
+    # Add a title
     st.title(":orange[How many House Sparrows?] Demo")
     st.write("##### *Detect and count house sparrows in a photo*")
-    st.write("![{0}](app/static/{1})".format(STATIC_IMG['caption'], STATIC_IMG['name']))
-    st.caption("Photo by [{0}]({1}) on [{2}]({3}). License: {4}. "
-               "*Photo modified: cropped, boxes and scores drawn*".format(
-                   STATIC_IMG['author'], STATIC_IMG['link'], STATIC_IMG['source'],
-                   STATIC_IMG['source_link'], STATIC_IMG['license']))
 
     # Add an image upload widget
     uploaded_image = st.file_uploader("Choose a photo", type=['png', 'jpg', 'jpeg'])
