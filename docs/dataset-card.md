@@ -68,6 +68,6 @@ The dataset is checked before use in several steps using [**Great Expectations**
 
 The `train.csv` and `test.csv` files are created when the `src/data/prepare_data.py` module is run, and the splitting is done using the `src\utils.py: stratified_group_train_test_split` function in it.
 ### ***License Information***
-Each photo in the dataset has its own license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. The current license information must be checked on ([**Flickr**](https://flickr.com)) site, and use of the images must abide by the [**Flickr Terms of Use**](https://www.flickr.com/creativecommons/).
+Each photo in the dataset has its own license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. The current license information must be checked on [**Flickr**](https://flickr.com) site, and use of the images must abide by the [**Flickr Terms of Use**](https://www.flickr.com/creativecommons/).
 
 [^*]: *Based on [Hugging Face Hub Dataset Card Template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/datasetcard_template.md).*
