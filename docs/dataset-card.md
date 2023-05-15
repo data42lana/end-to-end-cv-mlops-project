@@ -42,7 +42,7 @@ The bounding boxes were drawn around each house sparrow manually using [**Make S
     - `image_width`: image width in pixels (taken from `bounding_boxes.csv`)
     - `image_height`: image height in pixels (taken from `bounding_boxes.csv`).
 
-* `test.csv` - a file containing information about images to test. All fields in it are similar to the fields in the `train.csv` file.
+* `test.csv` - a file containing information about images to test. All the fields in it are similar to the fields in the `train.csv` file.
 ### ***EDA of Training Data***
 ![House Sparrow Distribution Plot](../outputs/plots/eda/train_number_hsparrows_distribution.jpg)
 ![Author Distribution Plot](../outputs/plots/eda/train_author_distribution.jpg)

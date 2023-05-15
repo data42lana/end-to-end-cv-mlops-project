@@ -23,9 +23,9 @@ Its extended version can be viewed in `docs/project-mlops-diagram-extended.svg`.
 > More information about the dataset and model used can be found in `docs/dataset-card.md` and `docs/model-card.md`, respectively.
 
 ## Installation
-The source code was developed on Windows, and all Python modules except those in the `deployment` folder are also tested on Linux (in *Google Colab*).
+The source code was developed on Windows. All the Python modules in the repository, except those in the `deployment` folder, were also run and tested on Linux (Ubuntu) (in *Google Colab* and using *GitHub Actions*, respectively).
 
-First, clone this repo and go to its root directory. Then, create a virtual environment with Python 3.9 (not tested on other versions) and activate it. After that, install either all dependencies of the project by running from the command line:
+First, clone this repo and go to its root directory. Then, create a virtual environment with Python 3.9 (not tested on other versions) and activate it. After that, install either all the dependencies of the project by running from the command line:
 ```bash
 $ python -m pip install -r requirements/dev-requirements.txt
 ```
@@ -127,7 +127,7 @@ Below are the CLI commands for MLOps components, which are executed manually in 
     # Reproduce the model training pipeline without including new data checks
     $ dvc repro pipelines/dvc.yaml
     ```
-    or use the `--all-pipelines` flag to reproduce all pipelines for all `dvc.yaml` files present in the repo. DAGs of the pipelines can be viewed in the `pipelines/dvc_dag.md` file.
+    or use the `--all-pipelines` flag to reproduce all the pipelines for all the `dvc.yaml` files present in the repo. DAGs of the pipelines can be viewed in the `pipelines/dvc_dag.md` file.
 
 2. (Optional) View a history of model training runs:
 -
@@ -168,7 +168,7 @@ $ python -m pip install -r requirements/test-requirements.txt
 Test configurations are held in the `pytest.ini` file.
 
 ```bash
-# Run all tests in the repo except API ones
+# Run all the tests in the repo except API ones
 $ pytest --ignore=tests/webapi/ tests/
 
 # Run uvicorn server and the API
