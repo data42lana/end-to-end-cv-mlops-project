@@ -11,7 +11,7 @@ A model head was modified for two output classes, including the background. The 
 
 **Architecture:** *Basic information for this section is taken from [Everything you need to know about TorchVision’s MobileNetV3 implementation (Vasilis Vryniotis and Francisco Massa, May 26, 2021)](https://pytorch.org/blog/torchvision-mobilenet-v3-implementation/).*
 - *Detector:* the high resolution [Faster Region-based Convolutional Neural Network (Faster R-CNN)](https://arxiv.org/abs/1506.01497), initialized with weights pre-trained on the [COCO V1 dataset](https://cocodataset.org/#home) with images of 800-1333px.
-- *Backbone:* the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244)[Feature Pyramid Network](https://arxiv.org/abs/1612.03144v2) style (FPN-style), initialized with weights pre-trained on [ImageNet 1K V1](https://image-net.org/index.php).
+- *Backbone:* the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [Feature Pyramid Network](https://arxiv.org/abs/1612.03144v2) style (FPN-style), initialized with weights pre-trained on [ImageNet 1K V1](https://image-net.org/index.php).
 
 **Parameters:**
 The RPN and/or box parameters and their values used to load the model can be found in [these files](#more-information). Information about each of these parameters can be obtained from [the source code of the pre-trained model](https://github.com/pytorch/vision/blob/main/torchvision/models/detection/faster_rcnn.py).
@@ -36,7 +36,7 @@ The input images can have different sizes.
 
 ## Model Training & Evaluation
 ### Data
-**Dataset Details:** The dataset consists of house sparrow photos and their annotation results. The number of house sparrows and their sizes, as well as the sizes of the photos themselves, are various. See [the Dataset Card](./dataset-card.md) for more details about the dataset.
+**Dataset Details:** The dataset consists of house sparrow photos and their annotation results. The number of house sparrows and their sizes, as well as the sizes of the photos themselves, are various. See [Dataset Card](./dataset-card.md) for more details about the dataset.
 
 **Preprocessing:**
 - *Training:* Augmenting the training dataset by scaling the minimum and maximum sides of the images to certain sizes, flipping them horizontally and vertically, changing their brightness, contrast, and saturation, adding rain effects, and blurring the images. See the [`get_image_transforms`](../src/data/image_dataloader.py) function for more details on the types of image transformations used and their probability of being applied. Converting bounding box data to the Pascal VOC format ([x1, y1, x2, y2]). Scaling the input images to [0.0, 1.0] and converting them, like the boxes and their labels, into torch.Tensor objects.
@@ -82,14 +82,14 @@ The bias of the model was not checked.
 The maximum possible number of detected house sparrows in one image is set by the `box_detections_per_img` parameter and cannot be greater than its value.
 
 ### How to Use the Model
-Run the API server and then the web application provided in this project. Or go to [Web APP Demo](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo), if available. Upload a photo to it. After a short time, the result will be displayed.
+Run the API server and then the web application provided in this project. Or go to [Web App Demo](https://huggingface.co/spaces/data42lana/how-many-house-sparrows-demo), if available. Upload a photo to it. After a short time, the result will be displayed.
 
 ### License
 The model may have different licenses depending on the dataset used for training. See [TorchVision LICENSE](https://github.com/pytorch/vision/blob/main/LICENSE) and [Pre-trained Model License](https://github.com/pytorch/vision#pre-trained-model-license) for license information of the pre-trained model.
 
 ## More Information
 1. Follow the links in this Model Card for more information.
-2. Details about the latest version of the model, its performance on test data, and more (if the model is in production) can be found in [the Model Report](../reports/model_report.md).
+2. Details about the latest version of the model, its performance on test data, and more (if the model is in production) can be found in [Model Training Pipeline Result Report](../reports/model_report.md).
 3. The model loading and training parameters, their values, and other configurations used in the latest training pipeline are contained in the [`params.yaml`](../configs/params.yaml) and [`dvc.lock`](../pipelines/dvc.lock) files. Also the [`best_params.yaml`](../configs/best_params.yaml) contains some training parameter values if hyperparameter optimization has been performed.
 
 [^*]: *Based on [Model Cards for Model Reporting (Margaret Mitchell et al., 2019)](https://arxiv.org/abs/1810.03993) and [Hugging Face Hub Model Card Template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/modelcard_template.md).*

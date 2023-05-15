@@ -156,7 +156,7 @@ As a result of executing the commands, the project directory will have the struc
 Notebooks in this repo, except `EDA.ipynb`, contain trial runs of the data checks and initial experiments to build the model training pipeline.
 
 ## App Demo
-You can try out the web application from this project on [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/data42lana/how_many_house_sparrows_demo).
+You can try out the web application from this project on [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/data42lana/how-many-house-sparrows-demo).
 
 If the demo is not available or not displayed, then it can be seen as a static image in `docs/app-image.pdf`.
 

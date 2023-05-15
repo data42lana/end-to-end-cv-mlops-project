@@ -25,9 +25,9 @@ The dataset was created for tasks of detecting and counting house sparrows in ph
 
 ## Dataset Creation
 ### ***Data Collection***
-The photos of house sparrows (Passer domesticus) were collected manually from [**Flickr**](https://flickr.com) site based on their license type. The search for the necessary photos was carried out by the keyword "house sparrow". When choosing, preference was given to the images that differed in size, number and size of the sparrows, and the scene in them. The goal was to create as varied a set as possible. At the same time, the name of the photos, their authors, source, types of license, and the number of the house sparrows in them were entered into the `image_info.csv` file (also manually).
+The photos of house sparrows (Passer domesticus) were collected manually from [**Flickr**](https://flickr.com) based on their license type. The search for the necessary photos was carried out by the keyword "house sparrow". When choosing, preference was given to the images that differed in size, number and size of the sparrows, and the scene in them. The goal was to create as varied a set as possible. At the same time, the name of the photos, their authors, source, types of license, and the number of the house sparrows in them were entered into the `image_info.csv` file (also manually).
 ### ***Image Annotation***
-The bounding boxes were drawn around each house sparrow manually using [**Make Sense**](https://github.com/SkalskiP/make-sense) tool, and a class label was indicated. The sparrows did not have to be completely visible; the main thing is that it was possible to identify the type of bird by this visible part. At the end of the annotation, results were saved in the **COCO** format to the `bounding_boxes.csv` file with the name and size of the corresponding image automatically added for each box.
+The bounding boxes were drawn around each house sparrow manually using [**Make Sense**](https://github.com/SkalskiP/make-sense), and a class label was indicated. The sparrows did not have to be completely visible; the main thing is that it was possible to identify the type of bird by this visible part. At the end of the annotation, results were saved in the **COCO** format to the `bounding_boxes.csv` file with the name and size of the corresponding image automatically added for each box.
 ## Data Splitting
 ### ***Training and Test Dataset Structure (Instances & Fields)***
 * `train.csv` - a file containing information about images for training (one row per image):
@@ -68,6 +68,6 @@ The dataset is checked before use in several steps using [**Great Expectations**
 
 The `train.csv` and `test.csv` files are created when the `src/data/prepare_data.py` module is run, and the splitting is done using the `src\utils.py: stratified_group_train_test_split` function in it.
 ### ***License Information***
-Each photo in the dataset has its own license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. The current license information must be checked on [**Flickr**](https://flickr.com) site, and use of the images must abide by the [**Flickr Terms of Use**](https://www.flickr.com/creativecommons/).
+Each photo in the dataset has its own license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. The current license information must be checked on [**Flickr**](https://flickr.com), and use of the images must abide by the [**Flickr Terms of Use**](https://www.flickr.com/creativecommons/).
 
 [^*]: *Based on [Hugging Face Hub Dataset Card Template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/datasetcard_template.md).*
