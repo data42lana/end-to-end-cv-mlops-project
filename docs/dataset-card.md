@@ -60,7 +60,7 @@ Sample files and images of the dataset are located in the `tests/data_samples` d
 
 *The complete dataset is uploaded to [**Kaggle**](https://www.kaggle.com/datasets/data42lana/house-sparrow-detection) so that the entire ML pipeline in this project can be reproduced, including with new data.*
 
-To find the specific photo from the dataset in the source ([**Flickr**](https://flickr.com)), we need to go to its author's page and add "/" with the first part of the photo name (numbers before the "_" sign) to a URL. *For example, we want to find the `52089256535_d3b996ae78_w.jpg` photo by `Wildlife Terry`. By going to the author's page, we get the URL: `https://www.flickr.com/photos/wistaston.` By adding `/52089256535` to it, the link to the photo will look like this: `https://www.flickr.com/photos/wistaston/52089256535` (sometimes the author's name and his nickname may be the same).*
+To find a specific photo from the dataset in the source ([**Flickr**](https://flickr.com)), we need to go to its author's page and add "/" with the first part of the photo name (numbers before the "_" sign) to a URL. *For example, we want to find the `52089256535_d3b996ae78_w.jpg` photo by `Wildlife Terry`. By going to the author's page, we get the URL: `https://www.flickr.com/photos/wistaston.` By adding `/52089256535` to it, the link to the photo will look like this: `https://www.flickr.com/photos/wistaston/52089256535` (sometimes the author's name and his nickname may be the same).*
 ### ***Technical Information***
 The data are stored on the local file system and versioned by [**DVC**](https://github.com/iterative/dvc). Paths to the specific data files and the image set are specified in the `configs/params.yaml` file (`image_data_paths`), as well as where and how to store new data (`new_image_data_paths`).
 
@@ -68,6 +68,6 @@ The dataset is checked before use in several steps using [**Great Expectations**
 
 The `train.csv` and `test.csv` files are created when the `src/data/prepare_data.py` module is run, and the splitting is done using the `src\utils.py: stratified_group_train_test_split` function in it.
 ### ***License Information***
-Each photo in the dataset has its own license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. The current license information must be checked on [**Flickr**](https://flickr.com), and use of the images must abide by the [**Flickr Terms of Use**](https://www.flickr.com/creativecommons/).
+Each photo in the dataset has a specific type of license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. The license information must be verified before using any photo from the dataset on its page on [**Flickr**](https://flickr.com) and its use must abide by [the terms of use specified in the current license](https://www.flickr.com/creativecommons/).
 
 [^*]: *Based on [Hugging Face Hub Dataset Card Template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/datasetcard_template.md).*

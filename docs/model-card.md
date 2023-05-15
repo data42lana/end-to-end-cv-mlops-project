@@ -36,7 +36,7 @@ The input images can have different sizes.
 
 ## Model Training & Evaluation
 ### Data
-**Dataset Details:** The dataset consists of house sparrow photos and their annotation results. The number of house sparrows and their sizes, as well as the sizes of the photos themselves, are various. See [Dataset Card](./dataset-card.md) for more details about the dataset.
+**Dataset Details:** The dataset consists of house sparrow photos and their annotation results. The number of house sparrows and their sizes, as well as the sizes of the photos themselves, are various. See the [Dataset Card](./dataset-card.md) for more details about the dataset.
 
 **Preprocessing:**
 - *Training:* Augmenting the training dataset by scaling the minimum and maximum sides of the images to certain sizes, flipping them horizontally and vertically, changing their brightness, contrast, and saturation, adding rain effects, and blurring the images. See the [`get_image_transforms`](../src/data/image_dataloader.py) function for more details on the types of image transformations used and their probability of being applied. Converting bounding box data to the Pascal VOC format ([x1, y1, x2, y2]). Scaling the input images to [0.0, 1.0] and converting them, like the boxes and their labels, into torch.Tensor objects.
@@ -89,7 +89,7 @@ The model may have different licenses depending on the dataset used for training
 
 ## More Information
 1. Follow the links in this Model Card for more information.
-2. Details about the latest version of the model, its performance on test data, and more (if the model is in production) can be found in [Model Training Pipeline Result Report](../reports/model_report.md).
+2. Details about the latest version of the model, its performance on test data, and more (if the model is in production) can be found in the [Model Training Pipeline Result Report](../reports/model_report.md).
 3. The model loading and training parameters, their values, and other configurations used in the latest training pipeline are contained in the [`params.yaml`](../configs/params.yaml) and [`dvc.lock`](../pipelines/dvc.lock) files. Also the [`best_params.yaml`](../configs/best_params.yaml) contains some training parameter values if hyperparameter optimization has been performed.
 
 [^*]: *Based on [Model Cards for Model Reporting (Margaret Mitchell et al., 2019)](https://arxiv.org/abs/1810.03993) and [Hugging Face Hub Model Card Template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/modelcard_template.md).*
