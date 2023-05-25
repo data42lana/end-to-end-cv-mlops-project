@@ -241,8 +241,8 @@ stages:
           save_dir: models
     outs:
     - path: mlruns
-      md5: ac77969317118d421474e70860c48ab0.dir
-      size: 76200759
+      md5: ecfff742c0d166b9d703afcec5a5a0f9.dir
+      size: 76208951
       nfiles: 7
     - path: models
       md5: 556fb3b0890b3d6d60f9d43d2126f106.dir
@@ -274,11 +274,11 @@ stages:
     cmd: python src/model/update_model_stages.py --only_if_test_score_is_best=True
     deps:
     - path: mlruns/mlruns.db
-      md5: e863a4d9e8dad81757f373e9808cb41e
-      size: 159744
+      md5: c4431221c1ef2d7622a1ac1bc79139ef
+      size: 167936
     - path: outputs/test_outs/test_score.json
       md5: 0dc11f1ce97db64ea2cf6ac51c561a57
-      size: 132
+      size: 133
     params:
       configs/params.yaml:
         model_training_inference_conf.metrics_to_plot:
@@ -326,8 +326,8 @@ stages:
       md5: f71126c7a03bc91c56581b5030785e9f
       size: 17909
     - path: mlruns
-      md5: ac77969317118d421474e70860c48ab0.dir
-      size: 76200759
+      md5: ecfff742c0d166b9d703afcec5a5a0f9.dir
+      size: 76208951
       nfiles: 7
     params:
       configs/params.yaml:
@@ -335,5 +335,5 @@ stages:
     outs:
     - path: outputs/test_outs
       md5: 60e6c496796251c74a61537b819d1e3b.dir
-      size: 59893
+      size: 59894
       nfiles: 2

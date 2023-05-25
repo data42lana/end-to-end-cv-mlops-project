@@ -13,7 +13,7 @@ pyttmp/
 *.db
 *.pt
 *.pth
-models/
+/models
 mlruns/
 hyper_opt/
 .metaflow/

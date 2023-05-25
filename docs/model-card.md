@@ -5,11 +5,12 @@ This model card provides general information about a model used in this project,
 The model detects house sparrows in photos and is a fine-tuned pre-trained [TorchVision's (PyTorch) implementation](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn.html#torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn) of the high resolution [Faster R-CNN](https://arxiv.org/abs/1506.01497) model with the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [FPN](https://arxiv.org/abs/1612.03144v2) backbone modified to predict two classes (house sparrows and the background).
 
 ### Model Details
-A model head was modified for two output classes, including the background. The model has two different inputs and outputs depending on a mode it is in: training (in the training mode) and inference (in the evaluation mode). *Details about the inputs and outputs for this section were taken from [`torchvision.models.detection.fasterrcnn_resnet50_fpn`](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_resnet50_fpn.html#torchvision.models.detection.fasterrcnn_resnet50_fpn).*
+A model head was modified for two output classes, including the background. The model has two different inputs and outputs depending on a mode it is in: training (in the training mode) and inference (in the evaluation mode). *Details about the inputs and outputs for this section were taken from the [`torchvision.models.detection.fasterrcnn_resnet50_fpn`](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_resnet50_fpn.html#torchvision.models.detection.fasterrcnn_resnet50_fpn) documentation.*
 
 **Type:** Convolutional Neural Network
 
-**Architecture:** *Basic information for this section is taken from [Everything you need to know about TorchVision’s MobileNetV3 implementation (Vasilis Vryniotis and Francisco Massa, May 26, 2021)](https://pytorch.org/blog/torchvision-mobilenet-v3-implementation/).*
+**Architecture:**
+*Basic information for this subsection is taken from [Everything you need to know about TorchVision’s MobileNetV3 implementation (Vasilis Vryniotis and Francisco Massa, May 26, 2021)](https://pytorch.org/blog/torchvision-mobilenet-v3-implementation/).*
 - *Detector:* the high resolution [Faster Region-based Convolutional Neural Network (Faster R-CNN)](https://arxiv.org/abs/1506.01497), initialized with weights pre-trained on the [COCO V1 dataset](https://cocodataset.org/#home) with images of 800-1333px.
 - *Backbone:* the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [Feature Pyramid Network](https://arxiv.org/abs/1612.03144v2) style (FPN-style), initialized with weights pre-trained on [ImageNet 1K V1](https://image-net.org/index.php).
 
