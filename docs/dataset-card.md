@@ -68,6 +68,7 @@ The dataset is checked before use in several steps using [**Great Expectations**
 
 The `train.csv` and `test.csv` files are created when the `src/data/prepare_data.py` module is run, and the splitting is done using the `src\utils.py: stratified_group_train_test_split` function in it.
 ### ***License Information***
-Each photo in the dataset has a specific type of license, which can be found in the `License` field of the `image_info.csv` or  the `train.csv` and `test.csv` files. Use of any of these photos must abide by [the terms of use specified in its license](https://creativecommons.org/about/cclicenses/).
+The author of this dataset does not own the copyright of the photos. Each photo in the dataset is licensed under one of the following licenses: [Attribution 2.0 Generic (CC BY 2.0)](https://creativecommons.org/licenses/by/2.0/), [Attribution-ShareAlike 2.0 Generic (CC BY-SA 2.0)](https://creativecommons.org/licenses/by-sa/2.0/), [Attribution-NonCommercial 2.0 Generic (CC BY-NC 2.0)](https://creativecommons.org/licenses/by-nc/2.0/), [CC0 1.0 Universal (CC0 1.0) Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/). The license and attribution can be found in the `image_info.csv` and `train.csv`/`test.csv` files. Use of any of these photos must abide by the terms of use specified in its license and [the Flickr Terms of Use](https://www.flickr.com/creativecommons/).
+The annotations and `image_info.csv` files in this dataset are licensed under the [Attribution 4.0 International (CC BY 4.0) license](https://creativecommons.org/licenses/by/4.0/).
 
 [^*]: *Based on [Hugging Face Hub Dataset Card Template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/datasetcard_template.md).*

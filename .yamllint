@@ -24,7 +24,7 @@ rules:
   line-length:
     allow-non-breakable-inline-mappings: true
   new-lines:
-    type: platform
+    type: dos
   quoted-strings:
     quote-type: single
     required: only-when-needed

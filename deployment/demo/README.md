@@ -10,5 +10,5 @@ app_file: app_demo.py
 tags:
   - Object Detection
 pinned: false
-license: unknown
+license: agpl-3.0
 ---

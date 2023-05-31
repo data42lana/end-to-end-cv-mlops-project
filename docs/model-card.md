@@ -2,7 +2,7 @@
 This model card provides general information about a model used in this project, its architecture, inputs and outputs, how it was trained, evaluated, etc.
 ## Model Description
 ### Model Summary
-The model detects house sparrows in photos and is a fine-tuned pre-trained [TorchVision's (PyTorch) implementation](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn.html#torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn) of the high resolution [Faster R-CNN](https://arxiv.org/abs/1506.01497) model with the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [FPN](https://arxiv.org/abs/1612.03144v2) backbone modified to predict two classes (house sparrows and the background).
+The model detects house sparrows in photos and is a fine-tuned pre-trained [torchvision (PyTorch) implementation](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn.html#torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn) of the high resolution [Faster R-CNN](https://arxiv.org/abs/1506.01497) model with the [MobileNetV3-Large](https://arxiv.org/abs/1905.02244) [FPN](https://arxiv.org/abs/1612.03144v2) backbone modified to predict two classes (house sparrows and the background).
 
 ### Model Details
 A model head was modified for two output classes, including the background. The model has two different inputs and outputs depending on a mode it is in: training (in the training mode) and inference (in the evaluation mode). *Details about the inputs and outputs for this section were taken from the [`torchvision.models.detection.fasterrcnn_resnet50_fpn`](https://pytorch.org/vision/main/models/generated/torchvision.models.detection.fasterrcnn_resnet50_fpn.html#torchvision.models.detection.fasterrcnn_resnet50_fpn) documentation.*
@@ -86,7 +86,7 @@ The maximum possible number of detected house sparrows in one image is set by th
 Run the API server and then the web application provided in this project. Or go to [Web App Demo](https://huggingface.co/spaces/data42lana/how-many-house-sparrows-demo), if available. Upload a photo to it. After a short time, the result will be displayed.
 
 ### License
-The model may have different licenses depending on the dataset used for training. See [TorchVision LICENSE](https://github.com/pytorch/vision/blob/main/LICENSE) and [Pre-trained Model License](https://github.com/pytorch/vision#pre-trained-model-license) for license information of the pre-trained model.
+The model may have different licenses depending on the datasets used for training and fine-tuning. The non-pre-trained version of the used implementation of the Faster R-CNN model is distributed under the [BSD 3-Clause "New" or "Revised" License](https://github.com/pytorch/vision/blob/main/LICENSE). See the [COCO Dataset Terms of Use](https://cocodataset.org/#termsofuse), the [ImageNet Terms of access](https://image-net.org/download.php), and the [License of the dataset used for fine-tuning](dataset-card.md#license-information) for more information about the dataset licenses.
 
 ## More Information
 1. Follow the links in this Model Card for more information.

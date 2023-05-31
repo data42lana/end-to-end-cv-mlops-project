@@ -61,6 +61,7 @@
 |   |   |-- .streamlit/config.toml
 |   |   |-- app_demo.py
 |   |   |-- fine_tuned_faster_rcnn_mob_large_demo.pt
+|   |   |-- NOTICE
 |   |   |-- README.md
 |   |   \-- requirements.txt
 |   |
@@ -238,6 +239,7 @@
 |-- .pre-commit-config.yaml
 |-- .yamlignore
 |-- .yamllint
+|-- LICENSE
 |-- mon.log
 |-- pipe.log
 |-- pytest.ini
