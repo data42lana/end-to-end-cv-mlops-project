@@ -58,7 +58,7 @@ Immediately before training the neural network model, the training dataset is ag
 ### ***General Information***
 Sample files and images of the dataset are located in the `tests/data_samples` directory.
 
-*The complete dataset is uploaded to [**Kaggle**](https://www.kaggle.com/datasets/data42lana/house-sparrow-detection) so that the entire ML pipeline in this project can be reproduced, including with new data.*
+*The complete dataset is uploaded to [**Kaggle**](https://kaggle.com/datasets/c09594815010b1f11dd842fc1dc1128b28f470b2034412dd3a4444ac979c25b3) so that the entire ML pipeline in this project can be reproduced, including with new data.*
 
 To find a specific photo from the dataset in the source ([**Flickr**](https://flickr.com)), we need to go to its author's page and add "/" with the first part of the photo name (numbers before the "_" sign) to a URL. *For example, we want to find the `52089256535_d3b996ae78_w.jpg` photo by `Wildlife Terry`. By going to the author's page, we get the URL: `https://www.flickr.com/photos/wistaston.` By adding `/52089256535` to it, the link to the photo will look like this: `https://www.flickr.com/photos/wistaston/52089256535` (sometimes the author's name and his nickname may be the same).*
 ### ***Technical Information***
