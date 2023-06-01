@@ -14,7 +14,7 @@
 </p>
 
 ## About
-The goal of creating this project is to learn how to implement end-to-end MLOps in practice. As a result, the machine learning pipeline was built that fine-tunes a pre-trained model and the web application for detecting house sparrows in a photo that interacts with the model via an API. This repository contains the source code of the pipeline, including the source code of the web app and API, and some of its run results, which are needed to reproduce the pipeline and demonstrate its work. The following diagram shows more clearly how MLOps is implemented in the project:
+The goal of creating this project was to learn how to implement end-to-end MLOps in practice. As a result, the machine learning pipeline was built that fine-tunes a pre-trained model and the web application for detecting house sparrows in a photo that interacts with the model via an API. This repository contains the source code of the pipeline, including the source code of the web app and API, and some of its run results, which are needed to reproduce the pipeline and demonstrate its work. The following diagram shows more clearly how MLOps is implemented in the project:
 
 ![Project MLOps Diagram](./docs/project-mlops-diagram.svg)
 
