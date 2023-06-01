@@ -95,7 +95,7 @@ or only those needed for a specific MLOps task (see table below).
 
 If you used `dev-requirements.txt`, run `pre-commit install` to install git hook scripts from the `.pre-commit-config.yaml` file (including for the DVC project in this repo). If you want to use your own Great Expectations/DVC projects, ensure that they are initialized in the root directory of the repo, or do it by running the `great_expectations init` / `dvc init` commands. For details, refer to the documentation for the respective tools.
 
-The dataset to reproduce the ML pipeline of this project can be found [here](https://www.kaggle.com/datasets/data42lana/house-sparrow-detection). To run the pipeline on your own data, they must be organized as described in `docs/dataset-card.md`. If necessary, configure items of the Great Expectations project according to the new data. See samples of the used data in the `tests/data_samples` folder.
+The dataset to reproduce the ML pipeline of this project can be found [here](https://kaggle.com/datasets/c09594815010b1f11dd842fc1dc1128b28f470b2034412dd3a4444ac979c25b3). To run the pipeline on your own data, they must be organized as described in `docs/dataset-card.md`. If necessary, configure items of the Great Expectations project according to the new data. See samples of the used data in the `tests/data_samples` folder.
 
 ## Configuration
 The project is configured to run on a local machine, although this can be changed if necessary. The main settings of the MLOps for this project are held in the `configs/params.yaml` file.
