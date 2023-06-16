@@ -1,4 +1,4 @@
-# End-to-End CV MLOps Project
+# End-to-End CV MLOps Project – How many House Sparrows?
 
 ![CI & Tests](https://github.com/data42lana/end-to-end-cv-mlops-project/actions/workflows/ci-tests.yml/badge.svg) ![python: 3.9](https://img.shields.io/badge/%20python-3.9-blue) [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit) [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit) ![project status: not updated](https://img.shields.io/badge/project%20status-not%20updated-red)
 
